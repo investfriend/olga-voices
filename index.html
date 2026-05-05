@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Голос аудитории — апрель/май 2026 · @olgasabitova</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0d1218;
+  --bg-soft: #131a22;
+  --bg-card: #181f28;
+  --ink: #f0e8d8;
+  --ink-soft: #d9d2c3;
+  --muted: #8a8478;
+  --line: #2a323d;
+  --gold: #c9a961;
+  --gold-soft: #b09556;
+  --rust: #b85d3c;
+  --green: #7ea876;
+  --max: 1280px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Source Sans 3', -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--gold); color: var(--bg); }
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { color: var(--ink); }
+
+.masthead {
+  border-bottom: 1px solid var(--line);
+  padding: 1.4rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.masthead .title-mark {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.3rem;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--gold);
+}
+
+.masthead-meta { display: flex; gap: 2.5rem; }
+
+.hero { max-width: var(--max); margin: 0 auto; padding: 6rem 3rem 4rem; }
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 2.5rem;
+}
+
+.kicker::before { content: ""; width: 36px; height: 1px; background: var(--gold); }
+
+.hero h1 {
+  font-family: 'Lora', serif;
+  font-weight: 500;
+  font-size: clamp(2.8rem, 6vw, 5.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 2rem;
+  max-width: 1100px;
+}
+
+.hero h1 em { font-style: italic; color: var(--gold); font-weight: 500; }
+
+.hero-dek {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.2rem, 1.9vw, 1.6rem);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 800px;
+  margin-bottom: 4rem;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 2rem 0;
+  margin-top: 3rem;
+}
+
+.stat .num {
+  font-family: 'Lora', serif;
+  font-weight: 500;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+
+.stat .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+section { max-width: var(--max); margin: 0 auto; padding: 5rem 3rem; position: relative; }
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-head .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+}
+
+.section-head h2 {
+  font-family: 'Lora', serif;
+  font-weight: 500;
+  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  flex: 1;
+}
+
+.section-head h2 em { font-style: italic; color: var(--gold); }
+
+.tldr {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.tldr-card { background: var(--bg); padding: 2rem 1.6rem; transition: background 0.3s; }
+.tldr-card:hover { background: var(--bg-soft); }
+
+.tldr-card .rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  margin-bottom: 0.9rem;
+}
+
+.tldr-card h3 {
+  font-family: 'Lora', serif;
+  font-weight: 500;
+  font-size: 1.18rem;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-bottom: 0.7rem;
+  letter-spacing: -0.01em;
+}
+
+.tldr-card p { font-size: 0.92rem; line-height: 1.5; color: var(--muted); font-weight: 400; }
+
+.chart-wrap { background: var(--bg-soft); border-left: 2px solid var(--gold); padding: 2.5rem 2.5rem 2rem; }
+.chart { display: flex; flex-direction: column; gap: 0.7rem; }
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 50px;
+  gap: 1.2rem;
+  align-items: center;
+  padding: 0.4rem 0;
+}
+
+.chart-row .name { font-family: 'Lora', serif; font-size: 1rem; color: var(--ink); font-weight: 400; }
+.chart-row .name.hot { color: var(--gold); font-weight: 500; }
+
+.chart-bar { height: 18px; background: var(--bg); border: 1px solid var(--line); position: relative; overflow: hidden; }
+
+.chart-bar-fill {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: var(--gold);
+  transform-origin: left;
+  animation: barGrow 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  opacity: 0.9;
+}
+
+.chart-bar-fill.hot { background: linear-gradient(90deg, var(--gold), var(--rust)); }
+
+@keyframes barGrow { from { transform: scaleX(0); } }
+
+.chart-row .count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--gold);
+  text-align: right;
+}
+
+.chart-note {
+  margin-top: 1.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px dashed var(--line);
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.voice-block { margin-bottom: 4rem; }
+
+.voice-block h3 {
+  font-family: 'Lora', serif;
+  font-weight: 500;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.015em;
+}
+
+.voice-block h3 em { font-style: italic; color: var(--gold); }
+
+.voice-block .summary {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+  margin-bottom: 1.8rem;
+  max-width: 800px;
+  font-weight: 400;
+}
+
+.quotes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+
+.quote {
+  background: var(--bg-card);
+  padding: 1.6rem 1.8rem;
+  border-left: 2px solid var(--gold-soft);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.quote:hover { border-left-color: var(--gold); transform: translateX(2px); }
+
+.quote .likes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--gold);
+  background: rgba(201, 169, 97, 0.12);
+  padding: 0.18rem 0.55rem;
+  border-radius: 100px;
+  margin-bottom: 0.9rem;
+  letter-spacing: 0.05em;
+}
+
+.quote .likes::before { content: "♥"; font-family: serif; }
+
+.quote .text {
+  font-family: 'Lora', serif;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--ink);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.quote .text::before {
+  content: "“";
+  font-family: 'Lora', serif;
+  color: var(--gold);
+  font-size: 1.4em;
+  font-style: normal;
+  margin-right: 0.1em;
+  vertical-align: -0.2em;
+}
+
+.takeaway {
+  border-top: 1px dashed var(--line);
+  padding-top: 1.2rem;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem;
+  color: var(--ink-soft);
+}
+
+.takeaway strong {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.tickers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin: 1.5rem 0; }
+
+.ticker {
+  background: var(--bg-card);
+  padding: 1rem 1.2rem;
+  border-left: 2px solid var(--gold-soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+  transition: all 0.25s;
+}
+
+.ticker:hover { border-left-color: var(--gold); background: var(--bg-soft); }
+
+.ticker .name { font-family: 'Lora', serif; font-size: 1rem; color: var(--ink); font-weight: 500; }
+
+.ticker .reqs { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--gold); font-weight: 600; }
+
+.ticker.top { border-left-color: var(--rust); background: var(--bg-soft); }
+.ticker.top .reqs { color: var(--rust); }
+
+.plan-section { background: var(--bg-soft); }
+
+.plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1rem; }
+
+.plan-col {
+  background: var(--bg);
+  padding: 2.2rem 2rem;
+  border-top: 3px solid var(--gold);
+  position: relative;
+}
+
+.plan-col.warm { border-top-color: var(--rust); }
+.plan-col.advanced { border-top-color: var(--green); }
+
+.plan-col .step {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.plan-col.warm .step { color: var(--rust); }
+.plan-col.advanced .step { color: var(--green); }
+
+.plan-col h3 {
+  font-family: 'Lora', serif;
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+}
+
+.plan-col .audience {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-bottom: 1.6rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px dashed var(--line);
+}
+
+.plan-col ol { list-style: none; counter-reset: planlist; }
+
+.plan-col ol li {
+  counter-increment: planlist;
+  padding: 0.9rem 0 0.9rem 2.2rem;
+  position: relative;
+  border-bottom: 1px dotted var(--line);
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.plan-col ol li:last-child { border-bottom: none; }
+
+.plan-col ol li::before {
+  content: counter(planlist, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.95rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--gold);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.plan-col.warm ol li::before { color: var(--rust); }
+.plan-col.advanced ol li::before { color: var(--green); }
+
+.colophon {
+  border-top: 1px solid var(--line);
+  margin-top: 6rem;
+  padding: 4rem 3rem;
+  max-width: var(--max);
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 3rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.colophon-block strong { color: var(--gold); font-weight: 600; display: block; margin-bottom: 1rem; }
+
+.colophon-block .l {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  color: var(--ink-soft);
+  font-weight: 400;
+  line-height: 1.45;
+  margin-bottom: 0.4rem;
+}
+
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 1100px) {
+  .tldr { grid-template-columns: repeat(2, 1fr); }
+  .tickers { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 800px) {
+  .masthead { padding: 1rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .masthead-meta { display: none; }
+  .hero { padding: 3rem 1.5rem 2rem; }
+  section { padding: 3rem 1.5rem; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .tldr { grid-template-columns: 1fr; }
+  .tickers { grid-template-columns: 1fr 1fr; }
+  .quotes { grid-template-columns: 1fr; }
+  .plan-grid { grid-template-columns: 1fr; }
+  .chart-row { grid-template-columns: 130px 1fr 40px; gap: 0.7rem; font-size: 0.9rem; }
+  .chart-wrap { padding: 1.4rem; }
+  .colophon { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="title-mark">Voices · Field Report</div>
+  <div class="masthead-meta">
+    <span>@olgasabitova</span>
+    <span>2026-04-05 → 2026-05-05</span>
+    <span>Vol. 01</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="kicker">Field report · YouTube · апрель–май</div>
+  <h1>Что на самом деле <em>волнует</em> аудиторию <em>прямо&nbsp;сейчас</em>.</h1>
+  <p class="hero-dek">Тридцать дней. Восемь видео. Четыреста восемьдесят два комментария — почти все по делу. Что подписчики Ольги читают, спрашивают, ждут и&nbsp;чему&nbsp;не&nbsp;верят.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="num">8</div><div class="label">видео</div></div>
+    <div class="stat"><div class="num">482</div><div class="label">комментария</div></div>
+    <div class="stat"><div class="num">463</div><div class="label">по&nbsp;делу</div></div>
+    <div class="stat"><div class="num">96%</div><div class="label">сигнал-к-шуму</div></div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="section-head">
+    <span class="num">№ 01</span>
+    <h2>Пять <em>горячих точек</em>.</h2>
+  </div>
+  <div class="tldr">
+    <div class="tldr-card"><div class="rank">— 01</div><h3>Облигации и ОФЗ под цикл снижения ставки</h3><p>Самая горячая тема. Раскол: одни верят в 30%, другие помнят 90-е и не верят ни во что.</p></div>
+    <div class="tldr-card"><div class="rank">— 02</div><h3>Просьбы разобрать конкретные акции</h3><p>Х5, Транснефть, Татнефть, Газпромнефть, Норникель, Сургут префы, Яндекс, Озон, Полюс.</p></div>
+    <div class="tldr-card"><div class="rank">— 03</div><h3>Недвижимость и ипотека</h3><p>«Реально ли купить квартиру с обычной зарплатой» — 80+ комментариев под одним видео.</p></div>
+    <div class="tldr-card"><div class="rank">— 04</div><h3>Доллар, рубль, инфляция</h3><p>«Что будет с накоплениями?», «Куда выводить из&nbsp;рубля?» — постоянный фон.</p></div>
+    <div class="tldr-card"><div class="rank">— 05</div><h3>Доверие к РФ-инструментам</h3><p>Дефолты СССР, страх дефолта по ОФЗ, ярлык «инфоцыганства» — повторяется десятками голосов.</p></div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="section-head">
+    <span class="num">№ 02</span>
+    <h2>Распределение тем — <em>по упоминаниям.</em></h2>
+  </div>
+  <div class="chart-wrap">
+    <div class="chart">
+      <div class="chart-row"><div class="name hot">Облигации (общ.)</div><div class="chart-bar"><div class="chart-bar-fill hot" style="width: 100%; animation-delay: 0.1s"></div></div><div class="count">51</div></div>
+      <div class="chart-row"><div class="name hot">Недвижимость</div><div class="chart-bar"><div class="chart-bar-fill hot" style="width: 82%; animation-delay: 0.15s"></div></div><div class="count">42</div></div>
+      <div class="chart-row"><div class="name hot">ОФЗ</div><div class="chart-bar"><div class="chart-bar-fill hot" style="width: 51%; animation-delay: 0.2s"></div></div><div class="count">26</div></div>
+      <div class="chart-row"><div class="name">ВТБ (отдельный кейс)</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 43%; animation-delay: 0.25s"></div></div><div class="count">22</div></div>
+      <div class="chart-row"><div class="name">Дивиденды</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 39%; animation-delay: 0.3s"></div></div><div class="count">20</div></div>
+      <div class="chart-row"><div class="name">Кредиты / долги</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 39%; animation-delay: 0.35s"></div></div><div class="count">20</div></div>
+      <div class="chart-row"><div class="name">Доллар / валюта</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 37%; animation-delay: 0.4s"></div></div><div class="count">19</div></div>
+      <div class="chart-row"><div class="name">Ключевая ставка / ЦБ</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 37%; animation-delay: 0.45s"></div></div><div class="count">19</div></div>
+      <div class="chart-row"><div class="name">Налоги</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 35%; animation-delay: 0.5s"></div></div><div class="count">18</div></div>
+      <div class="chart-row"><div class="name">Пенсия</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 23%; animation-delay: 0.55s"></div></div><div class="count">12</div></div>
+      <div class="chart-row"><div class="name">Инфляция</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 19%; animation-delay: 0.6s"></div></div><div class="count">10</div></div>
+      <div class="chart-row"><div class="name">Х5 / Пятёрочка</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 15%; animation-delay: 0.65s"></div></div><div class="count">8</div></div>
+      <div class="chart-row"><div class="name">Озон</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 15%; animation-delay: 0.7s"></div></div><div class="count">8</div></div>
+      <div class="chart-row"><div class="name">Яндекс</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 15%; animation-delay: 0.72s"></div></div><div class="count">8</div></div>
+      <div class="chart-row"><div class="name">Полюс / Золото</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 15%; animation-delay: 0.74s"></div></div><div class="count">8</div></div>
+      <div class="chart-row"><div class="name">Брокеры</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 15%; animation-delay: 0.76s"></div></div><div class="count">8</div></div>
+      <div class="chart-row"><div class="name">Транснефть</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 11%; animation-delay: 0.78s"></div></div><div class="count">6</div></div>
+      <div class="chart-row"><div class="name">БПИФ / фонды</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 11%; animation-delay: 0.8s"></div></div><div class="count">6</div></div>
+      <div class="chart-row"><div class="name">Сбер</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 7%; animation-delay: 0.82s"></div></div><div class="count">4</div></div>
+      <div class="chart-row"><div class="name">Крипта</div><div class="chart-bar"><div class="chart-bar-fill" style="width: 7%; animation-delay: 0.84s"></div></div><div class="count">4</div></div>
+    </div>
+    <div class="chart-note">
+      Облигации совокупно (общие + ОФЗ) = 77 упоминаний. Это больше, чем три следующие темы вместе взятые. Аудитория хочет ясности по&nbsp;долговому рынку — особенно перед циклом снижения ставки.
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="section-head">
+    <span class="num">№ 03</span>
+    <h2>Голос аудитории — <em>дословно.</em></h2>
+  </div>
+
+  <div class="voice-block">
+    <h3>Облигации и ОФЗ — <em>главная зона</em> тревоги/интереса</h3>
+    <p class="summary">Аудитория сомневается в 25–30% годовых, не доверяет прогнозам по ставке и помнит дефолты — каждое обещание встречается контр-вопросом.</p>
+    <div class="quotes">
+      <div class="quote"><span class="likes">+33</span><p class="text">У меня где-то лежат бабушкины облигации, красивые бумажки. Старость пришлась на 90-е, вклады заморозили, облигации превратились в&nbsp;бумажки.</p></div>
+      <div class="quote"><span class="likes">+22</span><p class="text">Девушка в видео очень юна и не помнит дефолтов государства. Заявлять, что это облигация ГОСУДАРСТВА, может только человек, не родившийся в СССР.</p></div>
+      <div class="quote"><span class="likes">+20</span><p class="text">Длинные облигации — это чисто спекуляции на цикле снижения ставки. Самые доходные ОФЗ имеют годовой купон 130&nbsp;рублей. Что такое 130&nbsp;рублей сегодня, а через 10–15 лет? Коробок спичек купишь.</p></div>
+      <div class="quote"><span class="likes">+18</span><p class="text">ОФЗ покупать? Потом такой как Кириенко вывалит — все капут вашим займам.</p></div>
+      <div class="quote"><span class="likes">+14</span><p class="text">Откуда такая уверенность, что в&nbsp;2028 году ставка будет 10%?</p></div>
+      <div class="quote"><span class="likes">+11</span><p class="text">Покупать надо облигации, которые меньше стоят прямо сейчас, иначе вы&nbsp;больше заплатите сейчас, а&nbsp;значит, и&nbsp;доходность уменьшится.</p></div>
+    </div>
+    <div class="takeaway">
+      <strong>— видео-кандидат</strong>
+      «Сколько РЕАЛЬНО получите от длинных ОФЗ — после комиссий, налогов, при разных сценариях ставки» с честным разбором рисков и&nbsp;историческим контекстом дефолтов.
+    </div>
+  </div>
+
+  <div class="voice-block">
+    <h3>Просьбы разобрать <em>конкретные акции.</em></h3>
+    <p class="summary">Под видео про Лукойл — каскад однотипных «разберите, пожалуйста». Лидер с большим отрывом — X5.</p>
+    <div class="tickers">
+      <div class="ticker top"><span class="name">Х5 / Пятёрочка</span><span class="reqs">12+</span></div>
+      <div class="ticker top"><span class="name">Транснефть</span><span class="reqs">8+</span></div>
+      <div class="ticker"><span class="name">Татнефть</span><span class="reqs">4+</span></div>
+      <div class="ticker"><span class="name">Газпромнефть</span><span class="reqs">4+</span></div>
+      <div class="ticker"><span class="name">Яндекс</span><span class="reqs">4+</span></div>
+      <div class="ticker"><span class="name">Озон / Озон Фарм</span><span class="reqs">4+</span></div>
+      <div class="ticker"><span class="name">Норникель</span><span class="reqs">3+</span></div>
+      <div class="ticker"><span class="name">Сургут префы</span><span class="reqs">3+</span></div>
+      <div class="ticker"><span class="name">Полюс / Золото</span><span class="reqs">3+</span></div>
+      <div class="ticker"><span class="name">Т-Банк</span><span class="reqs">2+</span></div>
+      <div class="ticker"><span class="name">Русагро / Фосагро</span><span class="reqs">2+</span></div>
+      <div class="ticker"><span class="name">ЮГК / UGLD</span><span class="reqs">2</span></div>
+      <div class="ticker"><span class="name">Банк ДОМ.РФ</span><span class="reqs">1 (+10♥)</span></div>
+      <div class="ticker"><span class="name">Интер РАО</span><span class="reqs">1</span></div>
+      <div class="ticker"><span class="name">WTCM</span><span class="reqs">1</span></div>
+      <div class="ticker"><span class="name">Газпром</span><span class="reqs">1</span></div>
+    </div>
+    <div class="takeaway">
+      <strong>— видео-кандидат</strong>
+      Серия 5–10-минутных разборов по тикерам. В&nbsp;первую очередь — X5 и&nbsp;Транснефть.
+    </div>
+  </div>
+
+  <div class="voice-block">
+    <h3>ВТБ — <em>отдельная горячая</em> тема.</h3>
+    <p class="summary">«ЛУЧШАЯ акция для новичков или МАСШТАБНЫЙ РАЗВОД?» — собрало стек вопросов от тех, кто уже купил.</p>
+    <div class="quotes">
+      <div class="quote"><span class="likes">+9</span><p class="text">ВТБ дивиденды: можно, а&nbsp;зачем?</p></div>
+      <div class="quote"><span class="likes">+2</span><p class="text">ВТБ банк, в новостях пишут что банк имеет дыру в&nbsp;бюджете 700 миллиардов рублей, а я вчера купил 1 акцию. Что мне делать с ними?</p></div>
+    </div>
+    <div class="takeaway">
+      <strong>— видео-кандидат</strong>
+      Follow-up: что делать тем, кто уже купил ВТБ; стоит&nbsp;ли заходить новичкам сейчас.
+    </div>
+  </div>
+
+  <div class="voice-block">
+    <h3>Недвижимость и ипотека — <em>боль среднего класса.</em></h3>
+    <p class="summary">«Мы обречены жить без квартиры?» — 80+ комментариев. Тон — между сарказмом и обречённостью.</p>
+    <div class="quotes">
+      <div class="quote"><span class="likes">+14</span><p class="text">Откуда такая уверенность, что в 2028 году ставка будет 10%? (про прогноз снижения ипотеки)</p></div>
+      <div class="quote"><span class="likes">+10</span><p class="text">Если нужно купить за год квартиру за 10 млн, нужно откладывать 1&nbsp;млн в месяц. Что непонятно? <em>(сарказм)</em></p></div>
+      <div class="quote"><span class="likes">+6</span><p class="text">Когда это родители в нашем возрасте имели свою квартиру? Приватизация? Это называется.</p></div>
+    </div>
+    <div class="takeaway">
+      <strong>— видео-кандидат</strong>
+      Конкретные стратегии для тех, у&nbsp;кого уже есть ипотека под 18–25%, и&nbsp;реалистичная декомпозиция «как накопить на первый взнос за&nbsp;3–5 лет с&nbsp;зарплатой 80–150&nbsp;к».
+    </div>
+  </div>
+
+  <div class="voice-block">
+    <h3>Сбережения, доверие, <em>«инфоцыгане».</em></h3>
+    <p class="summary">Уровень тревоги — высокий. Аудитория хочет видеть честные цифры с комиссиями и налогами, а не «брутто» обещания.</p>
+    <div class="quotes">
+      <div class="quote"><span class="likes">+15</span><p class="text">Мне ничего поднять не хотят? 30 т зарплата и&nbsp;15&nbsp;т коммуналка.</p></div>
+      <div class="quote"><span class="likes">+10</span><p class="text">У меня 600&nbsp;000 в акциях, 1М в&nbsp;облигациях, 300к в&nbsp;золоте, 150к в&nbsp;юанях, 400к в&nbsp;крипте и&nbsp;3&nbsp;квартиры. Объясните мне, куда ещё вложить деньги? <em>(полу-в-шутку)</em></p></div>
+      <div class="quote"><span class="likes">+10</span><p class="text">Я правильно помню, что год назад эта женщина советовала брать яндекс и&nbsp;лукойл?</p></div>
+      <div class="quote"><span class="likes">+9</span><p class="text">Мне одному кажется, что каждое выходящее видео в&nbsp;последнее время всё хуже и&nbsp;хуже? Ценной инфы — ноль.</p></div>
+      <div class="quote"><span class="likes">+5</span><p class="text">Когда я слышу от блогера слова «просто купите БПИФ у брокера», то&nbsp;становится понятно, что блогер инфоцыган.</p></div>
+      <div class="quote"><span class="likes">+5</span><p class="text">Почему никогда в таких видео не&nbsp;говорят, какая часть от прибыли уйдёт на&nbsp;комиссию и&nbsp;на&nbsp;налоги?</p></div>
+    </div>
+    <div class="takeaway">
+      <strong>— видео-кандидат</strong>
+      «Реальная доходность после налогов и комиссий» по&nbsp;ОФЗ, акциям, БПИФ — поверх обещанных «брутто» процентов. Плюс ретроспектива «что я говорила год назад» — для&nbsp;репутации.
+    </div>
+  </div>
+</section>
+
+<section class="plan-section reveal" style="max-width: none; margin: 0;">
+  <div style="max-width: var(--max); margin: 0 auto; padding: 5rem 3rem;">
+    <div class="section-head">
+      <span class="num">№ 04</span>
+      <h2>Контент-план — <em>на месяц вперёд.</em></h2>
+    </div>
+    <div class="plan-grid">
+      <div class="plan-col">
+        <div class="step">— Ступень 01</div>
+        <h3>Охват и&nbsp;новички</h3>
+        <p class="audience">Холодная и тёплая аудитория. Видео для вершины воронки.</p>
+        <ol>
+          <li>Реальная доходность ОФЗ — что увидите после налогов и комиссий</li>
+          <li>Что делать тем, у&nbsp;кого ВТБ в&nbsp;портфеле</li>
+          <li>X5 — самый запрашиваемый разбор</li>
+        </ol>
+      </div>
+      <div class="plan-col warm">
+        <div class="step">— Ступень 02</div>
+        <h3>Удержание и стратегия</h3>
+        <p class="audience">Тёплая лояльная аудитория, готовая к глубоким разборам.</p>
+        <ol>
+          <li>Транснефть префы / Татнефть / Сургут префы — серия коротких разборов</li>
+          <li>Что я говорила год назад: ретроспектива и&nbsp;выводы</li>
+          <li>Длинные ОФЗ vs дивидендные акции — что выбрать на&nbsp;5&nbsp;лет</li>
+        </ol>
+      </div>
+      <div class="plan-col advanced">
+        <div class="step">— Ступень 03</div>
+        <h3>Продвинутое</h3>
+        <p class="audience">Лояльное ядро. Глубина, конкретика, цифры.</p>
+        <ol>
+          <li>Стратегия купонной лестницы по ОФЗ — на&nbsp;основе плана подписчика</li>
+          <li>Реалистичный план покупки квартиры за&nbsp;3–5 лет — декомпозиция от&nbsp;80&nbsp;к</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="colophon">
+  <div class="colophon-block">
+    <strong>Метод</strong>
+    <div class="l">Анализ комментариев под 8&nbsp;видео @olgasabitova за&nbsp;месяц. Группировка по&nbsp;темам, отбор по&nbsp;числу лайков, дословные цитаты — без перевода и&nbsp;«улучшения».</div>
+  </div>
+  <div class="colophon-block">
+    <strong>Период</strong>
+    <div class="l">2026-04-05 — 2026-05-05</div>
+    <div class="l">8 видео · 482 комментария · 463 по&nbsp;делу</div>
+  </div>
+  <div class="colophon-block">
+    <strong>Source</strong>
+    <div class="l">2026-05-вопросы-аудитории.md</div>
+    <div class="l">YT-QUESTIONS-2026-05</div>
+  </div>
+</footer>
+
+<script>
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { rootMargin: '-8% 0px -8% 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const chartIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.chart-bar-fill').forEach(b => {
+        b.style.animation = 'none';
+        b.offsetHeight;
+        b.style.animation = '';
+      });
+    }
+  });
+});
+const chart = document.querySelector('.chart');
+if (chart) chartIo.observe(chart);
+</script>
+</body>
+</html>
