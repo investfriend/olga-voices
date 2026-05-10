@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data People — HR-аналитика, в которой видно людей</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&family=Nunito:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --primary: #FF69B4;
+  --secondary: #FFB6C1;
+  --accent: #FF1493;
+  --bg: #FFF0F5;
+  --bg-soft: #FFE4F0;
+  --text: #4A4A4A;
+  --text-strong: #2A2A2A;
+  --muted: #7A7A7A;
+  --line: #F5C7DD;
+  --white: #FFFFFF;
+  --grad-primary: linear-gradient(135deg, #FF69B4, #FF1493);
+  --grad-bg: linear-gradient(135deg, #FFF0F5, #FFE4F0);
+  --shadow-soft: 0 8px 32px rgba(255, 105, 180, 0.15);
+  --shadow-card: 0 12px 40px rgba(255, 105, 180, 0.18);
+  --max: 1400px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--primary); color: var(--white); }
+
+/* ============= NAV ============= */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 240, 245, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  padding: 1rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
+}
+
+.nav .logo img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.nav .logo .mascot {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.nav-meta {
+  display: flex;
+  gap: 2rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.nav-meta a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.25s;
+}
+
+.nav-meta a:hover { color: var(--accent); }
+
+/* ============= HERO ============= */
+.hero {
+  position: relative;
+  padding: 5rem 3rem 7rem;
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  gap: 4rem;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 10%;
+  left: -8%;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: var(--secondary);
+  opacity: 0.35;
+  filter: blur(60px);
+  z-index: -1;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: 10%;
+  right: -8%;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.22;
+  filter: blur(80px);
+  z-index: -1;
+}
+
+.hero-eyebrow {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.hero-eyebrow .mini-mascot { font-size: 1.1rem; line-height: 1; }
+
+.hero h1 {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5.2vw, 5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+  margin-bottom: 2rem;
+}
+
+.hero h1 .grad {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-lead {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  line-height: 1.6;
+  color: var(--text);
+  max-width: 540px;
+  margin-bottom: 2.5rem;
+  font-weight: 400;
+}
+
+.hero-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 1rem 1.8rem;
+  border-radius: 12px;
+  border: none;
+  background: var(--grad-primary);
+  color: var(--white);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(255, 105, 180, 0.32);
+}
+
+.btn-ghost {
+  background: var(--white);
+  color: var(--text-strong);
+  border: 1.5px solid var(--line);
+  box-shadow: 0 4px 18px rgba(255, 105, 180, 0.1);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-soft);
+  border-color: var(--primary);
+  color: var(--accent);
+  transform: translateY(-3px);
+}
+
+/* ============= DASHBOARD WIDGET ============= */
+.widget {
+  position: relative;
+  background: var(--white);
+  border-radius: 20px;
+  padding: 2rem 1.8rem;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.widget:hover { transform: translateY(-6px); }
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 0.7rem;
+}
+
+.widget-title {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-strong);
+  text-transform: none;
+  letter-spacing: -0.005em;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.widget-title .mascot { font-size: 1.3rem; }
+
+.risk-list { list-style: none; }
+
+.risk-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.85rem 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.risk-row:last-child { border-bottom: none; }
+
+.risk-row .name {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.98rem;
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+.risk-row .role {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+  font-weight: 400;
+}
+
+.bar {
+  height: 6px;
+  background: var(--bg-soft);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--grad-primary);
+  border-radius: 3px;
+  transform-origin: left;
+  animation: barFill 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes barFill {
+  from { transform: scaleX(0); }
+}
+
+.risk-pct {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 700;
+  text-align: right;
+}
+
+.risk-pct.low { color: var(--muted); }
+
+.widget-footer {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 1.2rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--line);
+  display: flex;
+  justify-content: space-between;
+}
+
+.widget-footer .signal {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.signal::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: pulse 2.4s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.widget-annotation {
+  margin-top: 1.2rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.5;
+  padding: 1rem 1.2rem;
+  background: var(--bg-soft);
+  border-radius: 14px;
+  border-left: 3px solid var(--primary);
+  font-weight: 400;
+  font-style: italic;
+  position: relative;
+}
+
+/* ============= STRIP ============= */
+.strip {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 1.4rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--white);
+  font-weight: 600;
+}
+
+.strip strong {
+  color: var(--accent);
+  font-weight: 700;
+  font-family: 'Comfortaa', cursive;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.strip-marquee {
+  display: flex;
+  gap: 2.5rem;
+  white-space: nowrap;
+  animation: scroll 40s linear infinite;
+  color: var(--muted);
+}
+
+@keyframes scroll {
+  to { transform: translateX(-50%); }
+}
+
+/* ============= SECTION ============= */
+.section {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 7rem 3rem;
+  position: relative;
+}
+
+.section-num {
+  position: absolute;
+  top: 7rem;
+  right: 3rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 0.5rem;
+  font-weight: 500;
+}
+
+.section-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.6rem;
+  font-weight: 700;
+}
+
+.section-title {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 4.2vw, 3.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+  margin-bottom: 3rem;
+  max-width: 950px;
+}
+
+.section-title .grad {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.intro-body p {
+  font-size: clamp(1.05rem, 1.3vw, 1.15rem);
+  line-height: 1.65;
+  margin-bottom: 1.4rem;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.intro-body p:first-child::first-letter {
+  font-family: 'Comfortaa', cursive;
+  font-size: 4em;
+  float: left;
+  line-height: 0.9;
+  margin: 0.05em 0.15em 0 0;
+  font-weight: 700;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.intro-aside {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.8rem 1.8rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--text);
+  box-shadow: var(--shadow-soft);
+  font-style: italic;
+  border-left: 3px solid var(--primary);
+}
+
+.intro-aside .label {
+  font-style: normal;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.7rem;
+  font-weight: 700;
+}
+
+/* ============= PHOTO BAND ============= */
+.photo-band {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 2rem 3rem 6rem;
+}
+
+.photo-band figure {
+  margin: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  background: var(--bg-soft);
+}
+
+.photo-band img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 1.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.photo-band figure:hover img { transform: scale(1.02); }
+
+.photo-band figcaption {
+  position: absolute;
+  bottom: 1.4rem;
+  left: 1.6rem;
+  right: 1.6rem;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1rem, 1.4vw, 1.3rem);
+  color: var(--white);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+  letter-spacing: -0.005em;
+}
+
+@media (max-width: 900px) {
+  .photo-band { padding: 0 1.5rem 4rem; }
+  .photo-band figure { border-radius: 16px; }
+  .photo-band figcaption { font-size: 0.95rem; bottom: 0.9rem; left: 1rem; right: 1rem; }
+}
+
+/* ============= BENEFITS ============= */
+.benefits-section {
+  background: var(--grad-bg);
+  padding: 1px 0;
+}
+
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.benefit {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2.6rem 2.2rem;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.benefit:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card);
+}
+
+.benefit-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  letter-spacing: 0.18em;
+  margin-bottom: 1.4rem;
+  display: block;
+  font-weight: 600;
+}
+
+.benefit h3 {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--text-strong);
+  margin-bottom: 1rem;
+}
+
+.benefit h3 .grad {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.benefit p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.benefit-stat {
+  display: block;
+  margin-top: 1.5rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  border-top: 1px dashed var(--line);
+  padding-top: 0.8rem;
+  font-weight: 500;
+}
+
+.benefit-stat strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ============= TRUST ============= */
+.trust {
+  text-align: center;
+  padding: 8rem 3rem;
+}
+
+.trust-num {
+  font-family: 'Comfortaa', cursive;
+  font-size: clamp(8rem, 22vw, 22rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-block;
+}
+
+.trust-num sup {
+  font-size: 0.4em;
+  vertical-align: top;
+  margin-left: 0.05em;
+  -webkit-text-fill-color: var(--accent);
+}
+
+.trust-label {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 500;
+  font-size: clamp(1.2rem, 1.9vw, 1.6rem);
+  color: var(--text-strong);
+  margin-top: 1rem;
+}
+
+.trust-meta {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 1rem 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 600;
+}
+
+/* ============= TESTIMONIAL ============= */
+.testimonial-section {
+  background: var(--grad-primary);
+  color: var(--white);
+  padding: 9rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonial-section::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  filter: blur(60px);
+}
+
+.testimonial-section::after {
+  content: "";
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  filter: blur(50px);
+}
+
+.testimonial-section .section-num,
+.testimonial-section .section-label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.testimonial-section .section-num { border-top-color: rgba(255, 255, 255, 0.3); }
+
+.testimonial {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonial-quote {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 500;
+  font-size: clamp(1.8rem, 3.6vw, 3.2rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.testimonial-quote::before {
+  content: "“";
+  position: absolute;
+  left: -0.5em;
+  top: -0.3em;
+  font-size: 2em;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.testimonial-quote .highlight {
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0 0.3em;
+  border-radius: 6px;
+}
+
+.testimonial-author {
+  display: flex;
+  gap: 1.5rem;
+  align-items: baseline;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  padding-top: 1.5rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  flex-wrap: wrap;
+}
+
+.testimonial-author .name {
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* ============= CTA ============= */
+.cta-section {
+  padding: 8rem 3rem 4rem;
+  max-width: var(--max);
+  margin: 0 auto;
+}
+
+.cta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.cta-left h2 {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 4.2vw, 3.6rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+  margin-bottom: 2rem;
+}
+
+.cta-left h2 .grad {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cta-left p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text);
+  max-width: 480px;
+}
+
+.form {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 2.6rem;
+  position: relative;
+  box-shadow: var(--shadow-card);
+}
+
+.form::before {
+  content: "🦄  заявочка";
+  position: absolute;
+  top: -1rem;
+  left: 1.6rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--grad-primary);
+  color: var(--white);
+  padding: 0.4rem 0.9rem;
+  border-radius: 100px;
+  font-weight: 700;
+  box-shadow: var(--shadow-soft);
+}
+
+.field {
+  margin-bottom: 1.4rem;
+}
+
+.field label {
+  display: block;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.field input {
+  width: 100%;
+  background: var(--bg-soft);
+  border: 2px solid transparent;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  color: var(--text-strong);
+  outline: none;
+  transition: all 0.25s;
+}
+
+.field input:focus {
+  border-color: var(--primary);
+  background: var(--white);
+}
+
+.field input::placeholder {
+  color: var(--muted);
+}
+
+.form .btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  justify-content: center;
+}
+
+.form-note {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 1.4rem;
+  text-align: center;
+  font-weight: 400;
+}
+
+/* ============= FOOTER ============= */
+.footer {
+  border-top: 1px solid var(--line);
+  margin-top: 4rem;
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 3rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  color: var(--text);
+  max-width: var(--max);
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 400;
+}
+
+.footer-block strong {
+  font-family: 'Comfortaa', cursive;
+  color: var(--text-strong);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+}
+
+.footer-block .line {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+.footer-block .line.muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 0.7rem;
+}
+
+/* ============= REVEAL ANIMATIONS ============= */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s cubic-bezier(0.2, 0.7, 0.2, 1), transform 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero h1 { animation: heroIn 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.hero-eyebrow { animation: heroIn 1s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: 0.05s; }
+.hero-lead { animation: heroIn 1s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: 0.3s; }
+.hero-cta-row { animation: heroIn 1s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: 0.5s; }
+.widget { animation: heroIn 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: 0.4s; }
+
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============= HERO FACTS ============= */
+.hero-facts {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.6rem;
+  margin: 1.5rem 0 2rem;
+  padding: 0;
+}
+
+.hero-facts li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.98rem;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.hero-facts li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.hero-facts li strong {
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+/* ============= BENEFIT WIDE (5th block) ============= */
+.benefit-wide {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF6FA 100%);
+  border-left: 4px solid var(--primary);
+}
+
+/* ============= TRUST EXTRA STATS ============= */
+.trust-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 4rem auto 0;
+  max-width: 900px;
+  padding-top: 3rem;
+  border-top: 1px solid var(--line);
+}
+
+.trust-stat-num {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.trust-stat-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ============= ROI CALCULATOR ============= */
+.calc-section {
+  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
+  padding: 6rem 3rem;
+}
+
+.calc-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.calc-head { text-align: center; margin-bottom: 3rem; }
+
+.calc-head .section-label { color: var(--accent); justify-content: center; display: block; }
+
+.calc-head h2 {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: clamp(2rem, 3.6vw, 3.2rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+  margin: 1rem 0;
+}
+
+.calc-head h2 .grad {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.calc-head p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  color: var(--text);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 2rem;
+  background: var(--white);
+  border-radius: 24px;
+  padding: 2.6rem;
+  box-shadow: var(--shadow-card);
+}
+
+.calc-inputs h3,
+.calc-output h3 {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text-strong);
+  margin-bottom: 1.6rem;
+  letter-spacing: -0.005em;
+}
+
+.calc-field { margin-bottom: 1.4rem; }
+
+.calc-field label {
+  display: block;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 0.45rem;
+  font-weight: 600;
+}
+
+.calc-field .input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: var(--bg-soft);
+  border: 2px solid transparent;
+  padding: 0.65rem 0.9rem;
+  border-radius: 12px;
+  transition: all 0.25s;
+}
+
+.calc-field .input-row:focus-within {
+  border-color: var(--primary);
+  background: var(--white);
+}
+
+.calc-field input[type="number"] {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.15rem;
+  color: var(--text-strong);
+  font-weight: 700;
+  outline: none;
+  width: 100%;
+  -moz-appearance: textfield;
+}
+
+.calc-field input[type="number"]::-webkit-outer-spin-button,
+.calc-field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.calc-field .unit {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  color: var(--muted);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.calc-output {
+  background: linear-gradient(135deg, #FFF0F5 0%, #FFE4F0 100%);
+  border-radius: 18px;
+  padding: 2rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 1rem 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.calc-row:last-of-type { border-bottom: none; padding-bottom: 0; }
+
+.calc-row .label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.calc-row .value {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
+}
+
+.calc-row.hero .value {
+  font-size: 2rem;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.calc-row.loss .value { color: #B85D3C; }
+
+.calc-note {
+  margin-top: 1.5rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ============= CASES ============= */
+.cases-section { padding: 5rem 3rem; max-width: var(--max); margin: 0 auto; }
+
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.case {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 2.4rem 2.2rem;
+  box-shadow: var(--shadow-soft);
+  border-top: 4px solid var(--primary);
+  transition: all 0.3s ease;
+}
+
+.case:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
+
+.case-client {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.9rem;
+}
+
+.case h3 {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: clamp(1.3rem, 1.9vw, 1.55rem);
+  line-height: 1.25;
+  color: var(--text-strong);
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.015em;
+}
+
+.case-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin: 1.4rem 0;
+  padding: 1.2rem 0;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+}
+
+.case-metric .num {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.case-metric .lbl {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.case p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* ============= INTEGRATIONS ============= */
+.integrations-section {
+  background: var(--bg-soft);
+  padding: 5rem 3rem;
+}
+
+.integrations-wrap { max-width: var(--max); margin: 0 auto; text-align: center; }
+
+.integrations-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.integration-card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 1.4rem 1.2rem;
+  box-shadow: var(--shadow-soft);
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-strong);
+  letter-spacing: -0.005em;
+  transition: all 0.25s ease;
+}
+
+.integration-card:hover {
+  transform: translateY(-3px);
+  border-top: 3px solid var(--primary);
+  padding-top: 1.1rem;
+}
+
+.integration-card .sub {
+  display: block;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: 0.3rem;
+}
+
+.integrations-more {
+  margin-top: 1.5rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ============= WHY US ============= */
+.why-section { padding: 5rem 3rem; max-width: var(--max); margin: 0 auto; }
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.why-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.8rem 1.8rem;
+  box-shadow: var(--shadow-soft);
+  border-left: 3px solid var(--primary);
+  display: flex;
+  gap: 1.2rem;
+  align-items: flex-start;
+}
+
+.why-card .icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--bg-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.why-card h4 {
+  font-family: 'Comfortaa', cursive;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-strong);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.005em;
+}
+
+.why-card p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ============= CTA PRICING ============= */
+.cta-pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.price-tag {
+  display: inline-block;
+  font-family: 'Comfortaa', cursive;
+  font-size: 1.5rem;
+  color: var(--accent);
+  background: var(--bg-soft);
+  border-radius: 12px;
+  padding: 0.8rem 1.2rem;
+  font-weight: 400;
+  width: fit-content;
+}
+
+.price-tag strong { font-weight: 700; }
+
+.btn-pdf { width: fit-content; }
+
+/* ============= RESPONSIVE ============= */
+@media (max-width: 900px) {
+  .nav { padding: 0.9rem 1.5rem; }
+  .nav .logo img { height: 30px; }
+  .nav-meta { display: none; }
+  .hero { grid-template-columns: 1fr; padding: 3rem 1.5rem 5rem; gap: 4rem; min-height: auto; }
+  .section { padding: 5rem 1.5rem; }
+  .intro-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .benefits { grid-template-columns: 1fr; }
+  .benefit { padding: 2rem 1.5rem; }
+  .testimonial-section { padding: 5rem 1.5rem; }
+  .cta-section { padding: 5rem 1.5rem 3rem; }
+  .cta-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .form { padding: 2rem 1.5rem; }
+  .footer { grid-template-columns: 1fr; padding: 2rem 1.5rem; gap: 2rem; }
+  .strip { padding: 1rem 1.5rem; flex-direction: column; gap: 0.8rem; align-items: flex-start; }
+  .strip-marquee { display: none; }
+  .hero-facts { gap: 0.6rem 1.2rem; }
+  .trust-row { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 2rem; margin-top: 2.5rem; }
+  .calc-section { padding: 3rem 1.5rem; }
+  .calc-grid { grid-template-columns: 1fr; padding: 1.6rem; gap: 1.5rem; }
+  .cases-section { padding: 3rem 1.5rem; }
+  .cases-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+  .case { padding: 1.8rem 1.4rem; }
+  .case-metrics { grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+  .integrations-section { padding: 3rem 1.5rem; }
+  .integrations-grid { grid-template-columns: 1fr 1fr; }
+  .why-section { padding: 3rem 1.5rem; }
+  .why-grid { grid-template-columns: 1fr; }
+  .why-card { padding: 1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="logo">
+    <img src="datapeople-logo.png" alt="Data People">
+    <span>Data People <span class="mascot">🦄</span></span>
+  </div>
+  <div class="nav-meta">
+    <a href="#что">Что мы делаем</a>
+    <a href="#трасты">Кейсы</a>
+    <a href="#cta">Заявка</a>
+  </div>
+</nav>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow"><span class="mini-mascot">🦄</span> HR-аналитика · Q2 2026</div>
+    <h1>
+      Узнайте, что нужно команде —<br><span class="grad">раньше, чем она сама поймёт.</span>
+    </h1>
+    <p class="hero-lead">
+      Data People читает тихие сигналы — настроение, нагрузку, вовлечённость — и&nbsp;даёт командам конкретные рекомендации, что делать в&nbsp;понедельник утром, чтобы «всё хорошо» не&nbsp;превращалось в&nbsp;заявление об&nbsp;увольнении.
+    </p>
+    <ul class="hero-facts">
+      <li><strong>2 недели</strong> до первых результатов</li>
+      <li><strong>от 350 ₽</strong> на сотрудника / мес</li>
+      <li><strong>78 клиентов</strong> уже работают</li>
+    </ul>
+    <div class="hero-cta-row">
+      <a href="#cta" class="btn">Получить демо</a>
+      <a href="#калькулятор" class="btn btn-ghost">Посчитать выгоду</a>
+    </div>
+  </div>
+
+  <div class="widget" aria-label="Превью дашборда">
+    <div class="widget-header">
+      <span>Live · сейчас</span>
+      <span>Q2 / wk 18</span>
+    </div>
+    <div class="widget-title"><span class="mascot">🦄</span> Где сейчас зона риска</div>
+    <ul class="risk-list">
+      <li class="risk-row">
+        <div>
+          <span class="name">Переработки</span>
+          <span class="role">фактор номер один</span>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width: 84%; animation-delay: 0.6s;"></div></div>
+        <div class="risk-pct">42%</div>
+      </li>
+      <li class="risk-row">
+        <div>
+          <span class="name">Несоответствие зарплаты</span>
+          <span class="role">по сравнению с рынком</span>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width: 76%; animation-delay: 0.75s;"></div></div>
+        <div class="risk-pct">38%</div>
+      </li>
+      <li class="risk-row">
+        <div>
+          <span class="name">Нет роста / карьеры</span>
+          <span class="role">больше 12 месяцев</span>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width: 54%; animation-delay: 0.9s;"></div></div>
+        <div class="risk-pct">27%</div>
+      </li>
+      <li class="risk-row">
+        <div>
+          <span class="name">Недостаток обратной связи</span>
+          <span class="role">от руководителя</span>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width: 36%; animation-delay: 1.05s;"></div></div>
+        <div class="risk-pct low">18%</div>
+      </li>
+    </ul>
+    <div class="widget-footer">
+      <span class="signal">Модель учится на ваших данных</span>
+      <span>v 4.7</span>
+    </div>
+    <div class="widget-annotation">
+      Тот&nbsp;же отдел три месяца назад был «всё в&nbsp;порядке» — пока два сейлза не написали заявление подряд.
+    </div>
+  </div>
+</section>
+
+<!-- ============== STRIP ============== -->
+<div class="strip">
+  <div><strong>78 клиентов</strong> уже работают с нами · <strong>NPS&nbsp;72</strong> · <strong>ROI ×6</strong> (с&nbsp;аудитом)</div>
+  <div class="strip-marquee">
+    <span>Промстандарт</span><span>·</span>
+    <span>Северсталь Групп</span><span>·</span>
+    <span>ТехноСервис</span><span>·</span>
+    <span>ИнфоГрупп</span><span>·</span>
+    <span>АвтоТрейд</span><span>·</span>
+    <span>ФинТрейд</span><span>·</span>
+    <span>Промстандарт</span><span>·</span>
+    <span>Северсталь Групп</span><span>·</span>
+    <span>ТехноСервис</span><span>·</span>
+    <span>ИнфоГрупп</span>
+  </div>
+  <div>Est. 2022 · Москва</div>
+</div>
+
+<!-- ============== INTRO ============== -->
+<section class="section reveal" id="что">
+  <span class="section-num">02</span>
+  <div class="section-label">— Что внутри</div>
+  <h2 class="section-title">Не «ещё один HR-софт» — а&nbsp;<span class="grad">система&nbsp;управления человеческим капиталом</span> на&nbsp;основе ваших&nbsp;же&nbsp;данных.</h2>
+
+  <div class="intro-grid">
+    <div class="intro-body">
+      <p>Каждая компания узнаёт про текучку постфактум — когда заявление уже на&nbsp;столе, а&nbsp;замена ищется в&nbsp;спешке. Data&nbsp;People анализирует <strong>847&nbsp;000+ записей</strong> о&nbsp;встречах, активности, вовлечённости и&nbsp;обратной связи — и&nbsp;находит паттерны, которые человеческому глазу не&nbsp;поймать.</p>
+      <p>Главное отличие от&nbsp;дашбордов — <strong>рекомендательный движок</strong>. Каждый понедельник в&nbsp;9 утра HR-директор и&nbsp;тимлид получают push: «вот эти команды в&nbsp;зоне риска, вот <em>что</em> с&nbsp;ними делать на&nbsp;этой неделе». Не&nbsp;графики, а&nbsp;действия.</p>
+      <p>Мы&nbsp;не&nbsp;показываем «вот этот человек уйдёт» — это и&nbsp;юридически рискованно, и&nbsp;по-человечески неправильно. Мы&nbsp;показываем <strong>зоны риска по&nbsp;командам и&nbsp;факторам</strong>, чтобы у&nbsp;руководителя была почва для разговора, а&nbsp;не&nbsp;ярлык на&nbsp;коллеге.</p>
+    </div>
+    <aside class="intro-aside">
+      <span class="label">— из брифа клиента (Росатом)</span>
+      «До Data&nbsp;People у нас были дашборды. После — каждый понедельник я&nbsp;знаю, в&nbsp;какие команды зайти и&nbsp;о&nbsp;чём с&nbsp;ними поговорить. За&nbsp;8&nbsp;месяцев текучка ушла с&nbsp;18&nbsp;% до&nbsp;11&nbsp;%».
+    </aside>
+  </div>
+</section>
+
+<!-- ============== PHOTO BAND ============== -->
+<section class="photo-band reveal" aria-label="Команда DataPeople в работе">
+  <figure>
+    <img src="images/team-with-product.png" alt="HR-команда обсуждает дашборд DataPeople с прогнозами текучки" loading="lazy">
+    <figcaption>Каждый понедельник — пять минут, чтобы увидеть всю команду.</figcaption>
+  </figure>
+</section>
+
+<!-- ============== ROI CALCULATOR ============== -->
+<section class="calc-section reveal" id="калькулятор">
+  <div class="calc-wrap">
+    <div class="calc-head">
+      <div class="section-label">— Калькулятор окупаемости</div>
+      <h2>Сколько вы&nbsp;<span class="grad">теряете прямо&nbsp;сейчас</span> — и&nbsp;что вернёт Data&nbsp;People.</h2>
+      <p>Подвиньте три цифры под свою компанию. Расчёт пересчитается на&nbsp;лету.</p>
+    </div>
+
+    <div class="calc-grid">
+      <div class="calc-inputs">
+        <h3>Ваши данные</h3>
+        <div class="calc-field">
+          <label for="calc-employees">Численность сотрудников</label>
+          <div class="input-row">
+            <input id="calc-employees" type="number" min="10" step="10" value="500">
+            <span class="unit">человек</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label for="calc-salary">Средняя годовая зарплата (с&nbsp;налогами)</label>
+          <div class="input-row">
+            <input id="calc-salary" type="number" min="100000" step="50000" value="1200000">
+            <span class="unit">₽ / год</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label for="calc-turnover">Текущая текучка</label>
+          <div class="input-row">
+            <input id="calc-turnover" type="number" min="1" max="60" step="1" value="18">
+            <span class="unit">% в&nbsp;год</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-output">
+        <h3>Что получится</h3>
+        <div class="calc-row loss">
+          <span class="label">Сейчас вы&nbsp;теряете в&nbsp;год</span>
+          <span class="value" id="calc-loss">—</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">Стоимость Data&nbsp;People в&nbsp;год</span>
+          <span class="value" id="calc-cost">—</span>
+        </div>
+        <div class="calc-row hero">
+          <span class="label">Вы&nbsp;сэкономите за&nbsp;12&nbsp;мес</span>
+          <span class="value" id="calc-saving">—</span>
+        </div>
+        <div class="calc-row">
+          <span class="label">ROI</span>
+          <span class="value" id="calc-roi">—</span>
+        </div>
+        <div class="calc-note">
+          Формулы согласованы с&nbsp;аудитом. Допущения: коэф. полной стоимости замены = 1,5; снижение текучки −34&nbsp;% по&nbsp;данным клиентов, следующих рекомендациям.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== BENEFITS ============== -->
+<section class="benefits-section">
+  <div class="section reveal">
+    <span class="section-num">03</span>
+    <div class="section-label">— Что получают компании</div>
+    <h2 class="section-title">Четыре вещи, ради которых нас держат.</h2>
+
+    <div class="benefits">
+      <div class="benefit">
+        <span class="benefit-num">№ 01 / TURNOVER</span>
+        <h3>Замечаем зоны риска <span class="grad">по командам</span> — задолго до первого заявления.</h3>
+        <p>Модель отмечает, в&nbsp;каких командах за&nbsp;30–90 дней сложится критическая масса сигналов. С&nbsp;объяснением — какие именно факторы (переработки, зарплата, отсутствие роста) дают основной вклад. Без ярлыков на&nbsp;конкретных людях.</p>
+        <span class="benefit-stat"><strong>−34%</strong> текучки за&nbsp;6&nbsp;мес у&nbsp;тех, кто следует рекомендациям; <strong>−12%</strong> просто за&nbsp;счёт прозрачности</span>
+      </div>
+
+      <div class="benefit">
+        <span class="benefit-num">№ 02 / BURNOUT</span>
+        <h3>Видим, где команда <span class="grad">тихо&nbsp;выгорает.</span></h3>
+        <p>Анализ нагрузки, отзывов, активности и&nbsp;откликов на&nbsp;1-on-1. Видно, какой отдел сейчас «горит молча» — пока никто не&nbsp;ушёл и&nbsp;не&nbsp;пожаловался.</p>
+        <span class="benefit-stat"><strong>11&nbsp;из&nbsp;14</strong> кейсов выгорания пойманы заранее</span>
+      </div>
+
+      <div class="benefit">
+        <span class="benefit-num">№ 03 / COST</span>
+        <h3>Считаем стоимость <span class="grad">каждой&nbsp;потери</span> — чтобы было что показать совету.</h3>
+        <p>Стоимость замены сотрудника, упущенная выручка, время онбординга. В&nbsp;понятных рублях, не&nbsp;в&nbsp;«HR-метриках, которые непонятно куда применить».</p>
+        <span class="benefit-stat"><strong>~&nbsp;3,2 млн&nbsp;₽</strong> средняя цена потери одного сейлза</span>
+      </div>
+
+      <div class="benefit">
+        <span class="benefit-num">№ 04 / CLARITY</span>
+        <h3>Превращаем интуицию HR в&nbsp;<span class="grad">дашборды</span> для совета директоров.</h3>
+        <p>Когда финдир спрашивает «почему фонд оплаты вырос», у&nbsp;вас есть слайд, а&nbsp;не&nbsp;ощущения. Когда CEO спрашивает «как команда» — у&nbsp;вас есть число, а&nbsp;не&nbsp;«ну…».</p>
+        <span class="benefit-stat"><strong>2&nbsp;недели → 1&nbsp;день</strong> подготовка квартального HR-отчёта</span>
+      </div>
+
+      <div class="benefit benefit-wide">
+        <span class="benefit-num">№ 05 / RECOMMENDATIONS</span>
+        <h3>Главное отличие — <span class="grad">рекомендации</span> на&nbsp;понедельник, а&nbsp;не&nbsp;дашборды.</h3>
+        <p>В&nbsp;9&nbsp;утра в&nbsp;понедельник руководитель и&nbsp;HR получают push: «команда X в&nbsp;жёлтой зоне, фактор номер один — переработки. На&nbsp;этой неделе зайди и&nbsp;поговори». Не&nbsp;графики, а&nbsp;действия. Тепловая карта в&nbsp;мобильном — открыл в&nbsp;метро, за&nbsp;30&nbsp;секунд видишь, где зелёный, где жёлтый, где красный.</p>
+        <span class="benefit-stat"><strong>847&nbsp;000+</strong> записей о&nbsp;поведении и&nbsp;нагрузке в&nbsp;продакшен-моделях</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TRUST ============== -->
+<section class="trust reveal" id="трасты">
+  <div class="section-label" style="margin-bottom: 1.5rem;">— Нам доверяют</div>
+  <div class="trust-num">78</div>
+  <div class="trust-label">клиентов от&nbsp;80&nbsp;до&nbsp;12&nbsp;000 сотрудников 🦄</div>
+  <div class="trust-meta">Промышленность · Логистика · Финтех · Розница · IT · FMCG</div>
+  <div class="trust-row">
+    <div class="trust-stat">
+      <div class="trust-stat-num">NPS&nbsp;72</div>
+      <div class="trust-stat-label">оценка лояльности клиентов</div>
+    </div>
+    <div class="trust-stat">
+      <div class="trust-stat-num">×6 ROI</div>
+      <div class="trust-stat-label">средний по&nbsp;портфелю · с&nbsp;аудитом</div>
+    </div>
+    <div class="trust-stat">
+      <div class="trust-stat-num">−34%</div>
+      <div class="trust-stat-label">текучки за&nbsp;6&nbsp;мес у&nbsp;тех, кто следует рекомендациям</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CASES ============== -->
+<section class="cases-section reveal" id="кейсы">
+  <div class="section-label" style="text-align: center; margin-bottom: 1rem;">— Реальные кейсы</div>
+  <h2 class="section-title" style="text-align: center; margin: 0 auto 2rem;">Не «среднее по&nbsp;больнице» — конкретные цифры конкретных компаний.</h2>
+
+  <div class="cases-grid">
+    <article class="case">
+      <div class="case-client">Росатом · публикуется по&nbsp;письменному согласию</div>
+      <h3>За&nbsp;8&nbsp;месяцев сняли текучку <span class="grad">с&nbsp;18&nbsp;% до&nbsp;11&nbsp;%</span> и&nbsp;сэкономили 47&nbsp;млн&nbsp;₽.</h3>
+      <div class="case-metrics">
+        <div class="case-metric"><div class="num">−39%</div><div class="lbl">относительное снижение текучки</div></div>
+        <div class="case-metric"><div class="num">47 млн&nbsp;₽</div><div class="lbl">сэкономлено за&nbsp;8&nbsp;мес</div></div>
+        <div class="case-metric"><div class="num">8 мес</div><div class="lbl">срок до&nbsp;первого результата</div></div>
+      </div>
+      <p>Каждый понедельник руководители получают рекомендации, в&nbsp;каких командах зайти и&nbsp;о&nbsp;чём говорить. HR&nbsp;перестал «гнаться за&nbsp;текучкой постфактум» и&nbsp;начал работать профилактически.</p>
+    </article>
+
+    <article class="case">
+      <div class="case-client">Крупный страховой холдинг · публикуется анонимно</div>
+      <h3>Поймали зону <span class="grad">тихого выгорания</span> и&nbsp;предотвратили 8&nbsp;млн&nbsp;₽ потерь.</h3>
+      <div class="case-metrics">
+        <div class="case-metric"><div class="num">23%</div><div class="lbl">признаков выгорания в&nbsp;трёх отделах</div></div>
+        <div class="case-metric"><div class="num">−8 млн&nbsp;₽</div><div class="lbl">потерь предотвращено</div></div>
+        <div class="case-metric"><div class="num">3 отдела</div><div class="lbl">отработаны до&nbsp;пика</div></div>
+      </div>
+      <p>На&nbsp;дашбордах «всё было в&nbsp;порядке». Data&nbsp;People увидел совокупность тихих сигналов — нагрузка, активность, тон обратной связи — и&nbsp;поднял три отдела в&nbsp;жёлтую зону до&nbsp;того, как ушёл первый человек.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============== INTEGRATIONS ============== -->
+<section class="integrations-section reveal" id="интеграции">
+  <div class="integrations-wrap">
+    <div class="section-label">— Интеграции</div>
+    <h2 class="section-title" style="margin: 1rem auto 0; text-align: center;">Подключаемся к&nbsp;тому, что у&nbsp;вас <span class="grad">уже есть.</span></h2>
+    <p style="font-family: 'Nunito', sans-serif; font-size: 1.05rem; color: var(--text); margin-top: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+      Автоматический маппинг данных. Подключение за&nbsp;2&nbsp;недели — не&nbsp;3&nbsp;месяца, как было раньше.
+    </p>
+
+    <div class="integrations-grid">
+      <div class="integration-card">1С<span class="sub">ЗУП, Бухгалтерия</span></div>
+      <div class="integration-card">SAP<span class="sub">HR, SuccessFactors</span></div>
+      <div class="integration-card">Bitrix24<span class="sub">HR-модуль, чаты</span></div>
+      <div class="integration-card">Slack<span class="sub">+ корп.&nbsp;мессенджеры</span></div>
+    </div>
+
+    <div class="integrations-more">
+      …и&nbsp;ещё&nbsp;12+ систем по&nbsp;запросу: Microsoft 365, Jira, BambooHR, Workday, MyTeam, Truckly и&nbsp;другие.
+    </div>
+  </div>
+</section>
+
+<!-- ============== WHY US ============== -->
+<section class="why-section reveal">
+  <div class="section-label" style="text-align: center;">— Почему Data People</div>
+  <h2 class="section-title" style="text-align: center; margin: 1rem auto 0;">Что отличает <span class="grad">нас</span> на&nbsp;российском рынке.</h2>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="icon">🇷🇺</div>
+      <div>
+        <h4>Российские серверы и&nbsp;хранение</h4>
+        <p>Данные не&nbsp;уходят за&nbsp;рубеж. Соответствие 152-ФЗ&nbsp;и&nbsp;152-ФЗ-данных. Аудит можно проводить локально.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="icon">🧠</div>
+      <div>
+        <h4>Обучены на&nbsp;российских HR-данных</h4>
+        <p>Модель учится на&nbsp;паттернах российского рынка труда — а&nbsp;не&nbsp;на&nbsp;англоязычных датасетах, где совсем другая корпоративная культура.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="icon">🔌</div>
+      <div>
+        <h4>Глубокая интеграция с&nbsp;1С</h4>
+        <p>Не&nbsp;«адаптер на&nbsp;кончиках пальцев», а&nbsp;нативная двунаправленная синхронизация. ЗУП, Бухгалтерия, корп.&nbsp;шаблоны — всё уже из&nbsp;коробки.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <div class="icon">💎</div>
+      <div>
+        <h4>Доступная цена</h4>
+        <p>От&nbsp;350&nbsp;₽ на&nbsp;сотрудника в&nbsp;месяц. В&nbsp;3–4 раза ниже зарубежных альтернатив с&nbsp;тем&nbsp;же набором функций.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TESTIMONIAL ============== -->
+<section class="testimonial-section reveal">
+  <span class="section-num">04</span>
+  <div class="testimonial">
+    <div class="section-label">— Слово клиенту</div>
+    <p class="testimonial-quote">
+      За&nbsp;8&nbsp;месяцев Data People <span class="highlight">сняли нашу текучку с&nbsp;18&nbsp;% до&nbsp;11&nbsp;%</span> и&nbsp;помогли сэкономить порядка 47&nbsp;млн&nbsp;₽. Главное — каждый понедельник у&nbsp;руководителя есть конкретный план, а&nbsp;не&nbsp;«надо посмотреть метрики».
+    </p>
+    <div class="testimonial-author">
+      <span class="name">HR-директор</span>
+      <span>Росатом</span>
+      <span>—&nbsp;по&nbsp;письменному согласию на&nbsp;публикацию</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CTA ============== -->
+<section class="cta-section reveal" id="cta">
+  <span class="section-num" style="position: static; display: inline-block; margin-bottom: 2rem;">05</span>
+  <div class="cta-grid">
+    <div class="cta-left">
+      <div class="section-label">— Заявка</div>
+      <h2>Подключим за&nbsp;<span class="grad">2 недели.</span><br>Покажем команду в&nbsp;новом&nbsp;свете.</h2>
+      <p>
+        Подключим тестовый стенд к&nbsp;двум-трём вашим источникам (1С, SAP, Bitrix24, корп.&nbsp;мессенджер). Через 2&nbsp;недели — первая модель и&nbsp;живой разговор по&nbsp;ней. Без обязательств, без «давайте сначала созвонимся, чтобы созвониться».
+      </p>
+      <div class="cta-pricing">
+        <div class="price-tag"><strong>от 350 ₽</strong> на&nbsp;сотрудника / мес</div>
+        <a href="#" class="btn btn-ghost btn-pdf" onclick="event.preventDefault(); alert('PDF готовится — пришлём на почту, оставьте заявку →');">📄 Скачать бизнес-кейс (PDF)</a>
+      </div>
+    </div>
+
+    <form id="lead-form" class="form" action="https://formspree.io/f/xaqvdvov" method="POST">
+      <input type="hidden" name="_subject" value="Новая заявка с лендинга DataPeople">
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+      <!-- Расчёт из ROI-калькулятора (синхронизируется JS) -->
+      <input type="hidden" name="calc_employees"   id="lf-emp"   value="">
+      <input type="hidden" name="calc_salary"      id="lf-sal"   value="">
+      <input type="hidden" name="calc_turnover"    id="lf-turn"  value="">
+      <input type="hidden" name="calc_loss_year"   id="lf-loss"  value="">
+      <input type="hidden" name="calc_cost_year"   id="lf-cost"  value="">
+      <input type="hidden" name="calc_saving_year" id="lf-sav"   value="">
+      <input type="hidden" name="calc_roi"         id="lf-roi"   value="">
+      <input type="hidden" name="page_url"         id="lf-url"   value="">
+      <div class="field">
+        <label for="name">Имя</label>
+        <input id="name" name="name" type="text" placeholder="Анна Петрова" required>
+      </div>
+      <div class="field">
+        <label for="email">Почта</label>
+        <input id="email" name="email" type="email" placeholder="anna@company.ru" required>
+      </div>
+      <div class="field">
+        <label for="company">Компания</label>
+        <input id="company" name="company" type="text" placeholder="ООО «Ваша компания»" required>
+      </div>
+      <button type="submit" class="btn">Оставить заявку</button>
+      <div class="form-note">— ответим в&nbsp;течение рабочего дня</div>
+    </form>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <div class="footer-block">
+    <strong><span>🦄</span> Data People</strong>
+    <div class="line">HR-аналитика, в&nbsp;которой видно людей. Тёплые дашборды, тихие сигналы и&nbsp;вовремя — вместо «уже поздно».</div>
+  </div>
+  <div class="footer-block">
+    <strong>Контакты</strong>
+    <div class="line">hello@datapeople.ru</div>
+    <div class="line">+7&nbsp;495&nbsp;___&nbsp;__&nbsp;__</div>
+    <div class="line">Москва · Покровка</div>
+  </div>
+  <div class="footer-block">
+    <strong>© 2026</strong>
+    <div class="line">Data People — все права защищены.</div>
+    <div class="line muted">— Видим людей за цифрами 🦄</div>
+  </div>
+</footer>
+
+<script>
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { rootMargin: '-10% 0px -10% 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const barIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.bar-fill').forEach(b => {
+        b.style.animation = 'none';
+        b.offsetHeight;
+        b.style.animation = '';
+      });
+    }
+  });
+});
+const widget = document.querySelector('.widget');
+if (widget) barIo.observe(widget);
+
+/* ============= ROI CALCULATOR ============= */
+(function () {
+  const $emp = document.getElementById('calc-employees');
+  const $sal = document.getElementById('calc-salary');
+  const $turn = document.getElementById('calc-turnover');
+  const $loss = document.getElementById('calc-loss');
+  const $cost = document.getElementById('calc-cost');
+  const $sav = document.getElementById('calc-saving');
+  const $roi = document.getElementById('calc-roi');
+  if (!$emp || !$sal || !$turn) return;
+
+  const PRICE_PER_EMP_MONTH = 350;       // ₽ на сотрудника / мес
+  const REPLACEMENT_COEF = 1.5;          // полная стоимость замены
+  const REDUCTION_RATE = 0.34;           // −34% при следовании рекомендациям
+
+  function fmtMoney(rub) {
+    if (rub >= 1e9) return (rub / 1e9).toFixed(1).replace('.', ',') + ' млрд ₽';
+    if (rub >= 1e6) return (rub / 1e6).toFixed(1).replace('.', ',') + ' млн ₽';
+    if (rub >= 1e3) return Math.round(rub / 1e3).toLocaleString('ru-RU') + ' тыс ₽';
+    return Math.round(rub).toLocaleString('ru-RU') + ' ₽';
+  }
+
+  // hidden form fields to sync values into the lead form
+  const $lfEmp  = document.getElementById('lf-emp');
+  const $lfSal  = document.getElementById('lf-sal');
+  const $lfTurn = document.getElementById('lf-turn');
+  const $lfLoss = document.getElementById('lf-loss');
+  const $lfCost = document.getElementById('lf-cost');
+  const $lfSav  = document.getElementById('lf-sav');
+  const $lfRoi  = document.getElementById('lf-roi');
+
+  function recompute() {
+    const employees = Math.max(parseInt($emp.value || 0, 10), 1);
+    const salary    = Math.max(parseInt($sal.value || 0, 10), 1);
+    const turnover  = Math.max(parseFloat($turn.value || 0), 0.1) / 100;
+
+    const lossYear   = employees * turnover * salary * REPLACEMENT_COEF;
+    const costYear   = employees * PRICE_PER_EMP_MONTH * 12;
+    const savingYear = lossYear * REDUCTION_RATE;
+    const roi        = costYear > 0 ? (savingYear - costYear) / costYear : 0;
+
+    $loss.textContent = fmtMoney(lossYear);
+    $cost.textContent = fmtMoney(costYear);
+    $sav.textContent  = fmtMoney(savingYear);
+    $roi.textContent  = '×' + Math.max(roi, 0).toFixed(1).replace('.', ',');
+
+    // sync into the lead form hidden fields
+    if ($lfEmp)  $lfEmp.value  = employees;
+    if ($lfSal)  $lfSal.value  = salary;
+    if ($lfTurn) $lfTurn.value = (turnover * 100).toFixed(1);
+    if ($lfLoss) $lfLoss.value = fmtMoney(lossYear);
+    if ($lfCost) $lfCost.value = fmtMoney(costYear);
+    if ($lfSav)  $lfSav.value  = fmtMoney(savingYear);
+    if ($lfRoi)  $lfRoi.value  = '×' + Math.max(roi, 0).toFixed(1).replace('.', ',');
+  }
+
+  ['input', 'change'].forEach(ev => {
+    $emp.addEventListener(ev, recompute);
+    $sal.addEventListener(ev, recompute);
+    $turn.addEventListener(ev, recompute);
+  });
+  recompute();
+})();
+
+/* ============= LEAD FORM (Formspree AJAX) ============= */
+(function () {
+  const form = document.getElementById('lead-form');
+  if (!form) return;
+  const btn = form.querySelector('.btn');
+  const note = form.querySelector('.form-note');
+  const ORIGINAL_BTN = btn.textContent;
+  const ORIGINAL_NOTE = note.textContent;
+
+  function setState(text, gradient, noteText) {
+    btn.textContent = text;
+    if (gradient) btn.style.background = gradient;
+    if (noteText !== undefined) note.textContent = noteText;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    setState('Отправляем…', null, '');
+    // capture page URL at submission time
+    const $lfUrl = document.getElementById('lf-url');
+    if ($lfUrl) $lfUrl.value = location.href;
+    try {
+      const r = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (r.ok) {
+        setState('🦄  Принято — мы напишем', 'linear-gradient(135deg,#FF1493,#FF69B4)', '— спасибо! заявка у нас, ответим в течение рабочего дня');
+        form.reset();
+      } else {
+        const data = await r.json().catch(() => ({}));
+        const msg = (data.errors && data.errors.map(x => x.message).join(', ')) || 'Что-то пошло не так. Попробуйте ещё раз или напишите hello@datapeople.ru';
+        setState(ORIGINAL_BTN, null, '⚠ ' + msg);
+        btn.disabled = false;
+      }
+    } catch (err) {
+      setState(ORIGINAL_BTN, null, '⚠ Нет связи. Попробуйте ещё раз или напишите hello@datapeople.ru');
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
