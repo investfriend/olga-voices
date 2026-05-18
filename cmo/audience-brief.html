@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИнвестКлуб — Аналитика аудитории. Запуск май 2026</title>
+<style>
+  :root {
+    --primary: #1a56db;
+    --primary-dark: #1140a0;
+    --accent: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --tag-bg: #eff6ff;
+    --tag-text: #1a56db;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #fff; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 24px; height: 56px;
+    gap: 8px;
+  }
+  nav .logo { font-weight: 700; font-size: 16px; margin-right: 16px; color: var(--primary); }
+  nav button {
+    background: none; border: none; cursor: pointer;
+    padding: 6px 12px; border-radius: 6px; font-size: 13px;
+    color: var(--muted); transition: all .15s;
+  }
+  nav button:hover { background: var(--bg); color: var(--text); }
+  nav button.active { background: var(--tag-bg); color: var(--primary); font-weight: 600; }
+
+  /* LAYOUT */
+  main { margin-top: 56px; padding: 32px 24px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HOME */
+  .hero { text-align: center; padding: 48px 0 32px; }
+  .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+  .hero p { font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto 8px; }
+  .hero .meta { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; cursor: pointer; transition: all .2s;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .card:hover { border-color: var(--primary); box-shadow: 0 4px 16px rgba(26,86,219,.1); transform: translateY(-2px); }
+  .card .icon { font-size: 28px; }
+  .card h3 { font-size: 17px; font-weight: 700; }
+  .card p { font-size: 13px; color: var(--muted); }
+  .card .badge { display: inline-block; background: var(--tag-bg); color: var(--tag-text); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; width: fit-content; }
+  .card .badge.danger { background: #fef2f2; color: var(--danger); }
+  .card .badge.success { background: #f0fdf4; color: var(--accent); }
+
+  /* SECTION HEADER */
+  .sec-header { margin-bottom: 28px; }
+  .sec-header h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  .sec-header p { color: var(--muted); font-size: 15px; }
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--primary); font-size: 14px; font-weight: 500; margin-bottom: 20px; background: none; border: none; padding: 0; }
+  .back-btn:hover { text-decoration: underline; }
+
+  /* BLOCKS */
+  .block { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+  .block h3 { font-size: 17px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .block h4 { font-size: 14px; font-weight: 600; color: var(--muted); margin: 16px 0 8px; text-transform: uppercase; letter-spacing: .5px; }
+  .block p { font-size: 14px; margin-bottom: 8px; }
+  .block ul { padding-left: 20px; }
+  .block li { font-size: 14px; margin-bottom: 4px; }
+
+  /* QUOTE */
+  .quote { background: #f8fafc; border-left: 3px solid var(--primary); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 8px 0; }
+  .quote p { font-style: italic; font-size: 14px; color: #334155; margin: 0; }
+  .quote .attr { font-size: 12px; color: var(--muted); margin-top: 4px; font-style: normal; }
+
+  /* STATS ROW */
+  .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .stat { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+  .stat .val { font-size: 22px; font-weight: 800; color: var(--primary); }
+  .stat .val.danger { color: var(--danger); }
+  .stat .val.success { color: var(--accent); }
+  .stat .lbl { font-size: 11px; color: var(--muted); }
+
+  /* COMPARE TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--bg); text-align: left; padding: 8px 12px; font-weight: 600; border-bottom: 2px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  .green { color: var(--accent); font-weight: 600; }
+  .red { color: var(--danger); font-weight: 600; }
+  .yellow { color: var(--warning); font-weight: 600; }
+
+  /* GRID 2 COL */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* TAG */
+  .tag { display: inline-block; background: var(--tag-bg); color: var(--tag-text); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .tag.danger { background: #fef2f2; color: var(--danger); }
+  .tag.success { background: #f0fdf4; color: var(--accent); }
+  .tag.warn { background: #fffbeb; color: var(--warning); }
+  .tag.gray { background: #f1f5f9; color: #475569; }
+
+  /* TIMELINE */
+  .timeline { list-style: none; padding: 0; }
+  .timeline li { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .timeline li:last-child { border-bottom: none; }
+  .tl-time { font-weight: 700; min-width: 60px; color: var(--primary); }
+  .tl-sell { font-weight: 700; min-width: 60px; color: var(--accent); }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 14px; }
+  .checklist li::before { content: "☐"; font-size: 16px; color: var(--primary); flex-shrink: 0; margin-top: 1px; }
+
+  /* FORBIDDEN */
+  .forbidden { list-style: none; padding: 0; }
+  .forbidden li { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 14px; }
+  .forbidden li::before { content: "❌"; flex-shrink: 0; }
+
+  /* SEGMENT CARD */
+  .seg { border-radius: 10px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--border); }
+  .seg.primary { border-color: var(--primary); background: linear-gradient(135deg, #eff6ff 0%, #fff 100%); }
+  .seg h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .seg .size { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+
+  /* NOTICE */
+  .notice { border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; font-size: 14px; }
+  .notice.warn { background: #fffbeb; border: 1px solid #fde68a; }
+  .notice.danger { background: #fef2f2; border: 1px solid #fecaca; }
+  .notice.success { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .notice.info { background: var(--tag-bg); border: 1px solid #bfdbfe; }
+  .notice strong { font-weight: 700; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">📊 ИнвестКлуб · Аудитория</span>
+  <button class="active" onclick="show('home',this)">Главная</button>
+  <button onclick="show('segments',this)">Сегменты</button>
+  <button onclick="show('hunt',this)">Лестница Ханта</button>
+  <button onclick="show('quotes',this)">Цитаты</button>
+  <button onclick="show('mechanics',this)">Механика эфира</button>
+  <button onclick="show('themes',this)">Темы 21/26 мая</button>
+  <button onclick="show('launches',this)">Февраль vs Апрель</button>
+  <button onclick="show('plan',this)">План эфиров</button>
+</nav>
+
+<main>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="hero">
+    <h1>Аналитика аудитории<br>Запуск 21 и 26 мая 2026</h1>
+    <p>Полный аналитический пакет CMO — сегменты, цитаты, механика, план</p>
+    <div class="meta">Подготовлено: CMO-bot · 15-18 мая 2026 · На основе 577 анкет, 13 кастдевов, 4040+ строк логов эфиров</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="val success">488</div><div class="lbl">оплат февраль</div></div>
+    <div class="stat"><div class="val danger">50</div><div class="lbl">оплат апрель</div></div>
+    <div class="stat"><div class="val success">2.37M₽</div><div class="lbl">выручка февраль</div></div>
+    <div class="stat"><div class="val danger">243K₽</div><div class="lbl">выручка апрель</div></div>
+    <div class="stat"><div class="val">577</div><div class="lbl">анкет Точки-А</div></div>
+    <div class="stat"><div class="val">13</div><div class="lbl">кастдевов</div></div>
+    <div class="stat"><div class="val">4040+</div><div class="lbl">строк логов эфиров</div></div>
+    <div class="stat"><div class="val">200+</div><div class="lbl">отзывов отписавшихся</div></div>
+  </div>
+
+  <div class="notice danger">
+    <strong>🔴 Главный вывод:</strong> Февраль и апрель дали разницу в 10×. Причина — не цена и не продукт. Причина — тональность рассылок и тайминг продающих блоков в эфире. Для 21/26 мая возвращаемся к механике февраля.
+  </div>
+
+  <div class="cards">
+    <div class="card" onclick="show('segments',document.querySelector('nav button:nth-child(3)'))">
+      <div class="icon">👥</div>
+      <div class="badge">Главный фокус</div>
+      <h3>4 сегмента аудитории</h3>
+      <p>Кто приходит на эфиры, чего боится, что триггерит покупку. Главный сегмент запуска — «Купил, но не понимает что дальше» (32-40% базы).</p>
+    </div>
+    <div class="card" onclick="show('hunt',document.querySelector('nav button:nth-child(4)'))">
+      <div class="icon">🪜</div>
+      <div class="badge">Стратегия</div>
+      <h3>Лестница Ханта</h3>
+      <p>5 ступеней осознанности. Вебинар 21 мая — стартуем со ступени 3, двигаем к 4-5. Смешивать ступени нельзя — апрель это показал.</p>
+    </div>
+    <div class="card" onclick="show('quotes',document.querySelector('nav button:nth-child(5)'))">
+      <div class="icon">💬</div>
+      <div class="badge">Для слайдов</div>
+      <h3>Голос клиента — цитаты</h3>
+      <p>7 болей и 5 возражений в точных формулировках аудитории. Для слайдов и CTA. Реальные кастдевы, не придуманные.</p>
+    </div>
+    <div class="card" onclick="show('mechanics',document.querySelector('nav button:nth-child(6)'))">
+      <div class="icon">⚙️</div>
+      <div class="badge success">Плейбук</div>
+      <h3>Механика живого эфира</h3>
+      <p>Что делали в феврале и почему сработало. Роли команды, тайминг кнопок, эффект бэндвагона. Апрель сломал одно — восстанавливаем.</p>
+    </div>
+    <div class="card" onclick="show('themes',document.querySelector('nav button:nth-child(7)'))">
+      <div class="icon">📋</div>
+      <div class="badge warn">Срочно</div>
+      <h3>Темы эфиров 21 и 26 мая</h3>
+      <p>Утверждённые темы от Ольги + анализ CMO. Риски и рекомендации по корректировке. «Всепогодный портфель» вместо «бронебойного».</p>
+    </div>
+    <div class="card" onclick="show('launches',document.querySelector('nav button:nth-child(8)'))">
+      <div class="icon">📉</div>
+      <div class="badge danger">10× разрыв</div>
+      <h3>Февраль vs Апрель</h3>
+      <p>Разбор почему апрель провалился. Что именно сломалось. Тональность рассылок, тайминг блоков, эффект бэндвагона.</p>
+    </div>
+    <div class="card" onclick="show('plan',document.querySelector('nav button:nth-child(9)'))">
+      <div class="icon">🗓️</div>
+      <div class="badge success">Готово</div>
+      <h3>Пословный план эфиров</h3>
+      <p>Полный сценарий обоих вебинаров по слайдам с таймингом. Продающие блоки, геймификация шифром, роли команды.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SEGMENTS -->
+<div id="segments" class="page">
+  <button class="back-btn" onclick="show('home',document.querySelector('nav button:nth-child(2)'))">← Главная</button>
+  <div class="sec-header">
+    <h2>👥 4 сегмента аудитории</h2>
+    <p>На основе 577 анкет Точки-А, 13 кастдевов, 47 отзывов, опросов YouTube (580+ голосов)</p>
+  </div>
+
+  <div class="notice info">
+    <strong>Главный фокус запуска 21/26 мая:</strong> Сегмент 1 «Купил, но не понимает что дальше». Самый большой кластер, короткий путь к покупке, платёжеспособный.
+  </div>
+
+  <div class="seg primary">
+    <div class="tag">🎯 Главный фокус</div>
+    <h3>Сегмент 1 — «Купил, но не понимает что дальше»</h3>
+    <div class="size red">~32-40% базы</div>
+    <div class="grid2">
+      <div>
+        <b style="font-size:13px">Профиль:</b>
+        <ul class="block" style="border:none;padding:0;margin:4px 0">
+          <li>Возраст 30-55, mix м/ж</li>
+          <li>Открыли ИИС/брокерский (часто Сбер «навязал»)</li>
+          <li>Готовы инвестировать 50-150к₽/мес</li>
+          <li>Горизонт 5+ лет, 1-2 часа в неделю</li>
+        </ul>
+      </div>
+      <div>
+        <b style="font-size:13px">Триггеры покупки:</b>
+        <ul class="block" style="border:none;padding:0;margin:4px 0">
+          <li>«Не курс, который забыл — живая стратегия»</li>
+          <li>«Говорят что делать и когда»</li>
+          <li>«Портфель клуба — покупаем вместе»</li>
+          <li>5000₽/мес vs 100-300к за курс</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quote">
+      <p>«Я как собака Павлова — всё понимаю, а сказать не могу. Купил и не знаю что делать дальше»</p>
+      <div class="attr">— Алексей, 50 лет, машиностроение, 5 лет в минусах</div>
+    </div>
+    <div class="quote">
+      <p>«У меня в теории всё понятно. А когда сел и смотрю на бумагу — а что делать-то?»</p>
+      <div class="attr">— Иван, 18 лет, студент</div>
+    </div>
+  </div>
+
+  <div class="seg">
+    <div class="tag warn">🩹 Вспомогательный</div>
+    <h3>Сегмент 2 — «Обжёгшиеся и реабилитирующиеся»</h3>
+    <div class="size">~20-25% базы · Возраст 45-60 · Опыт 3-8 лет без результата</div>
+    <p style="font-size:14px">Форекс, бинарные опционы, замороженные ETF 2022, фишинг. Триггер покупки: <b>искренность Ольги</b> («не обещает 35 миллионов завтра») и низкий порог 5к «можно протестировать».</p>
+    <div class="notice danger" style="margin-top:12px">
+      ⚠️ Этот сегмент <b>закрывается</b> от слов «мошенники», иксов (+29%, +38%), отсылок к 1998. Апрельский провал — во многом они.
+    </div>
+    <div class="quote">
+      <p>«Я оплатил клуб! но вы столько раз сказали мошенники, что я тревожусь)))»</p>
+      <div class="attr">— Сергей, уже оплативший участник апрельского эфира</div>
+    </div>
+  </div>
+
+  <div class="seg">
+    <div class="tag gray">👵 Вспомогательный</div>
+    <h3>Сегмент 3 — «Пенсионная подготовка»</h3>
+    <div class="size">~20-25% базы · Возраст 50-65 · Часто работающие пенсионеры</div>
+    <p style="font-size:14px">Переходят с вкладов. Главный страх — технологии («не дружу с интернетом»). Триггер: «учиться можно в любом возрасте» и личный контакт с экспертом.</p>
+    <div class="quote">
+      <p>«Я недавно зашла в Сбербанк, посчитала пенсию из своих накоплений за весь стаж. Мне стало очень грустно. На такие деньги я даже в Турцию с ребёнком не слетаю»</p>
+      <div class="attr">— Татьяна, бухгалтер, 25+ лет опыта</div>
+    </div>
+  </div>
+
+  <div class="seg">
+    <div class="tag">🚀 Долгосрочный</div>
+    <h3>Сегмент 4 — «Молодой капитал»</h3>
+    <div class="size">~10-15% базы · Возраст 18-40 · IT, бизнес, специалисты</div>
+    <p style="font-size:14px">Часто уже есть капитал из других источников. Горизонт 10-20+ лет. Нужны: реальные сделки, таргеты по бумагам, долгосрочное партнёрство.</p>
+  </div>
+
+  <div class="block">
+    <h3>🚫 Кого НЕ ловим на этом запуске</h3>
+    <ul>
+      <li>Трейдеры-спекулянты (Roboforex, MetaTrader) — апселл для существующей базы, не запуск</li>
+      <li>Полные новички «пока просто начать» — слишком длинный путь к оплате</li>
+      <li>Идеологические противники рынка («с государством нельзя в азартные игры»)</li>
+      <li>Ищущие «казино / +100% за месяц» — не наш JTBD</li>
+    </ul>
+  </div>
+</div>
+
+<!-- HUNT -->
+<div id="hunt" class="page">
+  <button class="back-btn" onclick="show('home',document.querySelector('nav button:nth-child(2)'))">← Главная</button>
+  <div class="sec-header">
+    <h2>🪜 Лестница Ханта</h2>
+    <p>5 ступеней осознанности — кому какой контент нужен. Смешивать ступени в одной презентации = апрельская ошибка.</p>
+  </div>
+
+  <div class="notice info">
+    <strong>Правило для 21 мая:</strong> Начинаем со ступени 3 («у тебя уже есть ИИС, что дальше?»), двигаем к 4-5. Новичков на ступени 1-2 — в YT-воронку, клуб им не продаём через один вебинар.
+  </div>
+
+  <div class="block">
+    <h3>📊 Распределение аудитории по ступеням</h3>
+    <table>
+      <tr><th>Ступень</th><th>Доля от YT</th><th>Конверсия за запуск</th><th>Наши действия</th></tr>
+      <tr><td>1 — Нет проблемы</td><td>10-15%</td><td class="red">~0%</td><td>Только YT-провокации</td></tr>
+      <tr><td>2 — Есть проблема, нет решения</td><td>20-25%</td><td class="yellow">1-2%</td><td>YT база + лид-магнит</td></tr>
+      <tr><td>3 — Есть проблема, есть решения</td><td>35-40%</td><td class="yellow">5-8%</td><td>Вебинар 21 мая (старт)</td></tr>
+      <tr><td><strong>4 — Выбор решения</strong></td><td><strong>20-25%</strong></td><td class="green"><strong>15-25%</strong></td><td><strong>Главная цель эфиров</strong></td></tr>
+      <tr><td>5 — Выбор продукта</td><td>5-10%</td><td class="green">40-60%</td><td>Вебинар 26 мая (финал)</td></tr>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="block">
+      <h3>Ступень 3 → Цель вебинара 21 мая</h3>
+      <p><em>«Знаю что есть акции, облигации, фонды. Что выбрать МНЕ?»</em></p>
+      <h4>Что двигает вверх:</h4>
+      <ul>
+        <li>«Купил курс за 100к — через год не помню. Клуб 5к — живая система»</li>
+        <li>«Здесь говорят что делать и когда»</li>
+        <li>Истории: Андрей +4098₽ за 2 мес, Сергей 7078₽/год купонов</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>Ступень 4 → Цель вебинара 26 мая</h3>
+      <p><em>«Знаю варианты. Клуб vs курс vs самостоятельно. Что выбрать?»</em></p>
+      <h4>Что двигает вверх:</h4>
+      <ul>
+        <li>«Курс ты прошёл и забыл. Клуб = живая стратегия»</li>
+        <li>«5к/мес vs 100-300к за курс — можно протестировать»</li>
+        <li>Демо клуба + оффер с дедлайном</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Возражения ступени 4 (закрывать в презентации)</h3>
+    <table>
+      <tr><th>Возражение</th><th>Ответ</th></tr>
+      <tr><td>«Дорого (5к × 12 = 60к/год)»</td><td>«60к — ~16% от портфеля 400к. Одна ошибка новичка стоит больше»</td></tr>
+      <tr><td>«А если не подойдёт?»</td><td>«Первый месяц 5000₽. Отписаться — одна кнопка»</td></tr>
+      <tr><td>«Чем отличаетесь?»</td><td>Live-стратегия vs замороженный курс, команда vs один спикер, сопровождение vs «учитель пропал»</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- QUOTES -->
+<div id="quotes" class="page">
+  <button class="back-btn" onclick="show('home',document.querySelector('nav button:nth-child(2)'))">← Главная</button>
+  <div class="sec-header">
+    <h2>💬 Голос клиента — цитаты для слайдов</h2>
+    <p>Реальные формулировки из кастдевов и отзывов. Используйте в слайдах без изменений.</p>
+  </div>
+
+  <div class="block">
+    <h3>ТОП-7 болей</h3>
+
+    <h4>Боль №1 — «Понимаю, а сделать не могу» (главная)</h4>
+    <div class="quote"><p>«Я как собака Павлова — всё понимаю, а сказать не могу»</p><div class="attr">— Алексей, 50 лет, машиностроение</div></div>
+    <div class="quote"><p>«У меня в теории всё понятно. А когда сел и смотрю на бумагу — а что делать-то?»</p><div class="attr">— Иван, 18 лет, студент</div></div>
+    <p><span class="tag">Слайд:</span> «Знание ≠ навык. Курсы оставляют с теорией. Клуб — с практикой каждую среду.»</p>
+
+    <h4>Боль №2 — «Каша в голове»</h4>
+    <div class="quote"><p>«Мне нужно кашу в голове разобрать. Чтобы сложилось по полочкам»</p><div class="attr">— Сергей, с 2020 года в инвестициях</div></div>
+    <div class="quote"><p>«У меня три портфеля, я в каждый каждый день заглядываю, а толку никакого нет»</p><div class="attr">— Сергей, 3 месяца в клубе</div></div>
+
+    <h4>Боль №3 — «Купил, и что дальше?»</h4>
+    <div class="quote"><p>«Слежу за всеми новостями. Что в портфеле клуба — есть. Но непонятно — когда выходить, до какой цены держать»</p><div class="attr">— Манукян, 35 лет, ювелир Москва, 600к в портфеле</div></div>
+    <p><span class="tag">Слайд:</span> «Каждую среду эфир: что покупаем, что продаём, почему. Не оставляем одного с купленными активами.»</p>
+
+    <h4>Боль №4 — «Уже пробовал — и потерял»</h4>
+    <div class="quote"><p>«В инвестициях я уже пятый год, и всё без результатов»</p><div class="attr">— Сергей, из отзыва (теперь в клубе)</div></div>
+    <div class="quote"><p>«У меня портфели минусовые все. ETF заморозили, потом фишинг — отдал 10 тысяч долларов»</p><div class="attr">— Алексей, 50 лет, Заволожск</div></div>
+
+    <h4>Боль №5 — «Пенсия не накопится»</h4>
+    <div class="quote"><p>«Я зашла в Сбербанк, посчитала пенсию из накоплений за весь стаж. Мне стало очень грустно. На такие деньги я даже в Турцию с ребёнком не слетаю»</p><div class="attr">— Татьяна, бухгалтер</div></div>
+
+    <h4>Боль №6 — «Стыдно / окружение не поддерживает»</h4>
+    <div class="quote"><p>«Я стесняюсь пока кому-то об этом говорить. Только семья знает, что я обучаюсь»</p><div class="attr">— Артём, мастер очков, новичок</div></div>
+    <p><span class="tag">Слайд:</span> «В клубе вы среди единомышленников, которые понимают вас.»</p>
+
+    <h4>Боль №7 — «Возраст / технологии»</h4>
+    <div class="quote"><p>«Я уже взрослая девочка, не очень дружу с интернетом, с телефоном. Мне иногда непонятно куда нажать»</p><div class="attr">— Лариса, 61 год, работающий пенсионер</div></div>
+    <div class="quote"><p>«Мне 56, ему за 60. Сидим, развлекаемся с акциями. Это очень интересно, азарт»</p><div class="attr">— Лора, 56 лет</div></div>
+  </div>
+
+  <div class="block">
+    <h3>ТОП-5 возражений</h3>
+
+    <h4>«Дорого — у меня нет лишних 5 тысяч»</h4>
+    <div class="quote"><p>«5 тысяч — немного. Но за год это 60 тысяч»</p><div class="attr">— Яков, продавец ковров</div></div>
+    <div class="quote"><p>«За небольшую сумму я восполнил ту информацию, которую получил ранее. Это лояльная плата за нужную информацию.»</p><div class="attr">— Алексей-50 (закрывающая цитата ⭐)</div></div>
+
+    <h4>«Уже пробовал — не работает»</h4>
+    <div class="quote"><p>«С 2020 года инвестирую. По 23-й год никаких результатов. Потом встретил Ольгу — и решил зайти в клуб»</p><div class="attr">— Сергей, из отзыва</div></div>
+
+    <h4>«Я не молод, мне поздно учиться»</h4>
+    <div class="quote"><p>«Учиться управлять своими средствами можно в любом возрасте. Настолько Ольга объясняет всё человеческим языком!»</p><div class="attr">— Ирина, из отзыва ⭐ (закрывающая цитата)</div></div>
+
+    <h4>«Нет времени»</h4>
+    <div class="quote"><p>«Грубо говоря, я слишком занят. Весь день работаю, допоздна. У меня не было времени всю эту аналитику делать самому»</p><div class="attr">— Манукян, 35 лет</div></div>
+    <p><span class="tag">Слайд:</span> «Время в клубе — от 1 часа в неделю. Эфиры в записи. Команда работает за вас.»</p>
+
+    <h4>«Чем вы лучше других школ?»</h4>
+    <div class="quote"><p>«Ольга максимально приземлённая. Она не кичится — "я сегодня заработал 5 миллионов". Понятным языком для людей, которые могут 10-30 тысяч в месяц инвестировать»</p><div class="attr">— Яков ⭐ (ключевое позиционирование)</div></div>
+    <div class="quote"><p>«Волкова — она прям совсем примитивна. Как с дурачками общается»</p><div class="attr">— Лора, 56 лет (конкурентная отстройка)</div></div>
+  </div>
+
+  <div class="block">
+    <h3>⭐ Сильные цитаты трансформации — для «ПОСЛЕ» слайдов</h3>
+    <div class="quote"><p>«Это лучшее обучение из всех онлайн-курсов на рынке! Мы по их портфелю закупаем активы вместе с клубом!»</p><div class="attr">— Марина (главный эмоциональный отзыв)</div></div>
+    <div class="quote"><p>«За 2.5 месяца стала другим человеком, намного увереннее. Хотя была полным чайником»</p><div class="attr">— Наталья</div></div>
+    <div class="quote"><p>«Совершенно спокоен, без паники на просадках. Отпали вопросы — что и когда покупать»</p><div class="attr">— Павел</div></div>
+    <div class="quote"><p>«После каждой такой встречи уходит страх, что я где-то накосячила»</p><div class="attr">— Марина Сергеевна</div></div>
+
+    <h4>Конкретные результаты (для слайдов-доказательств)</h4>
+    <table>
+      <tr><th>Ученик</th><th>Срок</th><th>Результат</th></tr>
+      <tr><td>Андрей</td><td>1 мес 25 дней</td><td class="green">+4 098,99₽ (+4.11%), будущие выплаты 5 270₽/год</td></tr>
+      <tr><td>Сергей</td><td>несколько мес</td><td class="green">прогноз 7 078₽/год, ~589₽/мес купонов</td></tr>
+      <tr><td>Наталья</td><td>2.5 месяца</td><td>из чайника → управляет ИИС, осваивает крипту и зарубеж</td></tr>
+      <tr><td>Лариса (61 год)</td><td>1 месяц</td><td>«Открыла БС, купила ОФЗ и акции. Самостоятельно. Я!»</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- MECHANICS -->
+<div id="mechanics" class="page">
+  <button class="back-btn" onclick="show('home',document.querySelector('nav button:nth-child(2)'))">← Главная</button>
+  <div class="sec-header">
+    <h2>⚙️ Механика живого эфира</h2>
+    <p>Плейбук февраля: что делать и когда. Апрель сломал одно — восстанавливаем.</p>
+  </div>
+
+  <div class="notice success">
+    <strong>Ключевой инсайт:</strong> Февральские эфиры длились 3:05 и 3:14 — ровно столько же сколько апрельский (3:21). Длительность не причина провала. Причина — <strong>тайминг первого продающего блока</strong> (22 мин в феврале vs 60 мин в апреле).
+  </div>
+
+  <div class="block">
+    <h3>Тайминг продающих блоков: февраль vs апрель</h3>
+    <table>
+      <tr><th>Блок</th><th>Февраль 19.02</th><th>Февраль 24.02</th><th>Апрель 22.04</th></tr>
+      <tr><td>Блок 1 (бонус-кнопка)</td><td class="green">22 мин</td><td class="green">26 мин</td><td class="red">60 мин (!)</td></tr>
+      <tr><td>Блок 2</td><td class="green">42 мин</td><td class="green">41 мин</td><td class="red">82 мин</td></tr>
+      <tr><td>Блок 3</td><td class="green">64 мин</td><td class="green">62 мин</td><td class="red">96 мин</td></tr>
+      <tr><td>Блок 4 (оффер клуба)</td><td class="green">110 мин</td><td class="green">100 мин</td><td class="red">131 мин</td></tr>
+      <tr><td>Активность чата</td><td class="green">1 событие / 5.5 сек</td><td class="green">1 событие / 7.5 сек</td><td class="red">1 событие / 25 сек</td></tr>
+    </table>
+  </div>
+
+  <div class="block">
+    <h3>Правило №1: Первый блок — не позже 25-й минуты</h3>
+    <p>В феврале бонус-кнопка появлялась на 22-й минуте. К этому моменту аудитория уже вовлечена и кликает. В апреле ждали час — большая часть уходила или переставала следить.</p>
+  </div>
+
+  <div class="block">
+    <h3>Роли команды</h3>
+    <div class="grid2">
+      <div>
+        <h4>Ольга (эксперт-спикер)</h4>
+        <ul>
+          <li>Ведёт содержательную часть</li>
+          <li>Делает сделку в эфире (февральская механика)</li>
+          <li>Отвечает на вопросы по контенту в конце</li>
+        </ul>
+        <ul class="forbidden">
+          <li>НЕ «продаёт» лично — убивает доверие эксперта</li>
+          <li>НЕ объявляет кнопки — это роль Юрия</li>
+          <li>НЕ отвечает на «не пришло письмо» — это Виктория</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Юрий Веселов (модератор-бэндвагон)</h4>
+        <ul>
+          <li>Разогрев ДО Ольги: «Привеееееет! Откуда вы?»</li>
+          <li>Объявляет каждую бонус-кнопку</li>
+          <li><strong>Поздравляет КАЖДОГО купившего по имени в 30 сек</strong></li>
+          <li>Каждые 5-10 мин: «Осталось N мест»</li>
+          <li>За 5 мин до кнопки: «Проверьте что у вас 5000₽ на карте»</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <h4>Виктория Ребрикова (техподдержка)</h4>
+        <ul>
+          <li>«Не пришло письмо» → «продублировали на почту»</li>
+          <li>«Когда доступ?» → «Сразу после оплаты»</li>
+          <li>«Куда писать?» → ссылка на support</li>
+        </ul>
+        <p style="font-size:13px;color:var(--danger);margin-top:8px">⚠️ Критическая роль — без неё часть оплативших не получает доступ → негативный отзыв → падение конверсии</p>
+      </div>
+      <div>
+        <h4>Аналитики (Лёша Полевик, Кирилл)</h4>
+        <ul>
+          <li>Отвечают на конкретные вопросы по бумагам в чате</li>
+          <li>«НКД», «дюрация», «лимитная vs рыночная заявка»</li>
+          <li>Создаёт впечатление «команда, не один спикер»</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>🎪 Эффект бэндвагона — главная механика февраля</h3>
+    <p style="margin-bottom:12px">В феврале каждые 2 минуты кто-то публично писал «Я купила!» — и Юрий сразу поздравлял по имени. Это создавало социальное давление «не один».</p>
+    <div class="grid2">
+      <div>
+        <h4>Февраль (15+ «купил» за 30 мин)</h4>
+        <div class="quote"><p>«Я купила» — Вероника</p></div>
+        <div class="quote"><p>«Вступила в клуб, спасибо Ольга» — Дягилева Ирина</p></div>
+        <div class="quote"><p>«Я в группе!!!!» — Галина</p></div>
+        <div class="quote"><p>«До встречи в клубе!!!))))❤️❤️❤️» — максим</p></div>
+      </div>
+      <div>
+        <h4>Апрель (2-3 «купил» за весь эфир)</h4>
+        <div class="quote"><p>«Оплатили» — Юлия</p></div>
+        <div class="quote"><p>«Оплатила клуб!» — Надежда Базеева</p></div>
+        <p style="font-size:13px;color:var(--danger);margin-top:8px">Эффект бэндвагона не запустился. Юрий не подсвечивал покупки, поздравлений по имени почти не было.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>🎮 Геймификация: бонус-кнопки и шифр</h3>
+    <ul>
+      <li>3 бонус-кнопки на каждом эфире — гайды для обучения</li>
+      <li>Ольга называет цифры в эфире → аудитория записывает</li>
+      <li><strong>21 мая: 2 цифры · 26 мая: 1 цифра → 3-значный шифр в боте → главный бонус</strong></li>
+      <li>Это держит внимание весь эфир и создаёт мотивацию прийти на второй</li>
+    </ul>
+  </div>
+</div>
+
+<!-- THEMES -->
+<div id="themes" class="page">
+  <button class="back-btn" onclick="show('home',document.querySelector('nav button:nth-child(2)'))">← Главная</button>
+  <div class="sec-header">
+    <h2>📋 Темы эфиров 21 и 26 мая</h2>
+    <p>Источник: голосовое Ольги 07.05.2026. Оценка CMO + риски и рекомендации.</p>
+  </div>
+
+  <div class="notice success">
+    <strong>CMO принял темы Ольги</strong> — они лучше моей первоначальной рекомендации. Двигают существующую базу выше по воронке, не дублируют февраль, создают естественную сцепку.
+  </div>
+
+  <div class="grid2">
+    <div class="block">
+      <h3>📅 Эфир 21 мая — «Открыл счёт — что дальше?»</h3>
+      <p><strong>ЦА:</strong> у кого УЖЕ есть брокерский счёт, не знают что купить первым</p>
+      <h4>Структура контента:</h4>
+      <ol style="padding-left:18px;font-size:14px">
+        <li>Целеполагание — зачем тебе это всё? (~5 мин)</li>
+        <li>Калькус-расчёты — сколько нужно для 5к/30к₽ пассивного дохода (~10 мин)</li>
+        <li>Реальность — «у меня нет таких денег» → за сколько накопят (~5 мин)</li>
+        <li>Вывод — нужен портфель, а не одна ОФЗ (~3 мин)</li>
+        <li><strong>3 бумаги для 3 сценариев</strong> (~15 мин): ПИФ / Облигация / Дивидендные акции</li>
+        <li>Первая сделка в эфире (~15 мин) — ключевая механика февраля</li>
+        <li>Продающий блок + Q&A (~30 мин)</li>
+      </ol>
+    </div>
+    <div class="block">
+      <h3>📅 Эфир 26 мая — «Первые покупки сделаны — что дальше?»</h3>
+      <p><strong>ЦА:</strong> горячие после 21 мая. Купили первое — теперь строим дальше.</p>
+      <h4>Структура контента:</h4>
+      <ol style="padding-left:18px;font-size:14px">
+        <li>Сцепка с первым эфиром (~3 мин)</li>
+        <li>Как сделать выплаты ежемесячными — купонная лестница (~15 мин)</li>
+        <li>Устойчивость к новостному фону — что делать при просадках (~15 мин)</li>
+        <li>Дивидендные акции, корпоративные облигации vs ОФЗ, БПИФ (~25 мин)</li>
+        <li>Итог: «Всепогодный портфель» (~10 мин)</li>
+        <li>Продающий блок + дедлайн + Q&A (~30 мин)</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>⚠️ Риски и рекомендации CMO</h3>
+
+    <div class="notice warn">
+      <strong>Риск 1 — Слово «бронебойный»</strong><br>
+      Военные ассоциации триггерят Сегмент 3 (пенсионная) и часть Сегмента 2.<br>
+      <strong>Замена:</strong> <span class="tag success">«Всепогодный портфель»</span> — классический термин Рэя Далио (All Weather Portfolio). Легко гуглится, серьёзная ассоциация.
+    </div>
+
+    <div class="notice warn">
+      <strong>Риск 2 — «Информационный террор»</strong><br>
+      Прямой триггер тревоги. Та же ошибка что «мошенники» в апреле.<br>
+      <strong>Замена:</strong> «Новостной фон» или «Мутные времена» (с самоиронией)
+    </div>
+
+    <div class="notice danger">
+      <strong>Риск 3 — Аудитория без счёта отвалится (48.4% — новички)</strong><br>
+      Тема «Открыл счёт — что дальше?» звучит как «не для меня».<br>
+      <strong>Решение:</strong> В рассылках прописать «Приходите даже без счёта — в начале эфира дадим пошаговый гайд». В самом эфире на ~10-й мин: «Кто без счёта — пишите "+" в чат, скинем гайд параллельно».
+    </div>
+
+    <div class="notice danger">
+      <strong>Риск 4 — 3 конкретные бумаги (КРИТИЧНО)</strong><br>
+      Ольга назовёт 3 конкретных тикера. Это не должно быть импровизацией.<br>
+      <strong>Чек-лист:</strong>
+      <ul class="checklist" style="margin-top:8px">
+        <li>Согласовать тикеры с Лёшей Полевиком и Кириллом до 20 мая</li>
+        <li>Все 3 тикера должны быть в модельном портфеле клуба</li>
+        <li>Перепроверить точки входа накануне 21 мая (рынок меняется)</li>
+        <li>Подготовить запасной вариант, если бумага «улетит»</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>✅ Что не хватает в описании Ольги (нужно добавить)</h3>
+    <ul>
+      <li><strong>Бонус-кнопки и шифр</strong> — критическая механика февраля. 3 кнопки + сцепка 2+1 цифры между эфирами</li>
+      <li><strong>Демо клуба</strong> — показ структуры (3 ступени + чат + аналитики + портфели), 15-20 мин</li>
+      <li><strong>Кейсы учеников</strong> с цифрами: Андрей (+4098₽), Сергей (7078₽/год), Наталья (2.5 мес), Лариса (61 год)</li>
+      <li><strong>Роли в эфире</strong> — Юрий (бэндвагон), Виктория (техподдержка), аналитики в чате</li>
+    </ul>
+  </div>
+</div>
+
+<!-- LAUNCHES -->
+<div id="launches" class="page">
+  <button class="back-btn" onclick="show('home',document.querySelector('nav button:nth-child(2)'))">← Главная</button>
+  <div class="sec-header">
+    <h2>📉 Февраль vs Апрель — анализ запусков</h2>
+    <p>Почему результаты упали в 10 раз — и что конкретно изменить для 21/26 мая.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="val success">488</div><div class="lbl">оплат фев</div></div>
+    <div class="stat"><div class="val danger">50</div><div class="lbl">оплат апр</div></div>
+    <div class="stat"><div class="val success">2.37M₽</div><div class="lbl">выручка фев</div></div>
+    <div class="stat"><div class="val danger">243K₽</div><div class="lbl">выручка апр</div></div>
+    <div class="stat"><div class="val success">79%</div><div class="lbl">доходимость фев</div></div>
+    <div class="stat"><div class="val danger">36%</div><div class="lbl">доходимость апр</div></div>
+  </div>
+
+  <div class="block">
+    <h3>Сравнение метрик</h3>
+    <table>
+      <tr><th>Метрика</th><th>Февраль</th><th>Апрель</th><th>Дельта</th></tr>
+      <tr><td>Регистрации</td><td>3 861</td><td>~2 732</td><td class="red">-29%</td></tr>
+      <tr><td>Доходимость до эфиров</td><td class="green">79%</td><td class="red">35.9%</td><td class="red">-55%</td></tr>
+      <tr><td>Эфир → оплата</td><td class="green">7.7%</td><td class="red">5.3%</td><td class="red">-31%</td></tr>
+      <tr><td>Оплат</td><td class="green">488</td><td class="red">50</td><td class="red">-90%</td></tr>
+      <tr><td>Выручка</td><td class="green">2 373 269₽</td><td class="red">243 250₽</td><td class="red">-90%</td></tr>
+      <tr><td>Средний чек</td><td>4 863₽</td><td>4 865₽</td><td>≈ равно</td></tr>
+    </table>
+    <div class="notice info" style="margin-top:12px">
+      <strong>Чек не падал — падала конверсия на всех ступенях.</strong> Проблема в позиционировании и подаче, не в цене и не в продукте.
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Причины провала апреля</h3>
+
+    <h4>1. Тема мошенников (КОРНЕВАЯ ПРОБЛЕМА)</h4>
+    <div class="quote"><p>«Я оплатил клуб! но вы столько раз сказали мошенники, что я тревожусь)))»</p><div class="attr">— Сергей, уже оплативший, в эфире апреля</div></div>
+    <p style="font-size:14px">Сегмент 2 (обжёгшиеся, 20-25% базы) — уже травмированы Форексом, фишингом, пирамидами. Повторное упоминание триггерит защитную реакцию «вы тоже мошенник?»</p>
+
+    <h4>2. Тональность рассылок сменилась</h4>
+    <div class="grid2">
+      <div>
+        <p><span class="tag success">✅ Февраль (работало)</span></p>
+        <ul style="font-size:13px;padding-left:18px;margin-top:6px">
+          <li>«Снимем страх первого шага»</li>
+          <li>«Не нужно быть героем-одиночкой»</li>
+          <li>Дефицит мягкий: «241 место осталось»</li>
+        </ul>
+      </div>
+      <div>
+        <p><span class="tag danger">❌ Апрель (провал)</span></p>
+        <ul style="font-size:13px;padding-left:18px;margin-top:6px">
+          <li>«+29.4% по Т-Техно за 33 дня. +100% по MDMG»</li>
+          <li>«Бездействие сейчас — добровольный отказ от денег»</li>
+          <li>«Вы тонете в мусоре. Вам кажется, что учитесь»</li>
+          <li>«Если рынок рухнет завтра?» — 1998, дефолт</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>3. Первый продающий блок на 60-й минуте (см. Механику)</h4>
+    <h4>4. Один живой эфир вместо двух с разным контентом</h4>
+    <p style="font-size:14px">В феврале — 2 разных contentful event-а (19.02 и 24.02) → две конверсионные волны. В апреле — 1 живой эфир + 6 повторов одного контента. Кто не купил в первый раз — не купил и в 5-й раз.</p>
+  </div>
+
+  <div class="block">
+    <h3>Топ причин отписок апреля (200+ отзывов)</h3>
+    <table>
+      <tr><th>Кластер</th><th>Доля</th></tr>
+      <tr><td>Финансовые трудности («потерял работу», «нет 5000₽»)</td><td>~30%</td></tr>
+      <tr><td>Нет времени</td><td>~25%</td></tr>
+      <tr><td class="red">Не увидели ценности («в дом не позвали», «только облигации», «неделю без ответа»)</td><td class="red">~15% ⚠️</td></tr>
+      <tr><td>Telegram блокировки</td><td>~10%</td></tr>
+      <tr><td>Хотят сами разобраться</td><td>~7%</td></tr>
+      <tr><td>Идут в другую школу</td><td>~5%</td></tr>
+    </table>
+    <div class="notice warn" style="margin-top:12px">
+      <strong>Системная дыра:</strong> Правило «нельзя вступить 6 месяцев после ухода» заставляет людей в трудной ситуации уходить навсегда. Несколько отзывов просят «паузу 2-3 месяца». Теряем восстанавливаемых. Решение — к CEO/собственникам.
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>🚫 Полный список запретов на 21/26 мая</h3>
+    <ul class="forbidden">
+      <li>Слова «мошенники», «развод», «пирамида» — максимум 1 краткое нейтральное упоминание</li>
+      <li>Обещания иксов: «+29%», «+38%», «+100%»</li>
+      <li>Отсылки к 1998, дефолту, обвалу как страшилки</li>
+      <li>«Бездействие = отказ от денег» (давление виной)</li>
+      <li>«Просирание», «тонете в мусоре» — отторжение у зрелой аудитории</li>
+      <li>Активная продажа недвижимости — несколько отписок прямо назвали причиной</li>
+      <li>Первый продающий блок позже 25-й минуты</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PLAN -->
+<div id="plan" class="page">
+  <button class="back-btn" onclick="show('home',document.querySelector('nav button:nth-child(2)'))">← Главная</button>
+  <div class="sec-header">
+    <h2>🗓️ Пословный план эфиров — сводка</h2>
+    <p>Полный сценарий: <code>board/cmo/webinar-presentation-plan-2026-05.md</code></p>
+  </div>
+
+  <div class="block">
+    <h3>Тайминг — оба эфира по единой структуре</h3>
+    <ul class="timeline">
+      <tr><td></td></ul>
+    <table>
+      <tr><th>Время</th><th>Эфир 21 мая</th><th>Эфир 26 мая</th></tr>
+      <tr><td>0:00–0:10</td><td>Разогрев Юрий, знакомство</td><td>Сцепка с 21-м, разогрев</td></tr>
+      <tr><td>0:10–0:22</td><td>Целеполагание, калькулятор</td><td>Ошибки после первой покупки</td></tr>
+      <tr><td style="color:var(--accent);font-weight:700">0:22</td><td>🎁 Бонус-кнопка 1</td><td>🎁 Бонус-кнопка 1</td></tr>
+      <tr><td>0:22–0:42</td><td>3 бумаги для 3 сценариев</td><td>Купонная лестница, дивиденды</td></tr>
+      <tr><td style="color:var(--accent);font-weight:700">0:42</td><td>🎁 Бонус-кнопка 2 + Цифра 1</td><td>🎁 Бонус-кнопка 2</td></tr>
+      <tr><td>0:42–1:04</td><td>Сделка в эфире</td><td>Всепогодный портфель, БПИФ</td></tr>
+      <tr><td style="color:var(--accent);font-weight:700">1:04</td><td>🎁 Бонус-кнопка 3 + Цифра 2</td><td>🎁 Бонус-кнопка 3 + Цифра 3</td></tr>
+      <tr><td>1:04–1:45</td><td>«Что дальше?» боль + отстройка</td><td>Работа с возражениями</td></tr>
+      <tr><td>1:45–2:00</td><td>Кейсы учеников + демо клуба</td><td>Кейсы + демо клуба (свежий)</td></tr>
+      <tr><td style="color:var(--primary);font-weight:700">~2:00</td><td>🛒 Главный оффер клуба</td><td>🛒 Оффер + дедлайн</td></tr>
+      <tr><td>2:00–3:00+</td><td>Q&A + поздравления купивших</td><td>Q&A + поздравления + финал</td></tr>
+    </table>
+  </div>
+
+  <div class="block">
+    <h3>Целевые метрики</h3>
+    <table>
+      <tr><th>Метрика</th><th>Февраль</th><th>Цель мая</th><th>Минимум</th></tr>
+      <tr><td>Регистрации</td><td>3 861</td><td class="green">≥6 000</td><td>5 000</td></tr>
+      <tr><td>Доходимость</td><td>79%</td><td class="green">≥70%</td><td>60%</td></tr>
+      <tr><td>Онлайн на пике</td><td>1 325</td><td class="green">≥1 200</td><td>900</td></tr>
+      <tr><td>Эфир → оплата</td><td>7.7%</td><td class="green">≥10%</td><td>7%</td></tr>
+      <tr><td>Всего оплат</td><td>488</td><td class="green">≥500</td><td>400</td></tr>
+      <tr><td>Выручка</td><td>2.37M₽</td><td class="green">≥2.4M₽</td><td>1.9M₽</td></tr>
+    </table>
+    <div class="notice warn" style="margin-top:12px">
+      Если 21 мая ниже минимума → экстренно пересобираем структуру 26 мая.
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Чек-лист до 20 мая</h3>
+    <ul class="checklist">
+      <li>Тикеры для 3 сценариев согласованы с Лёшей Полевиком + Кириллом</li>
+      <li>Тикеры перепроверены на актуальность цен (накануне 21 мая)</li>
+      <li>Заменены слова: «бронебойный» → «всепогодный», «информационный террор» → «новостной фон»</li>
+      <li>Продающие блоки в GetCourse настроены: 22, 42, 64, 110 мин</li>
+      <li>Лендинг оплаты проверен, тестовая оплата проведена</li>
+      <li>Выдача доступа после оплаты проверена</li>
+      <li>Шифр согласован: Цифра 1 и 2 (21 мая), Цифра 3 (26 мая)</li>
+      <li>Бот ввода шифра и выдачи бонуса настроен</li>
+      <li>Кейсы: Андрей, Сергей, Наталья, Лариса — актуальные цифры + согласие</li>
+      <li>Юрий Веселов получил инструкцию по своей роли</li>
+      <li>Виктория Ребрикова получила шаблоны ответов</li>
+      <li>Аналитики знают ожидаемые вопросы (ИИС, НКД, дюрация)</li>
+    </ul>
+  </div>
+</div>
+
+</main>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
