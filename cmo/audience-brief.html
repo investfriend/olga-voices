@@ -749,62 +749,343 @@
 <div id="plan" class="page">
   <button class="back-btn" onclick="show('home',document.querySelector('nav button:nth-child(2)'))">← Главная</button>
   <div class="sec-header">
-    <h2>🗓️ Пословный план эфиров — сводка</h2>
-    <p>Полный сценарий: <code>board/cmo/webinar-presentation-plan-2026-05.md</code></p>
+    <h2>🗓️ Постайдовый план эфиров 21 и 26 мая</h2>
+    <p>Полный сценарий по слайдам с таймингом, продающими блоками и инструкциями команде</p>
   </div>
 
-  <div class="block">
-    <h3>Тайминг — оба эфира по единой структуре</h3>
-    <ul class="timeline">
-      <tr><td></td></ul>
-    <table>
-      <tr><th>Время</th><th>Эфир 21 мая</th><th>Эфир 26 мая</th></tr>
-      <tr><td>0:00–0:10</td><td>Разогрев Юрий, знакомство</td><td>Сцепка с 21-м, разогрев</td></tr>
-      <tr><td>0:10–0:22</td><td>Целеполагание, калькулятор</td><td>Ошибки после первой покупки</td></tr>
-      <tr><td style="color:var(--accent);font-weight:700">0:22</td><td>🎁 Бонус-кнопка 1</td><td>🎁 Бонус-кнопка 1</td></tr>
-      <tr><td>0:22–0:42</td><td>3 бумаги для 3 сценариев</td><td>Купонная лестница, дивиденды</td></tr>
-      <tr><td style="color:var(--accent);font-weight:700">0:42</td><td>🎁 Бонус-кнопка 2 + Цифра 1</td><td>🎁 Бонус-кнопка 2</td></tr>
-      <tr><td>0:42–1:04</td><td>Сделка в эфире</td><td>Всепогодный портфель, БПИФ</td></tr>
-      <tr><td style="color:var(--accent);font-weight:700">1:04</td><td>🎁 Бонус-кнопка 3 + Цифра 2</td><td>🎁 Бонус-кнопка 3 + Цифра 3</td></tr>
-      <tr><td>1:04–1:45</td><td>«Что дальше?» боль + отстройка</td><td>Работа с возражениями</td></tr>
-      <tr><td>1:45–2:00</td><td>Кейсы учеников + демо клуба</td><td>Кейсы + демо клуба (свежий)</td></tr>
-      <tr><td style="color:var(--primary);font-weight:700">~2:00</td><td>🛒 Главный оффер клуба</td><td>🛒 Оффер + дедлайн</td></tr>
-      <tr><td>2:00–3:00+</td><td>Q&A + поздравления купивших</td><td>Q&A + поздравления + финал</td></tr>
-    </table>
+  <!-- Sub-tabs -->
+  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+    <button id="ptab-timing" class="active" onclick="showPlan('timing',this)" style="background:var(--tag-bg);color:var(--primary);border:1px solid #bfdbfe;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px">📊 Тайминг и структура</button>
+    <button id="ptab-may21" onclick="showPlan('may21',this)" style="background:none;color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px">📅 21 мая — по слайдам</button>
+    <button id="ptab-may26" onclick="showPlan('may26',this)" style="background:none;color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px">📅 26 мая — по слайдам</button>
+    <button id="ptab-ops" onclick="showPlan('ops',this)" style="background:none;color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:14px">✅ Метрики и чек-лист</button>
   </div>
 
-  <div class="block">
-    <h3>Целевые метрики</h3>
-    <table>
-      <tr><th>Метрика</th><th>Февраль</th><th>Цель мая</th><th>Минимум</th></tr>
-      <tr><td>Регистрации</td><td>3 861</td><td class="green">≥6 000</td><td>5 000</td></tr>
-      <tr><td>Доходимость</td><td>79%</td><td class="green">≥70%</td><td>60%</td></tr>
-      <tr><td>Онлайн на пике</td><td>1 325</td><td class="green">≥1 200</td><td>900</td></tr>
-      <tr><td>Эфир → оплата</td><td>7.7%</td><td class="green">≥10%</td><td>7%</td></tr>
-      <tr><td>Всего оплат</td><td>488</td><td class="green">≥500</td><td>400</td></tr>
-      <tr><td>Выручка</td><td>2.37M₽</td><td class="green">≥2.4M₽</td><td>1.9M₽</td></tr>
-    </table>
-    <div class="notice warn" style="margin-top:12px">
-      Если 21 мая ниже минимума → экстренно пересобираем структуру 26 мая.
+  <!-- TIMING TAB -->
+  <div id="plan-timing">
+    <div class="notice info">
+      <strong>Ключевое правило:</strong> Первый продающий блок — не позже 25-й минуты. В феврале — 22 мин → 488 оплат. В апреле — 60 мин → 50 оплат. Это единственное главное отличие.
+    </div>
+    <div class="block">
+      <h3>Общая структура — одинакова для обоих эфиров</h3>
+      <table>
+        <tr><th>Время</th><th>Что происходит</th><th>Кто</th></tr>
+        <tr><td>0:00–0:10</td><td>Разогрев в чате, знакомство, опросы</td><td>Юрий Веселов</td></tr>
+        <tr><td>0:10–0:22</td><td>Содержательный блок 1</td><td>Ольга</td></tr>
+        <tr><td style="color:var(--accent);font-weight:700">0:22</td><td>🎁 Бонус-кнопка 1 — гайд №1</td><td>Юрий объявляет</td></tr>
+        <tr><td>0:22–0:42</td><td>Содержательный блок 2</td><td>Ольга</td></tr>
+        <tr><td style="color:var(--accent);font-weight:700">0:42</td><td>🎁 Бонус-кнопка 2 + Цифра шифра</td><td>Юрий объявляет</td></tr>
+        <tr><td>0:42–1:04</td><td>Содержательный блок 3 / Сделка в эфире</td><td>Ольга</td></tr>
+        <tr><td style="color:var(--accent);font-weight:700">1:04</td><td>🎁 Бонус-кнопка 3 + Цифра шифра</td><td>Юрий объявляет</td></tr>
+        <tr><td>1:04–1:45</td><td>Боль, отстройка от конкурентов, кейсы</td><td>Ольга</td></tr>
+        <tr><td>1:45–2:00</td><td>Демо клуба: 3 ступени, портфель, аналитики</td><td>Ольга</td></tr>
+        <tr><td style="color:var(--primary);font-weight:700">~2:00</td><td>🛒 Главный оффер клуба (кнопка оплаты)</td><td>Юрий — бэндвагон</td></tr>
+        <tr><td>2:00–3:00+</td><td>Q&A + поздравления купивших по имени</td><td>Ольга + вся команда</td></tr>
+      </table>
+    </div>
+    <div class="block">
+      <h3>Сцепка двух эфиров через шифр</h3>
+      <div class="grid2">
+        <div style="background:var(--bg);padding:16px;border-radius:8px;border:1px solid var(--border)">
+          <div style="font-weight:700;margin-bottom:8px">📅 21 мая</div>
+          <ul style="font-size:14px;padding-left:18px">
+            <li>На 0:42 Ольга называет <strong>Цифру 1</strong></li>
+            <li>На 1:04 Ольга называет <strong>Цифру 2</strong></li>
+            <li>«Запишите в блокнот — понадобится 26 мая»</li>
+          </ul>
+        </div>
+        <div style="background:var(--bg);padding:16px;border-radius:8px;border:1px solid var(--border)">
+          <div style="font-weight:700;margin-bottom:8px">📅 26 мая</div>
+          <ul style="font-size:14px;padding-left:18px">
+            <li>На 1:04 Ольга называет <strong>Цифру 3</strong></li>
+            <li>«Введите все три цифры в боте → получите главный бонус»</li>
+            <li>Кто пропустил 21 мая — бонус не получит</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:12px">Механика держит явку на второй эфир — воспроизводим февраль где была двухэфирная сцепка через «запомните цифры».</p>
+    </div>
+    <div class="block">
+      <h3>Роли команды в эфире</h3>
+      <table>
+        <tr><th>Человек</th><th>Роль</th><th>Главная задача</th></tr>
+        <tr><td><strong>Ольга</strong></td><td>Эксперт-спикер</td><td>Контент, сделка в эфире, Q&A. НЕ «продаёт» лично — убивает доверие.</td></tr>
+        <tr><td><strong>Юрий Веселов</strong></td><td>Модератор-бэндвагон</td><td>Разогрев до начала. Объявляет кнопки. <strong>Поздравляет каждого купившего по имени в 30 сек.</strong> Счётчик мест.</td></tr>
+        <tr><td><strong>Виктория Ребрикова</strong></td><td>Техподдержка</td><td>«Не пришло письмо» → «продублировали». «Когда доступ» → «сразу». Снимает технические потери конверсии.</td></tr>
+        <tr><td><strong>Лёша Полевик, Кирилл</strong></td><td>Аналитики в чате</td><td>Отвечают на вопросы по бумагам. Создают впечатление «команда, не один спикер».</td></tr>
+      </table>
+    </div>
+    <div class="block">
+      <h3>🚫 Запреты — обязательно для всей команды</h3>
+      <ul class="forbidden">
+        <li>«Мошенники», «развод», «пирамида» — максимум 1 краткое нейтральное упоминание</li>
+        <li>Обещания иксов: «+29%», «+38%», «+100%» — паттерн мошеннических курсов, триггерит Сегмент 2</li>
+        <li>Отсылки к 1998, дефолту, обвалу как страшилки — убивает Сегмент 3</li>
+        <li>«Бездействие = отказ от денег» — давление виной отталкивает</li>
+        <li>«Просирание», «тонете в мусоре» — аудитория зрелая, уважительный тон</li>
+        <li>Активная продажа недвижимости — несколько отписок прямо назвали причиной ухода</li>
+        <li>«Бронебойный» → заменить на «всепогодный», «информационный террор» → «новостной фон»</li>
+        <li>Первый продающий блок позже 25-й минуты — апрельская смерть конверсии</li>
+      </ul>
     </div>
   </div>
 
-  <div class="block">
-    <h3>Чек-лист до 20 мая</h3>
-    <ul class="checklist">
-      <li>Тикеры для 3 сценариев согласованы с Лёшей Полевиком + Кириллом</li>
-      <li>Тикеры перепроверены на актуальность цен (накануне 21 мая)</li>
-      <li>Заменены слова: «бронебойный» → «всепогодный», «информационный террор» → «новостной фон»</li>
-      <li>Продающие блоки в GetCourse настроены: 22, 42, 64, 110 мин</li>
-      <li>Лендинг оплаты проверен, тестовая оплата проведена</li>
-      <li>Выдача доступа после оплаты проверена</li>
-      <li>Шифр согласован: Цифра 1 и 2 (21 мая), Цифра 3 (26 мая)</li>
-      <li>Бот ввода шифра и выдачи бонуса настроен</li>
-      <li>Кейсы: Андрей, Сергей, Наталья, Лариса — актуальные цифры + согласие</li>
-      <li>Юрий Веселов получил инструкцию по своей роли</li>
-      <li>Виктория Ребрикова получила шаблоны ответов</li>
-      <li>Аналитики знают ожидаемые вопросы (ИИС, НКД, дюрация)</li>
-    </ul>
+  <!-- MAY 21 TAB -->
+  <div id="plan-may21" style="display:none">
+    <div class="notice success">
+      <strong>Тема:</strong> «Открыл счёт — что дальше?» · ЦА: Сегмент 1, Hunt 3→4 · Длительность: 2.5–3 часа
+    </div>
+
+    <div class="block">
+      <h3>До эфира (0:00 — за 5–10 мин до старта)</h3>
+      <p><em>Юрий в чате, Ольга ещё не появилась:</em></p>
+      <ul>
+        <li>«Всем привеееееет! Откуда вы сегодня? Пишите города!»</li>
+        <li>«Кто впервые на нашем эфире — напишите "+" в чат!»</li>
+        <li>Реагирует на каждый город: «Ура, Челябинск! Привет, Казань!»</li>
+      </ul>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-top:8px;font-size:13px"><strong>Слайд 0:</strong> Заставка-ожидание с таймером. «Эфир начнётся через X минут».</div>
+    </div>
+
+    <div class="block">
+      <h3>Блок 1 — Открытие (0:00–0:10)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 1 — Знакомство:</strong> Фото Ольги. «Сегодня не лекция — практика. Уйдёте с конкретным следующим шагом.» Опрос: «У вас уже есть брокерский счёт? +/−»</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 2 — Карта эфира:</strong> 3 блока: Зачем → Сколько нужно → 3 бумаги + сделка. Для тех без счёта: «Пишите "ноль" в чат — скинем гайд параллельно».</div>
+    </div>
+
+    <div class="block">
+      <h3>Блок 2 — Целеполагание (0:10–0:22)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 3 — Зачем вам инвестировать?</strong> Опрос: «Ваша цель — пассивный доход или рост капитала? 1/2». Юрий реагирует на ответы в чате.</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 4 — «Зайдите в Сбербанк»:</strong> Цитата Татьяны: «Я посчитала свою пенсию — мне стало очень грустно. Даже в Турцию не слетаю». Визуализация пенсии ПФР vs реальные расходы.</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 5 — Калькулятор (интерактив):</strong> «Сколько нужно для 5000₽/мес? А для 30 000₽/мес?» Ольга считает вместе с аудиторией. Юрий в чате: «Цель 5к — пишите "5". Цель 30к — пишите "30"». <em>Не больше 5 минут!</em></div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 6 — «У меня нет таких денег»:</strong> «Большинство скажет "нет таких денег". Но смотрите что происходит при регулярных вложениях N₽/мес...» График сложного процента. Вывод: нужна система, а не большой капитал.</div>
+    </div>
+
+    <div style="background:#f0fdf4;border:2px solid var(--accent);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--accent);font-size:15px">🎁 ПРОДАЮЩИЙ БЛОК 1 — ~0:22</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий в чате:</strong> «Под видео появилась первая кнопка — успевайте нажать! Получите гайд "Два типа компаний: куда не надо входить новичку"»</p>
+      <p style="font-size:13px;color:var(--muted)">Цель: приучить аудиторию кликать под видео. Рефлекс сформируется — когда появится кнопка оплаты, кликнут автоматически.</p>
+    </div>
+
+    <div class="block">
+      <h3>Блок 3 — 3 бумаги для 3 сценариев (0:22–0:42)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 7 — Почему одна ОФЗ — не стратегия:</strong> «Самая частая ошибка — купить одно и ждать. Нужен сбалансированный портфель».</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 8 — 3 сценария:</strong>
+        <ul style="margin-top:8px">
+          <li>Сценарий А: «Хочу собрать портфель, не вникать в детали» → Биржевой ПИФ (БПИФ)</li>
+          <li>Сценарий Б: «Хочу пассивный доход быстрее» → Облигация</li>
+          <li>Сценарий В: «Хочу качественный растущий портфель» → Дивидендные акции</li>
+        </ul>
+        Опрос в чате: «Вы за А, Б или В?»
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;padding:12px;border-radius:8px;font-size:13px">⚠️ <strong>Тикеры для 3 сценариев согласовать с Лёшей Полевиком и Кириллом до 20 мая.</strong> Все три — в модельном портфеле клуба. Перепроверить 20 мая.</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-top:8px;font-size:13px"><strong>Слайд 9 — Разбор каждого сценария (~5 мин каждый):</strong> БПИФ: что это, как работает. Облигация: купоны, ОФЗ vs корпоративные. Дивидендные акции: как выбирать.</div>
+    </div>
+
+    <div style="background:#f0fdf4;border:2px solid var(--accent);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--accent);font-size:15px">🎁 ПРОДАЮЩИЙ БЛОК 2 — ~0:42</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий:</strong> «Вторая кнопка под видео! Гайд "5 стратегий инвестирования в облигации"»</p>
+      <p style="font-size:14px"><strong>Ольга:</strong> «Запомните сегодняшнюю цифру [ЦИФРА 1] — запишите в блокнот. Она понадобится 26 мая»</p>
+    </div>
+
+    <div class="block">
+      <h3>Блок 4 — Сделка в эфире (0:42–1:04)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 10 — «Делаем первую покупку прямо сейчас»:</strong> Ольга показывает на экране брокерское приложение. «Повторяйте за мной». Пошагово: нашли инструмент → выставили заявку → подтвердили.</div>
+      <p style="font-size:13px;color:var(--muted)">Юрий в чате: «Кто сделал первую покупку — напишите "Купил!" в чат». Реагирует на каждое «купил» — поздравляет по имени.</p>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 11 — Социальное доказательство:</strong> Скриншоты реальных комментариев февраля «Я в клубе!», «Купил ОФЗ прямо сейчас!». «Такие же люди как вы — месяц назад сделали первую покупку».</div>
+    </div>
+
+    <div style="background:#f0fdf4;border:2px solid var(--accent);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--accent);font-size:15px">🎁 ПРОДАЮЩИЙ БЛОК 3 — ~1:04</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий:</strong> «Третья кнопка — успевайте! Гайд "Разбор показателей акции: что смотреть перед покупкой"»</p>
+      <p style="font-size:14px"><strong>Ольга:</strong> «И ещё одна цифра — [ЦИФРА 2]. Запишите. Всего три. Третья только 26-го»</p>
+    </div>
+
+    <div class="block">
+      <h3>Блок 5 — «А что дальше?» боль + отстройка (1:04–1:45)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 12 — «Купил и что?»:</strong>
+        <div class="quote" style="margin-top:8px"><p>«Я как собака Павлова — всё понимаю, а сказать не могу»</p><div class="attr">— Алексей, 50 лет</div></div>
+        <div class="quote"><p>«В теории всё понятно. А когда смотрю на брокерский — а что делать-то?»</p><div class="attr">— Иван, 18 лет</div></div>
+      </div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 13 — Курс vs Клуб:</strong>
+        <table style="margin-top:8px">
+          <tr><th>Курс</th><th>ИнвестКлуб</th></tr>
+          <tr><td>Купил → прошёл → через 3 мес забыл</td><td>Живая стратегия, обновляется каждую неделю</td></tr>
+          <tr><td>Замороженный контент, устаревает</td><td>Каждую среду: что покупаем, что продаём, почему</td></tr>
+          <tr><td>Один спикер</td><td>Команда: Ольга + 4 аналитика</td></tr>
+          <tr><td class="red">100-300к за год (≥8 000₽/мес)</td><td class="green">5 000₽/мес</td></tr>
+        </table>
+      </div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 14 — Что внутри клуба:</strong> 3 ступени обучения, эфиры с аналитиками каждую среду, портфель клуба, база разборов, чат участников.</div>
+    </div>
+
+    <div class="block">
+      <h3>Блок 6 — Кейсы + Демо клуба (1:45–2:00)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 15 — «Таких как вы — уже были»:</strong>
+        <ul style="margin-top:8px">
+          <li><strong>Андрей:</strong> ИИС с января, +4 098,99₽ за 2 мес</li>
+          <li><strong>Сергей:</strong> 7 078₽/год купонов — «5 лет без результатов, теперь система»</li>
+          <li><strong>Наталья:</strong> «За 2.5 месяца стала другим человеком»</li>
+          <li><strong>Лариса (61 год):</strong> «Открыла БС и купила ОФЗ и акции. Самостоятельно. Я!»</li>
+        </ul>
+      </div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 16 — Демо клуба:</strong> Показ реального эфира среды. Скрин чата. «Вот как выглядит среда в клубе. Так каждую неделю».</div>
+    </div>
+
+    <div style="background:#eff6ff;border:2px solid var(--primary);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--primary);font-size:16px">🛒 ГЛАВНЫЙ ОФФЕР КЛУБА — ~2:00</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий (за 5 мин до кнопки):</strong> «Видим ваши вопросы про клуб. Через 5 минут будет кнопка. Пока проверьте — есть у вас 5000₽ на карте? 😊»</p>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-top:8px;font-size:13px"><strong>Слайд 17 — Оффер:</strong> Название, цена 5 000₽/мес, список из 6-7 пунктов что входит, кнопка «Вступить прямо сейчас», ограничение по местам (конкретное число N), дедлайн «окно раз в 3 месяца».</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-top:8px;font-size:13px"><strong>Слайд 18 — Возражения:</strong> «Telegram блокируют» / «Дорого» / «А если не подойдёт» / «Чем отличаетесь»</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий после открытия кнопки:</strong> Каждое «купил/оплатила» → поздравление по имени в 30 сек. Каждые 5-10 мин: «Осталось N мест!». В конце: «Кусать локти потом — обидно. Следующий запуск через 3 месяца».</p>
+    </div>
+
+    <div class="block">
+      <h3>Q&A + Завершение (2:00–3:00+)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 19 — Анонс 26 мая:</strong> «Следующий эфир 26 мая — "Первые покупки сделаны — что дальше?". Купонная лестница, всепогодный портфель, дивидендные акции. И там будет третья цифра шифра».</div>
+      <p style="font-size:14px">Ольга отвечает на вопросы по контенту. Виктория закрывает технические.</p>
+    </div>
+  </div>
+
+  <!-- MAY 26 TAB -->
+  <div id="plan-may26" style="display:none">
+    <div class="notice success">
+      <strong>Тема:</strong> «Первые покупки сделаны — что дальше?» · ЦА: горячие после 21-го, Сегмент 1+2, Hunt 4→5 · Особенность: жёсткий дедлайн оффера
+    </div>
+
+    <div class="block">
+      <h3>Открытие — сцепка с 21 мая (0:00–0:10)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 1 — «Вы сделали первый шаг. Теперь — следующий»:</strong> «5 дней назад мы открыли счёт и сделали первую покупку». Опрос: «Кто был 21 мая — +. Кто впервые — 0». Напоминание: «Кто записал две цифры — сегодня получите третью».</div>
+    </div>
+
+    <div class="block">
+      <h3>Блок 2 — Проблема «как жить с портфелем» (0:10–0:22)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 2 — Самые частые ошибки после первой покупки:</strong>
+        <ul style="margin-top:8px">
+          <li>«Купил и смотрю на красное/зелёное — не знаю что делать»</li>
+          <li>«Купил одно — а сбалансирован ли портфель?»</li>
+          <li>«Новости пугают — когда продавать?»</li>
+        </ul>
+        Цитата Манукяна: «Слежу за всеми новостями. Но непонятно когда выходить, до какой цены держать».
+      </div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 3 — «Новостной фон — как не поддаться панике»:</strong> Почему рынок падает и это нормально. Психология инвестора: волатильность vs тренд. Главная ошибка — продать на дне.</div>
+    </div>
+
+    <div style="background:#f0fdf4;border:2px solid var(--accent);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--accent);font-size:15px">🎁 ПРОДАЮЩИЙ БЛОК 1 — ~0:22</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий:</strong> «Первая кнопка под видео! Гайд "Что делать когда портфель в минусе"»</p>
+    </div>
+
+    <div class="block">
+      <h3>Блок 3 — Купонная лестница и ежемесячный доход (0:22–0:42)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 4 — Как получать выплаты каждый месяц:</strong> Проблема: «Купила одну облигацию — купон раз в полгода, неудобно». Решение: купонная лестница — несколько бумаг с разными датами выплат. Ольга строит лестницу в эфире на конкретных инструментах.</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 5 — Дивидендные акции: как выбирать:</strong> Ключевые показатели: дивдоходность, история выплат, коэффициент выплат. Разбор 2-3 конкретных компаний (согласовать с аналитиками до 25 мая).</div>
+    </div>
+
+    <div style="background:#f0fdf4;border:2px solid var(--accent);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--accent);font-size:15px">🎁 ПРОДАЮЩИЙ БЛОК 2 — ~0:42</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий:</strong> «Вторая кнопка — "Разбор показателей: что смотреть перед покупкой дивидендной акции"»</p>
+    </div>
+
+    <div class="block">
+      <h3>Блок 4 — «Всепогодный портфель» (0:42–1:04)</h3>
+      <div class="notice info" style="margin-bottom:12px">⚠️ «Бронебойный» заменить на <strong>«Всепогодный»</strong> — концепция Рэя Далио (All Weather Portfolio). Серьёзная ассоциация, легко гуглится.</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 6 — Что такое всепогодный портфель:</strong> «Работает и при инфляции, и при дефляции, и при росте, и при рецессии. Война или мир, высокая ставка или низкая — портфель держится». Структура: акции + облигации + золото/фонды.</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 7 — Корпоративные облигации vs ОФЗ:</strong> Разница в доходности и риске. Когда брать что. Сравнение на скрине.</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 8 — БПИФ: стоит ли:</strong> Когда фонд — правильный выбор. Подводные камни (комиссия, состав). Рекомендация для разных сценариев.</div>
+    </div>
+
+    <div style="background:#f0fdf4;border:2px solid var(--accent);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--accent);font-size:15px">🎁 ПРОДАЮЩИЙ БЛОК 3 — ~1:04</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий:</strong> «Третья кнопка! И — внимание — ТРЕТЬЯ ЦИФРА шифра: [ЦИФРА 3]! Записали все три? Вводите в нашем боте до конца недели»</p>
+    </div>
+
+    <div class="block">
+      <h3>Блок 5 — Работа с возражениями (1:04–1:45)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 9 — «Уже обжигался» (Сегмент 2):</strong>
+        <div class="quote" style="margin-top:8px"><p>«5 лет в инвестициях — без результатов. Теперь я с вами»</p><div class="attr">— Сергей, из отзыва</div></div>
+        «Если уже потеряли в Форексе или бинарных — это не конец. У 18% наших учеников опыт 3+ лет без результата. Они приходят за системой, не за секретом богатства».
+      </div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:8px;font-size:13px"><strong>Слайд 10 — «Telegram блокируют»:</strong> «Всё дублируется в Max и GetCourse. Даже если Telegram полностью заблокируют — вы ничего не теряете».</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 11 — Клуб vs конкуренты:</strong> 3 отличия: живая стратегия vs замороженный курс, команда vs один спикер, 5к/мес vs 100-300к за курс.</div>
+    </div>
+
+    <div class="block">
+      <h3>Блок 6 — Кейсы + Демо (1:45–2:00)</h3>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;font-size:13px"><strong>Слайд 12 — Истории «после первого месяца»:</strong> Андрей, Сергей, Лариса (61 год). Свежий демо клуба — что произошло на этой неделе, скрин эфира среды.</div>
+    </div>
+
+    <div style="background:#eff6ff;border:2px solid var(--primary);border-radius:10px;padding:16px;margin-bottom:16px">
+      <div style="font-weight:700;color:var(--primary);font-size:16px">🛒 ГЛАВНЫЙ ОФФЕР + ДЕДЛАЙН — ~2:00</div>
+      <p style="font-size:14px;margin-top:8px"><strong>Особенность 26 мая:</strong> дедлайн жёсткий. «Окно закрывается [дата]. После — следующий запуск через 3 месяца».</p>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-top:8px;font-size:13px"><strong>Слайд 13 — Оффер с дедлайном:</strong> «Уже 200 человек вступили в клуб 21 мая. Успевайте до [дата] в 23:59».</div>
+      <div style="background:var(--bg);padding:12px;border-radius:8px;margin-top:8px;font-size:13px"><strong>Слайд 14 — Последние возражения:</strong>
+        <ul style="margin-top:8px">
+          <li>«Нет денег» → «5000₽ — меньше, чем потеряете на одной ошибочной сделке без системы»</li>
+          <li>«Не успею освоить» → «Материалы не уходят. Ближайшая среда уже через неделю»</li>
+          <li>«Слишком сложно» → «Лариса из деревни справилась в 61 год. Вы тоже справитесь»</li>
+        </ul>
+      </div>
+      <p style="font-size:14px;margin-top:8px"><strong>Юрий:</strong> максимально активен. Каждые 2-3 мин «Ура! [Имя] с нами!». Публичный счётчик мест. «Кусать локти потом — обидно».</p>
+    </div>
+  </div>
+
+  <!-- OPS TAB -->
+  <div id="plan-ops" style="display:none">
+    <div class="block">
+      <h3>Целевые метрики</h3>
+      <table>
+        <tr><th>Метрика</th><th>Февраль</th><th>Цель мая</th><th>Минимум</th></tr>
+        <tr><td>Регистрации</td><td>3 861</td><td class="green">≥6 000</td><td>5 000</td></tr>
+        <tr><td>Доходимость</td><td>79%</td><td class="green">≥70%</td><td>60%</td></tr>
+        <tr><td>Онлайн на пике</td><td>1 325</td><td class="green">≥1 200</td><td>900</td></tr>
+        <tr><td>Эфир → оплата</td><td>7.7%</td><td class="green">≥10%</td><td>7%</td></tr>
+        <tr><td>Всего оплат (оба эфира)</td><td>488</td><td class="green">≥500</td><td>400</td></tr>
+        <tr><td>Выручка</td><td>2.37M₽</td><td class="green">≥2.4M₽</td><td>1.9M₽</td></tr>
+        <tr><td>Публичных «купил» в чате</td><td>15+ за 30 мин</td><td class="green">≥15</td><td>8</td></tr>
+      </table>
+      <div class="notice warn" style="margin-top:12px">
+        Если 21 мая ниже минимума → экстренно пересобираем структуру 26 мая.
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>Чек-лист до 20 мая</h3>
+      <h4>Контент</h4>
+      <ul class="checklist">
+        <li>Тикеры для «3 бумаги / 3 сценария» согласованы с Лёшей Полевиком + Кириллом</li>
+        <li>Все три тикера — в модельном портфеле клуба</li>
+        <li>Тикеры перепроверены на актуальность цен накануне 21 мая (20 мая)</li>
+        <li>Подготовлен запасной вариант если бумага «улетит» за день</li>
+        <li>«Бронебойный» → «Всепогодный», «информационный террор» → «Новостной фон»</li>
+        <li>Кейсы Андрея, Сергея, Натальи, Ларисы — актуальные цифры + согласие на публикацию</li>
+      </ul>
+      <h4>Техника (GetCourse)</h4>
+      <ul class="checklist">
+        <li>Продающие блоки настроены на тайминги: 22, 42, 64, 110 мин от старта</li>
+        <li>Лендинг оплаты проверен, тестовая оплата проведена</li>
+        <li>Выдача доступа после оплаты проверена (письмо приходит сразу)</li>
+        <li>Шифр согласован: Цифра 1 и Цифра 2 (21 мая), Цифра 3 (26 мая)</li>
+        <li>Бот для ввода шифра и выдачи бонуса настроен и протестирован</li>
+      </ul>
+      <h4>Команда</h4>
+      <ul class="checklist">
+        <li>Юрий Веселов: получил инструкцию (роль бэндвагона, тайминги кнопок, формат поздравлений)</li>
+        <li>Виктория Ребрикова: получила шаблоны ответов на все типовые вопросы</li>
+        <li>Лёша Полевик, Кирилл: предупреждены о дежурстве в чате, знают ожидаемые вопросы</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Что нужно от команды</h3>
+      <table>
+        <tr><th>Кому</th><th>Что</th><th>Срок</th></tr>
+        <tr><td><strong>Ольга</strong></td><td>Согласовать замены слов. Утвердить 3 тикера с аналитиками.</td><td class="red">До 20 мая</td></tr>
+        <tr><td><strong>Контент-продюсер</strong></td><td>Слайды по этому плану. Материал: цитаты из «Голос клиента».</td><td class="red">До 19 мая</td></tr>
+        <tr><td><strong>Tech-директор</strong></td><td>4 продающих блока в GetCourse, бот шифра, тестовая оплата.</td><td class="red">До 20 мая</td></tr>
+        <tr><td><strong>CFO</strong></td><td>Подтвердить план: ≥400 оплат, ≥1.9M₽ выручки.</td><td>До 19 мая</td></tr>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -816,6 +1097,27 @@ function show(id, btn) {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if (btn) btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showPlan(tab, btn) {
+  ['timing','may21','may26','ops'].forEach(t => {
+    const el = document.getElementById('plan-'+t);
+    if (el) el.style.display = 'none';
+  });
+  document.querySelectorAll('[id^="ptab-"]').forEach(b => {
+    b.style.background = 'none';
+    b.style.color = 'var(--muted)';
+    b.style.borderColor = 'var(--border)';
+    b.style.fontWeight = 'normal';
+  });
+  const target = document.getElementById('plan-'+tab);
+  if (target) target.style.display = 'block';
+  if (btn) {
+    btn.style.background = 'var(--tag-bg)';
+    btn.style.color = 'var(--primary)';
+    btn.style.borderColor = '#bfdbfe';
+    btn.style.fontWeight = '600';
+  }
   window.scrollTo(0,0);
 }
 </script>
