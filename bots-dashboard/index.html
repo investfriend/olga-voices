@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Боты InvestFriend</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', Roboto, sans-serif;
+    background: var(--tg-theme-bg-color, #0d1117);
+    color: var(--tg-theme-text-color, #e6edf3);
+    padding: 16px;
+    font-size: 15px;
+  }
+  h1 {
+    font-size: 18px; font-weight: 600; margin-bottom: 16px;
+    color: var(--tg-theme-text-color, #e6edf3);
+  }
+  .header-row {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+  }
+  .refresh {
+    background: var(--tg-theme-button-color, #2da44e);
+    color: var(--tg-theme-button-text-color, #fff);
+    border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer;
+  }
+  .bot-card {
+    background: var(--tg-theme-secondary-bg-color, #161b22);
+    border-radius: 12px; padding: 14px; margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .bot-header {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; cursor: pointer;
+  }
+  .bot-name {
+    font-weight: 600; font-size: 15px;
+    color: var(--tg-theme-text-color, #e6edf3);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #586069; flex-shrink: 0;
+  }
+  .status-dot.active { background: #2da44e; box-shadow: 0 0 6px #2da44e; }
+  .bot-role { font-size: 12px; color: var(--tg-theme-hint-color, #7d8590); margin-top: 2px; }
+  .bot-handle {
+    font-size: 11px; color: var(--tg-theme-link-color, #58a6ff);
+    margin-top: 2px; font-family: 'SF Mono', Menlo, monospace;
+  }
+  .model-badge {
+    background: rgba(88, 166, 255, 0.15);
+    color: #58a6ff; border-radius: 6px; padding: 4px 8px;
+    font-size: 12px; font-weight: 600; white-space: nowrap;
+  }
+  .model-badge.opus { background: rgba(189, 147, 249, 0.15); color: #bd93f9; }
+  .model-badge.sonnet { background: rgba(80, 200, 120, 0.15); color: #50c878; }
+  .model-badge.codex { background: rgba(255, 184, 108, 0.15); color: #ffb86c; }
+  .details {
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.06); display: none;
+  }
+  .bot-card.expanded .details { display: block; }
+  .model-switcher { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .model-btn {
+    background: rgba(255,255,255,0.05);
+    color: var(--tg-theme-text-color, #e6edf3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 6px 12px; font-size: 12px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .model-btn:hover { background: rgba(255,255,255,0.1); }
+  .model-btn.current {
+    background: var(--tg-theme-button-color, #2da44e);
+    color: #fff; border-color: transparent;
+  }
+  .sessions-list { margin-top: 8px; }
+  .session-row {
+    font-size: 12px; color: var(--tg-theme-hint-color, #7d8590);
+    padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .session-row:last-child { border-bottom: none; }
+  .session-age { color: var(--tg-theme-link-color, #58a6ff); font-size: 11px; }
+  .empty { color: var(--tg-theme-hint-color, #7d8590); font-size: 12px; padding: 6px 0; }
+  .updated {
+    text-align: center; color: var(--tg-theme-hint-color, #7d8590);
+    font-size: 11px; margin-top: 16px;
+  }
+  .openclaw-marker {
+    background: rgba(255, 184, 108, 0.1);
+    color: #ffb86c; font-size: 9px; padding: 2px 6px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<div class="header-row">
+  <h1>🤖 Боты InvestFriend</h1>
+  <button class="refresh" onclick="loadBots()">↻ Обновить</button>
+</div>
+<div id="bots-list">Загрузка...</div>
+<div class="updated" id="updated"></div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+// Backend URL (via ngrok). Includes header to skip ngrok warning.
+const API_BASE = 'https://ardently-hardwood-ebook.ngrok-free.dev';
+
+async function apiFetch(path, opts = {}) {
+  opts.headers = {
+    ...(opts.headers || {}),
+    'ngrok-skip-browser-warning': 'true',
+  };
+  return fetch(API_BASE + path, opts);
+}
+
+async function loadBots() {
+  const list = document.getElementById('bots-list');
+  list.innerHTML = '<div class="empty">Загрузка...</div>';
+  try {
+    const r = await apiFetch('/api/bots');
+    const data = await r.json();
+    renderBots(data.bots);
+    document.getElementById('updated').textContent =
+      'Обновлено: ' + new Date(data.updated_at * 1000).toLocaleTimeString('ru-RU');
+  } catch (e) {
+    list.innerHTML = '<div class="empty">Ошибка загрузки: ' + e.message + '</div>';
+  }
+}
+
+function modelBadgeClass(modelShort) {
+  const s = (modelShort || '').toLowerCase();
+  if (s.includes('opus')) return 'opus';
+  if (s.includes('sonnet')) return 'sonnet';
+  if (s.includes('codex') || s.includes('gpt')) return 'codex';
+  return '';
+}
+
+function renderBots(bots) {
+  const list = document.getElementById('bots-list');
+  list.innerHTML = '';
+  bots.forEach(bot => {
+    const card = document.createElement('div');
+    card.className = 'bot-card';
+    card.dataset.id = bot.id;
+    const isOpenclaw = bot.type === 'openclaw';
+    const currentModel = (bot.model_short || '').toLowerCase();
+    card.innerHTML = `
+      <div class="bot-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div>
+          <div class="bot-name">
+            <span class="status-dot ${bot.active ? 'active' : ''}"></span>
+            ${escapeHtml(bot.name)}
+            ${isOpenclaw ? '<span class="openclaw-marker">openclaw</span>' : ''}
+          </div>
+          <div class="bot-role">${escapeHtml(bot.role)}</div>
+          <div class="bot-handle">${escapeHtml(bot.tg_handle)}</div>
+        </div>
+        <div class="model-badge ${modelBadgeClass(bot.model_short)}">${escapeHtml(bot.model_short)}</div>
+      </div>
+      <div class="details">
+        ${!isOpenclaw ? `
+          <div class="model-switcher">
+            <button class="model-btn ${currentModel === 'opus' ? 'current' : ''}" onclick="switchModel('${bot.id}', 'opus')">Opus</button>
+            <button class="model-btn ${currentModel === 'sonnet' ? 'current' : ''}" onclick="switchModel('${bot.id}', 'sonnet')">Sonnet</button>
+            <button class="model-btn ${currentModel === 'haiku' ? 'current' : ''}" onclick="switchModel('${bot.id}', 'haiku')">Haiku</button>
+          </div>
+        ` : '<div class="empty">Модель openclaw — управляется отдельно</div>'}
+        <div class="sessions-list">
+          <div style="font-size:11px;color:#7d8590;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px">Последние сессии</div>
+          ${bot.recent_sessions.length ? bot.recent_sessions.map(s => `
+            <div class="session-row">
+              <span>${escapeHtml(s.preview || s.chat_id || s.session_id)}</span>
+              <span class="session-age">${escapeHtml(s.age)}</span>
+            </div>
+          `).join('') : '<div class="empty">Нет недавних сессий</div>'}
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+async function switchModel(botId, model) {
+  if (tg) tg.HapticFeedback?.impactOccurred('light');
+  try {
+    const r = await apiFetch(`/api/bots/${botId}/model`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({model}),
+    });
+    if (r.ok) {
+      if (tg) tg.HapticFeedback?.notificationOccurred('success');
+      loadBots();
+    } else {
+      const err = await r.json();
+      alert('Ошибка: ' + (err.detail || 'unknown'));
+    }
+  } catch (e) {
+    alert('Сеть: ' + e.message);
+  }
+}
+
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+loadBots();
+setInterval(loadBots, 30000);
+</script>
+</body>
+</html>
