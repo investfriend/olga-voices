@@ -257,8 +257,80 @@
     text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 16px;
   }
 
+  /* COMPARE TABLE */
+  .compare-table {
+    margin-top: 36px; background: var(--bg-card); border-radius: 18px;
+    border: 1px solid var(--line); overflow: hidden;
+  }
+  .compare-row {
+    display: grid; grid-template-columns: 1.6fr 1.4fr 1fr; gap: 24px;
+    padding: 18px 28px; border-bottom: 1px solid var(--line); align-items: center;
+  }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-header {
+    background: rgba(109,242,195,0.08); font-weight: 700; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent);
+  }
+  .compare-row > div:first-child { color: var(--text); font-weight: 600; }
+  .price-other { color: var(--text-dim); font-size: 15px; }
+  .price-other s { color: var(--text-dim); opacity: 0.7; }
+  .price-ok { color: var(--accent); font-weight: 700; font-size: 15px; }
+  .compare-total {
+    display: grid; grid-template-columns: 1.6fr 1.4fr 1fr; gap: 24px;
+    padding: 24px 28px; background: linear-gradient(90deg, rgba(255,117,117,0.08), rgba(109,242,195,0.08));
+    align-items: center; font-size: 17px;
+  }
+  .compare-total > div:first-child { color: var(--accent); font-weight: 800; }
+  .compare-total .crossed { color: var(--danger); font-weight: 800; font-size: 22px; }
+  .compare-total .winning { color: var(--accent); font-weight: 800; font-size: 22px; }
+
+  /* INTENSIVES */
+  .intensives-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-top: 36px;
+  }
+  .intensive-card {
+    background: var(--bg-card); padding: 22px; border-radius: 14px;
+    border: 1px solid var(--line); transition: transform 0.2s;
+    position: relative;
+  }
+  .intensive-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .intensive-icon { font-size: 26px; margin-bottom: 10px; }
+  .intensive-card h4 { color: var(--accent); font-size: 16px; margin-bottom: 6px; font-weight: 700; }
+  .intensive-card p { font-size: 13px; color: var(--text-dim); }
+  .intensive-card .badge {
+    position: absolute; top: 14px; right: 14px;
+    background: var(--warn); color: var(--bg); font-size: 10px;
+    padding: 3px 8px; border-radius: 99px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* REAL ESTATE */
+  .realestate {
+    background: linear-gradient(135deg, #1a3a30 0%, #112822 100%);
+    border-radius: 24px; padding: 60px;
+    border: 1px solid var(--line); position: relative; overflow: hidden;
+  }
+  .realestate::before {
+    content: '🏠'; position: absolute; right: 30px; top: 30px;
+    font-size: 100px; opacity: 0.15;
+  }
+  .realestate h2 { color: var(--accent); }
+  .realestate-stats {
+    display: flex; gap: 36px; margin-top: 28px; flex-wrap: wrap;
+  }
+  .realestate-stat b {
+    color: var(--accent); font-size: 30px; font-weight: 800;
+    display: block; margin-bottom: 4px;
+  }
+  .realestate-stat span { color: var(--text-dim); font-size: 14px; }
+
   /* MOBILE */
   @media (max-width: 720px) {
+    .compare-row, .compare-total, .compare-header { grid-template-columns: 1fr; gap: 6px; padding: 14px 18px; }
+    .compare-row > div:first-child { font-weight: 700; }
+    .realestate { padding: 30px 22px; }
+    .realestate::before { font-size: 60px; }
     section { padding: 60px 0; }
     .iis, .olga-quote, .final-cta, .price-card { padding: 32px 22px; }
     .hero-cta-row { flex-direction: column; align-items: stretch; }
@@ -321,6 +393,11 @@
         <h3>Готовлюсь к пенсии</h3>
         <p>До пенсии 5–15 лет. Государственной хватит на коммуналку. Хочется построить что-то своё, пока есть время.</p>
       </div>
+      <div class="segment-card">
+        <div class="segment-icon">📊</div>
+        <h3>Уже инвестирую — но в нуле</h3>
+        <p>2–3 года в рынке. Покупаю как говорит брокер. Дивиденды — копейки. Чувствую, что что-то делаю не так, но что — не понимаю.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -356,6 +433,10 @@
       <div class="anti-item">
         <div class="anti-item-q">«Просадка — это ошибка или норма?»</div>
         <div class="anti-item-a">Без системы вы не отличите одно от другого. Продаёте на низах. Покупаете на верхах. Знакомо.</div>
+      </div>
+      <div class="anti-item">
+        <div class="anti-item-q">«Брокер предложил структурные ноты»</div>
+        <div class="anti-item-a">Знакомый Михаила купил ноту на 500 тысяч — через год вернулось 250. У брокера за это премия. Вы потеряли половину.</div>
       </div>
     </div>
 
@@ -415,6 +496,54 @@
         </ul>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- СРАВНЕНИЕ С КУРСАМИ -->
+<section>
+  <div class="container">
+    <div class="section-label">Сравните цены</div>
+    <h2>В отдельных школах это стоит <span class="accent">160 200 ₽</span></h2>
+    <p>А у нас всё это уже включено в подписку 5 000 ₽/мес. Без отдельных доплат за модули и налоги.</p>
+
+    <div class="compare-table">
+      <div class="compare-row compare-header">
+        <div>Тема</div>
+        <div>Отдельный курс</div>
+        <div>В клубе</div>
+      </div>
+      <div class="compare-row">
+        <div>Финансовая грамотность</div>
+        <div class="price-other">23 000 ₽ <span style="opacity:0.7;">(Skillbox)</span></div>
+        <div class="price-ok">✓ включено</div>
+      </div>
+      <div class="compare-row">
+        <div>Акции, облигации, фонды</div>
+        <div class="price-other">286 000 ₽ <span style="opacity:0.7;">(Московская бизнес-академия)</span></div>
+        <div class="price-ok">✓ включено</div>
+      </div>
+      <div class="compare-row">
+        <div>Налоги и ИИС</div>
+        <div class="price-other">3 200 ₽ <span style="opacity:0.7;">(Netology)</span></div>
+        <div class="price-ok">✓ включено</div>
+      </div>
+      <div class="compare-row">
+        <div>Криптовалюта</div>
+        <div class="price-other">64 000 ₽ <span style="opacity:0.7;">(Skillbox)</span></div>
+        <div class="price-ok">✓ включено</div>
+      </div>
+      <div class="compare-row">
+        <div>Тариф/подписка брокера</div>
+        <div class="price-other">~5 000 ₽/мес</div>
+        <div class="price-ok">не нужно</div>
+      </div>
+      <div class="compare-total">
+        <div>Итого</div>
+        <div class="crossed">~376 000 ₽</div>
+        <div class="winning">5 000 ₽/мес</div>
+      </div>
+    </div>
+    <p style="margin-top: 22px; font-size: 14px;">И главное: в отдельных школах нет того, что есть в клубе — личной связи с командой, разбора реальных портфелей и сделок каждую неделю.</p>
   </div>
 </section>
 
@@ -525,17 +654,17 @@
       <div class="case">
         <div class="case-header">
           <div class="case-avatar">М</div>
-          <div class="case-name"><b>Михаил</b><span>Новоалтайск · Предприниматель · 3+ года</span></div>
+          <div class="case-name"><b>Михаил</b><span>Новоалтайск · Предприниматель · в клубе с 2024</span></div>
         </div>
         <div class="case-block">
-          <div class="case-label">До клуба</div>
-          <div class="case-text">Опытный, но в одиночку. Не было среды специалистов. Решения принимал без второго мнения.</div>
+          <div class="case-label">До клуба (2021–2024)</div>
+          <div class="case-text">3 года в рынке — портфель плюс-минус ноль. «Как игра в напёрстки возле вокзала, всегда в проигрыше». НЛМК купил на пиках 2023 — минус 100 тыс ₽ с учётом дивидендов.</div>
         </div>
         <div class="case-block">
           <div class="case-label">Сейчас</div>
-          <div class="case-text">В клубе с 2025. Идеи клуба дали результат. Системно инвестирует 50+ тыс ₽/мес. Цель 2026: доходность 20%+.</div>
+          <div class="case-text">ОФЗ, купленные в клубе в 2024, сейчас дают 28% годовых. Пассивный доход около <b>100 000 ₽ в месяц</b>. Знает зачем покупать облигации и какие.</div>
         </div>
-        <div class="case-quote">«Идеи клуба дали результат — как и в 2025 году»</div>
+        <div class="case-quote">«5 000 ₽ в месяц для меня уже не сильно большие деньги»<br><span style="color: var(--text-dim); font-style: normal; font-size: 12px;">— Михаил в эфире 26 мая</span></div>
       </div>
 
       <!-- АННА -->
@@ -554,6 +683,88 @@
         </div>
         <div class="case-quote">— Таких «Анн» в чате 21 мая было больше 100. Все получают конкретный ответ.</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ИНТЕНСИВЫ -->
+<section>
+  <div class="container">
+    <div class="section-label">Интенсивы внутри</div>
+    <h2>Не курс. <span class="accent">Живой продукт.</span></h2>
+    <p>Каждый месяц мы выпускаем новый интенсив на узкую тему. Без воды. Без растягивания материала на «12 модулей по 8 часов». Уже в клубе — 8 интенсивов, доступны сразу.</p>
+
+    <div class="intensives-grid">
+      <div class="intensive-card">
+        <div class="intensive-icon">🌱</div>
+        <h4>Портфель с нуля</h4>
+        <p>Для тех, кто ничего не знает про компании. Собираем портфель через волатильность.</p>
+      </div>
+      <div class="intensive-card">
+        <div class="intensive-icon">💸</div>
+        <h4>Портфель, который платит</h4>
+        <p>Календарь дивидендных выплат и купонов. Пассивный доход каждый месяц.</p>
+      </div>
+      <div class="intensive-card">
+        <div class="intensive-icon">🛡️</div>
+        <h4>Пассивный доход в кризис</h4>
+        <p>Как защитить портфель от падений и продолжать получать выплаты.</p>
+      </div>
+      <div class="intensive-card">
+        <div class="intensive-icon">📈</div>
+        <h4>Корпоративные облигации</h4>
+        <p>Доходность до 24%. Как читать карточку, как проверить компанию. Без потери на дефолтах.</p>
+      </div>
+      <div class="intensive-card">
+        <div class="intensive-icon">🏦</div>
+        <h4>ИИС-интенсив</h4>
+        <p>Как открыть, что положить, как забрать 52–60 тыс налогового вычета.</p>
+      </div>
+      <div class="intensive-card">
+        <div class="intensive-icon">₿</div>
+        <h4>КриптоСтарт</h4>
+        <p>Безопасные сделки с криптой. Стратегия x2–x5 без потери всего.</p>
+      </div>
+      <div class="intensive-card">
+        <div class="intensive-icon">📊</div>
+        <h4>Технический анализ</h4>
+        <span class="badge">Июнь</span>
+        <p>Покупка по графику. Точки входа. Для продвинутых.</p>
+      </div>
+      <div class="intensive-card">
+        <div class="intensive-icon">🌍</div>
+        <h4>Зарубежные рынки</h4>
+        <span class="badge">Июль</span>
+        <p>Открытие зарубежного счёта в санкциях. Что покупать. Налоги.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- НЕДВИЖИМОСТЬ -->
+<section>
+  <div class="container">
+    <div class="realestate">
+      <div class="section-label">Особая ветка</div>
+      <h2>Недвижимость — отдельный раздел в клубе</h2>
+      <p style="font-size: 18px; color: var(--text); max-width: 700px;">У Ольги первая инвестиционная квартира — 28 м² за 1.5 млн ₽ первого взноса. За время владения цена выросла на 40%. В клубе есть эксперт, с которым она покупала эту и следующую недвижимость.</p>
+
+      <div class="realestate-stats">
+        <div class="realestate-stat">
+          <b>28 м²</b>
+          <span>первая квартира Ольги</span>
+        </div>
+        <div class="realestate-stat">
+          <b>+40%</b>
+          <span>рост цены за время владения</span>
+        </div>
+        <div class="realestate-stat">
+          <b>1.5 млн ₽</b>
+          <span>первоначальный взнос</span>
+        </div>
+      </div>
+
+      <p style="margin-top: 24px; color: var(--text-dim); font-size: 15px; max-width: 700px;">В ветке: обзор рынка, анализ застройщиков, разбор промо-программ с банками (выгоднее обычной ипотеки). Полезно даже если пока копите — экспертный опыт накапливается.</p>
     </div>
   </div>
 </section>
