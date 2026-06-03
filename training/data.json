@@ -1,0 +1,1197 @@
+[
+  {
+    "slug": "00-vvedenie",
+    "title": "Введение",
+    "count": 4,
+    "lessons": [
+      {
+        "title": "Как получить результат",
+        "file": "lessons/00-vvedenie/01-kak-poluchit-rezultat.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/intro/kak-poluchit-rezultat"
+      },
+      {
+        "title": "Как задавать вопросы в чате",
+        "file": "lessons/00-vvedenie/02-kak-zadavat-voprosy.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/intro/kak-zadavat-voprosy"
+      },
+      {
+        "title": "Как работать эффективнее и успевать больше",
+        "file": "lessons/00-vvedenie/03-uspet-i-sdelat-vse.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/intro/uspet-i-sdelat-vse"
+      },
+      {
+        "title": "Как пользоваться базой знаний",
+        "file": "lessons/00-vvedenie/04-welcome.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/intro/welcome"
+      }
+    ]
+  },
+  {
+    "slug": "02-tehnicheskie-nuansy",
+    "title": "Технические нюансы",
+    "count": 19,
+    "lessons": [
+      {
+        "title": "Быстрые заготовленные ответы",
+        "file": "lessons/02-tehnicheskie-nuansy/01-bystrye-otvety.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/bystrye-otvety"
+      },
+      {
+        "title": "Знакомство с Google-документами",
+        "file": "lessons/02-tehnicheskie-nuansy/02-google-dokumenty.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/google-dokumenty"
+      },
+      {
+        "title": "Как обезопасить свои аккаунты",
+        "file": "lessons/02-tehnicheskie-nuansy/03-kak-obezopasit-akkaunt.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/kak-obezopasit-akkaunt"
+      },
+      {
+        "title": "Как проводить прямые эфиры и вебинары",
+        "file": "lessons/02-tehnicheskie-nuansy/04-kak-vesti-efiry.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/kak-vesti-efiry"
+      },
+      {
+        "title": "Как пользоваться Miro и делать интеллект-карты",
+        "file": "lessons/02-tehnicheskie-nuansy/05-miro.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/miro"
+      },
+      {
+        "title": "Нюансы ведения Instagram*",
+        "file": "lessons/02-tehnicheskie-nuansy/06-nuansy-vedenia-instagram.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/nuansy-vedenia-instagram"
+      },
+      {
+        "title": "Нюансы ведения каналов в MAX",
+        "file": "lessons/02-tehnicheskie-nuansy/07-nuansy-vedenia-max.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/nuansy-vedenia-max"
+      },
+      {
+        "title": "Нюансы ведения Pinterest",
+        "file": "lessons/02-tehnicheskie-nuansy/08-nuansy-vedenia-pinterest.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/nuansy-vedenia-pinterest"
+      },
+      {
+        "title": "Нюансы ведения Telegram-каналов",
+        "file": "lessons/02-tehnicheskie-nuansy/09-nuansy-vedenia-tg.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/nuansy-vedenia-tg"
+      },
+      {
+        "title": "Нюансы ведения Threads",
+        "file": "lessons/02-tehnicheskie-nuansy/10-nuansy-vedenia-threads.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/nuansy-vedenia-threads"
+      },
+      {
+        "title": "Нюансы ведения TikTok",
+        "file": "lessons/02-tehnicheskie-nuansy/11-nuansy-vedenia-tiktok.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/nuansy-vedenia-tiktok"
+      },
+      {
+        "title": "Нюансы ведения ВКонтакте",
+        "file": "lessons/02-tehnicheskie-nuansy/12-nuansy-vedenia-vk.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/nuansy-vedenia-vk"
+      },
+      {
+        "title": "Нюансы ведения YouTube",
+        "file": "lessons/02-tehnicheskie-nuansy/13-nuansy-vedenia-youtube.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/nuansy-vedenia-youtube"
+      },
+      {
+        "title": "OBS: Как записывать стильные уроки",
+        "file": "lessons/02-tehnicheskie-nuansy/14-obs-stilnye-uroki.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/obs-stilnye-uroki"
+      },
+      {
+        "title": "Сборка анкеты в Tilda",
+        "file": "lessons/02-tehnicheskie-nuansy/15-sborka-ankety-tilda.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/sborka-ankety-tilda"
+      },
+      {
+        "title": "Ссылки с заготовленными кодовыми словами",
+        "file": "lessons/02-tehnicheskie-nuansy/16-ssylki-kodovye-slova.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/ssylki-kodovye-slova"
+      },
+      {
+        "title": "Трансляция Zoom на YouTube",
+        "file": "lessons/02-tehnicheskie-nuansy/17-translacia-zoom-youtube.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/translacia-zoom-youtube"
+      },
+      {
+        "title": "Упаковка материалов в базу знаний",
+        "file": "lessons/02-tehnicheskie-nuansy/18-upakovka-baza-znanij.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/upakovka-baza-znanij"
+      },
+      {
+        "title": "Как создать второй аккаунт в Telegram и MAX",
+        "file": "lessons/02-tehnicheskie-nuansy/19-vtoroj-akkaunt-telegram.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/tech-nuances/vtoroj-akkaunt-telegram"
+      }
+    ]
+  },
+  {
+    "slug": "03-vvedenie-v-neiroseti",
+    "title": "Введение в нейросети",
+    "count": 11,
+    "lessons": [
+      {
+        "title": "Как делать баннеры в Gemini для TG Ads, постов и каруселей",
+        "file": "lessons/03-vvedenie-v-neiroseti/01-bannery-s-gemini.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/bannery-s-gemini"
+      },
+      {
+        "title": "Безопасность и исправление багов в работе с Claude",
+        "file": "lessons/03-vvedenie-v-neiroseti/02-bezopasnost-i-ispravlenie-bagov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/bezopasnost-i-ispravlenie-bagov"
+      },
+      {
+        "title": "Claude: как работать с нейросетью от Anthropic",
+        "file": "lessons/03-vvedenie-v-neiroseti/03-claude.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/claude"
+      },
+      {
+        "title": "Claude для продаж в переписках и напоминаний о созвонах",
+        "file": "lessons/03-vvedenie-v-neiroseti/04-claude-v-perepiskah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/claude-v-perepiskah"
+      },
+      {
+        "title": "Как собрать нейрокуратора в Telegram",
+        "file": "lessons/03-vvedenie-v-neiroseti/05-neirokurator-v-telegram.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/neirokurator-v-telegram"
+      },
+      {
+        "title": "Нейромышление",
+        "file": "lessons/03-vvedenie-v-neiroseti/06-nejromyshlenie.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/nejromyshlenie"
+      },
+      {
+        "title": "Как обучить Claude писать в вашем стиле",
+        "file": "lessons/03-vvedenie-v-neiroseti/07-obuchenie-claude-stilu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/obuchenie-claude-stilu"
+      },
+      {
+        "title": "Как делать презентации в Claude",
+        "file": "lessons/03-vvedenie-v-neiroseti/08-prezentacii-v-claude.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/prezentacii-v-claude"
+      },
+      {
+        "title": "Как разбирать продающие созвоны с Claude",
+        "file": "lessons/03-vvedenie-v-neiroseti/09-razbor-zvonkov-s-claude.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/razbor-zvonkov-s-claude"
+      },
+      {
+        "title": "Как сделать сайт с помощью Claude",
+        "file": "lessons/03-vvedenie-v-neiroseti/10-sajt-s-claude.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/sajt-s-claude"
+      },
+      {
+        "title": "Как управлять Claude через Telegram-бота",
+        "file": "lessons/03-vvedenie-v-neiroseti/11-telegram-bot-claude.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/neiroseti/telegram-bot-claude"
+      }
+    ]
+  },
+  {
+    "slug": "04-produkt-i-offer",
+    "title": "Продукт и оффер",
+    "count": 10,
+    "lessons": [
+      {
+        "title": "Анализ конкурентов",
+        "file": "lessons/04-produkt-i-offer/01-analiz-konkurentov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/analiz-konkurentov"
+      },
+      {
+        "title": "Что и кому вы продаёте",
+        "file": "lessons/04-produkt-i-offer/02-cto-i-komu-vy-prodaete.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/cto-i-komu-vy-prodaete"
+      },
+      {
+        "title": "Докрутка оффера",
+        "file": "lessons/04-produkt-i-offer/03-dokrutka-offera.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/dokrutka-offera"
+      },
+      {
+        "title": "Как правильно выбрать цену",
+        "file": "lessons/04-produkt-i-offer/04-kak-pravilno-vybrat-cenu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/kak-pravilno-vybrat-cenu"
+      },
+      {
+        "title": "Поиск конкурентов",
+        "file": "lessons/04-produkt-i-offer/05-poisk-konkurentov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/poisk-konkurentov"
+      },
+      {
+        "title": "Продуктовая линейка: что в ней должно быть",
+        "file": "lessons/04-produkt-i-offer/06-produktovaja-linejka.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/produktovaja-linejka"
+      },
+      {
+        "title": "Разработка сильного оффера",
+        "file": "lessons/04-produkt-i-offer/07-razrabotka-silnogo-offera.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/razrabotka-silnogo-offera"
+      },
+      {
+        "title": "С чего начать: услуга, курс, личная работа",
+        "file": "lessons/04-produkt-i-offer/08-s-cego-nacat-usluga-kurs-nastavnicestvo.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/s-cego-nacat-usluga-kurs-nastavnicestvo"
+      },
+      {
+        "title": "Создание программы",
+        "file": "lessons/04-produkt-i-offer/09-sozdanie-programmy.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/sozdanie-programmy"
+      },
+      {
+        "title": "Ведение клиентов",
+        "file": "lessons/04-produkt-i-offer/10-vedenie-klientov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/produkt-i-offer/vedenie-klientov"
+      }
+    ]
+  },
+  {
+    "slug": "05-prodayuschie-konsultacii",
+    "title": "Продающие консультации",
+    "count": 9,
+    "lessons": [
+      {
+        "title": "Где проводить созвоны, как их записывать и анализировать",
+        "file": "lessons/05-prodayuschie-konsultacii/01-gde-provodit-sozvony.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/gde-provodit-sozvony"
+      },
+      {
+        "title": "Общение с людьми, оставившими заявку",
+        "file": "lessons/05-prodayuschie-konsultacii/02-obshenie-s-ostavivshimi-zayavku.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/obshenie-s-ostavivshimi-zayavku"
+      },
+      {
+        "title": "Работа с заявками после созвона",
+        "file": "lessons/05-prodayuschie-konsultacii/03-rabota-s-zayavkami-posle-sozvona.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/rabota-s-zayavkami-posle-sozvona"
+      },
+      {
+        "title": "Создание журнала созвонов",
+        "file": "lessons/05-prodayuschie-konsultacii/04-sozdanie-zhurnala-sozvonov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/sozdanie-zhurnala-sozvonov"
+      },
+      {
+        "title": "Способ быстро прокачаться в продажах",
+        "file": "lessons/05-prodayuschie-konsultacii/05-sposob-bystro-prokachatsya-v-prodazhah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/sposob-bystro-prokachatsya-v-prodazhah"
+      },
+      {
+        "title": "Структура продающей консультации",
+        "file": "lessons/05-prodayuschie-konsultacii/06-struktura-prodayushchej-konsultacii.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/struktura-prodayushchej-konsultacii"
+      },
+      {
+        "title": "Таблица для расчёта конверсий",
+        "file": "lessons/05-prodayuschie-konsultacii/07-tablica-dlya-rascheta-konversiy.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/tablica-dlya-rascheta-konversiy"
+      },
+      {
+        "title": "Тренировка продаж с ChatGPT",
+        "file": "lessons/05-prodayuschie-konsultacii/08-trenirovka-prodazh-s-chatgpt.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/trenirovka-prodazh-s-chatgpt"
+      },
+      {
+        "title": "Увеличение доходимости до консультации",
+        "file": "lessons/05-prodayuschie-konsultacii/09-uvelichenie-dohodimosti-do-konsultacii.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodayushchie-konsultacii/uvelichenie-dohodimosti-do-konsultacii"
+      }
+    ]
+  },
+  {
+    "slug": "06-yuridicheskie-aspekty",
+    "title": "Юридические аспекты",
+    "count": 10,
+    "lessons": [
+      {
+        "title": "Оформление самозанятости и ИП",
+        "file": "lessons/06-yuridicheskie-aspekty/01-oformlenie-samozanatosti.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/oformlenie-samozanatosti"
+      },
+      {
+        "title": "Шаблон договора с подрядчиком",
+        "file": "lessons/06-yuridicheskie-aspekty/02-shablon-dogovora-s-podryadchikom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/shablon-dogovora-s-podryadchikom"
+      },
+      {
+        "title": "Шаблон договора с приглашённым спикером",
+        "file": "lessons/06-yuridicheskie-aspekty/03-shablon-dogovora-so-spikerom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/shablon-dogovora-so-spikerom"
+      },
+      {
+        "title": "Шаблон публичной оферты",
+        "file": "lessons/06-yuridicheskie-aspekty/04-shablon-oferty.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/shablon-oferty"
+      },
+      {
+        "title": "Шаблон партнёрского договора",
+        "file": "lessons/06-yuridicheskie-aspekty/05-shablon-partnerskogo-dogovora.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/shablon-partnerskogo-dogovora"
+      },
+      {
+        "title": "Шаблон Политики конфиденциальности",
+        "file": "lessons/06-yuridicheskie-aspekty/06-shablon-politiki-konfidencialnosti.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/shablon-politiki-konfidencialnosti"
+      },
+      {
+        "title": "Шаблон Согласия на обработку персональных данных",
+        "file": "lessons/06-yuridicheskie-aspekty/07-shablon-soglasiya-na-obrabotku-pd.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/shablon-soglasiya-na-obrabotku-pd"
+      },
+      {
+        "title": "Шаблон Согласия на рекламные материалы",
+        "file": "lessons/06-yuridicheskie-aspekty/08-shablon-soglasiya-na-reklamnye-materialy.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/shablon-soglasiya-na-reklamnye-materialy"
+      },
+      {
+        "title": "Уведомление в Роскомнадзор об обработке персональных данных",
+        "file": "lessons/06-yuridicheskie-aspekty/09-uvedomlenie-roskomnadzor.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/uvedomlenie-roskomnadzor"
+      },
+      {
+        "title": "Юридические основы онлайн-продаж в России",
+        "file": "lessons/06-yuridicheskie-aspekty/10-yuridicheskie-osnovy-online-prodazh.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/yuridicheskie-aspekty/yuridicheskie-osnovy-online-prodazh"
+      }
+    ]
+  },
+  {
+    "slug": "07-priyom-oplat",
+    "title": "Приём оплат и рассрочки",
+    "count": 7,
+    "lessons": [
+      {
+        "title": "АктивКредит – рассрочки для граждан СНГ",
+        "file": "lessons/07-priyom-oplat/01-aktivkredit.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/priem-oplat/aktivkredit"
+      },
+      {
+        "title": "Приём оплат через криптовалюту",
+        "file": "lessons/07-priyom-oplat/02-crypto.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/priem-oplat/crypto"
+      },
+      {
+        "title": "Как быть, если клиент хочет заключить договор",
+        "file": "lessons/07-priyom-oplat/03-kak-byt-esli-klient-hocet-zaklucit-dogovor.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/priem-oplat/kak-byt-esli-klient-hocet-zaklucit-dogovor"
+      },
+      {
+        "title": "Как быть, если клиент просит сделать возврат",
+        "file": "lessons/07-priyom-oplat/04-kak-byt-esli-klient-prosit-sdelat-vozvrat.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/priem-oplat/kak-byt-esli-klient-prosit-sdelat-vozvrat"
+      },
+      {
+        "title": "МаниФест – сервис для оформления внутренних рассрочек",
+        "file": "lessons/07-priyom-oplat/05-manifest.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/priem-oplat/manifest"
+      },
+      {
+        "title": "Оформление рассрочек и что делать, если рассрочку не одобряют",
+        "file": "lessons/07-priyom-oplat/06-oformlenie-rassrocek.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/priem-oplat/oformlenie-rassrocek"
+      },
+      {
+        "title": "Подключение Продамуса",
+        "file": "lessons/07-priyom-oplat/07-podklucenie-prodamusa.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/priem-oplat/podklucenie-prodamusa"
+      }
+    ]
+  },
+  {
+    "slug": "08-vedenie-bloga",
+    "title": "Ведение блога",
+    "count": 14,
+    "lessons": [
+      {
+        "title": "Ажиотаж, лояльность и вовлечение",
+        "file": "lessons/08-vedenie-bloga/01-azhiotazh-loyalnost-vovlechenie.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/azhiotazh-loyalnost-vovlechenie"
+      },
+      {
+        "title": "Цепляющие тексты",
+        "file": "lessons/08-vedenie-bloga/02-ceplyayushchie-teksty.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/ceplyayushchie-teksty"
+      },
+      {
+        "title": "Что не стоит делать в блоге",
+        "file": "lessons/08-vedenie-bloga/03-chto-ne-stoit-delat-v-bloge.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/chto-ne-stoit-delat-v-bloge"
+      },
+      {
+        "title": "Добавление подкастов и видео",
+        "file": "lessons/08-vedenie-bloga/04-dobavlenie-podkastov-i-video.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/dobavlenie-podkastov-i-video"
+      },
+      {
+        "title": "Добавление прямых эфиров",
+        "file": "lessons/08-vedenie-bloga/05-dobavlenie-pryamyh-efirov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/dobavlenie-pryamyh-efirov"
+      },
+      {
+        "title": "Главная задача блога",
+        "file": "lessons/08-vedenie-bloga/06-glavnaya-zadacha-bloga.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/glavnaya-zadacha-bloga"
+      },
+      {
+        "title": "Готовый контент-план",
+        "file": "lessons/08-vedenie-bloga/07-gotovyj-kontent-plan.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/gotovyj-kontent-plan"
+      },
+      {
+        "title": "Идеи для заголовков",
+        "file": "lessons/08-vedenie-bloga/08-idei-dlya-zagolovkov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/idei-dlya-zagolovkov"
+      },
+      {
+        "title": "Как сделать блог интересным",
+        "file": "lessons/08-vedenie-bloga/09-kak-sdelat-blog-interesnym.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/kak-sdelat-blog-interesnym"
+      },
+      {
+        "title": "Как собирать и публиковать отзывы и кейсы",
+        "file": "lessons/08-vedenie-bloga/10-kak-sobirat-i-publikovat-otzyvy-i-kejsy.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/kak-sobirat-i-publikovat-otzyvy-i-kejsy"
+      },
+      {
+        "title": "Модели ведения блога",
+        "file": "lessons/08-vedenie-bloga/11-modeli-vedenia-bloga.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/modeli-vedenia-bloga"
+      },
+      {
+        "title": "Переплетение контента в единую сеть",
+        "file": "lessons/08-vedenie-bloga/12-perepletenie-kontenta-v-edinuu-set.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/perepletenie-kontenta-v-edinuu-set"
+      },
+      {
+        "title": "Продающий визуал",
+        "file": "lessons/08-vedenie-bloga/13-prodayushchiy-vizual.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/prodayushchiy-vizual"
+      },
+      {
+        "title": "Создание банка идей",
+        "file": "lessons/08-vedenie-bloga/14-sozdanie-banka-idey.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/vedenie-bloga/sozdanie-banka-idey"
+      }
+    ]
+  },
+  {
+    "slug": "09-upakovka-socsetey",
+    "title": "Упаковка соцсетей",
+    "count": 13,
+    "lessons": [
+      {
+        "title": "Отстройка от конкурентов",
+        "file": "lessons/09-upakovka-socsetey/01-otstrojka-ot-konkurentov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/otstrojka-ot-konkurentov"
+      },
+      {
+        "title": "Первые посты в канале",
+        "file": "lessons/09-upakovka-socsetey/02-pervye-posty-v-kanale.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/pervye-posty-v-kanale"
+      },
+      {
+        "title": "Пирамида Дилтса",
+        "file": "lessons/09-upakovka-socsetey/03-piramida-diltsa.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/piramida-diltsa"
+      },
+      {
+        "title": "Пост в закрепе",
+        "file": "lessons/09-upakovka-socsetey/04-post-v-zakrepe.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/post-v-zakrepe"
+      },
+      {
+        "title": "Приглашение подписчиков из других соцсетей",
+        "file": "lessons/09-upakovka-socsetey/05-priglashenie-podpiscikov-iz-drugih-socsetej.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/priglashenie-podpiscikov-iz-drugih-socsetej"
+      },
+      {
+        "title": "Приглашение в канал списка контактов",
+        "file": "lessons/09-upakovka-socsetey/06-priglashenie-v-kanal-spiska-kontaktov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/priglashenie-v-kanal-spiska-kontaktov"
+      },
+      {
+        "title": "Упаковка Instagram*",
+        "file": "lessons/09-upakovka-socsetey/07-upakovka-instagram.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/upakovka-instagram"
+      },
+      {
+        "title": "Упаковка канала в MAX",
+        "file": "lessons/09-upakovka-socsetey/08-upakovka-kanala-v-max.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/upakovka-kanala-v-max"
+      },
+      {
+        "title": "Упаковка кейсов клиентов",
+        "file": "lessons/09-upakovka-socsetey/09-upakovka-kejsov-klientov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/upakovka-kejsov-klientov"
+      },
+      {
+        "title": "Упаковка личного аккаунта в Telegram",
+        "file": "lessons/09-upakovka-socsetey/10-upakovka-lichnogo-akkaunta.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/upakovka-lichnogo-akkaunta"
+      },
+      {
+        "title": "Упаковка личной страницы ВКонтакте",
+        "file": "lessons/09-upakovka-socsetey/11-upakovka-lichnoj-stranicy-vk.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/upakovka-lichnoj-stranicy-vk"
+      },
+      {
+        "title": "Упаковка сообщества ВКонтакте",
+        "file": "lessons/09-upakovka-socsetey/12-upakovka-soobshestva-vk.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/upakovka-soobshestva-vk"
+      },
+      {
+        "title": "Упаковка Telegram-канала",
+        "file": "lessons/09-upakovka-socsetey/13-upakovka-telegram-kanala.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/upakovka-socsetey/upakovka-telegram-kanala"
+      }
+    ]
+  },
+  {
+    "slug": "10-uslovno-besplatnoe-prodvizhenie",
+    "title": "Условно-бесплатное продвижение",
+    "count": 17,
+    "lessons": [
+      {
+        "title": "Нейробот для поиска клиентов в чатах",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/01-bot-poisk-klientov-v-chatah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/bot-poisk-klientov-v-chatah"
+      },
+      {
+        "title": "Экспертные круги",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/02-ekspertnye-krugi.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/ekspertnye-krugi"
+      },
+      {
+        "title": "Комментинг в каналах с ЦА",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/03-kommenting-v-kanalah-s-ca.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/kommenting-v-kanalah-s-ca"
+      },
+      {
+        "title": "Конференции",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/04-konferencii.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/konferencii"
+      },
+      {
+        "title": "Марафоны и интенсивы",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/05-marafony-i-intensivy.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/marafony-i-intensivy"
+      },
+      {
+        "title": "Нейрокомментинг",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/06-nejrokommenting-samostoatelno.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/nejrokommenting-samostoatelno"
+      },
+      {
+        "title": "НейроPinterest",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/07-nejropinterest.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/nejropinterest"
+      },
+      {
+        "title": "Нейровидео",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/08-nejrorils.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/nejrorils"
+      },
+      {
+        "title": "Нетворкинги",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/09-netvorkingi.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/netvorkingi"
+      },
+      {
+        "title": "Организация мероприятий",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/10-organizacia-meropriatij.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/organizacia-meropriatij"
+      },
+      {
+        "title": "Папки с каналами",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/11-papki-s-kanalami.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/papki-s-kanalami"
+      },
+      {
+        "title": "Продвижение через короткие видео",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/12-prodausij-reels-ego-reklama.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/prodausij-reels-ego-reklama"
+      },
+      {
+        "title": "Продвижение через длинные видео",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/13-prodvizenie-cerez-dlinnye-video.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/prodvizenie-cerez-dlinnye-video"
+      },
+      {
+        "title": "Продвижение через Threads*",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/14-prodvizenie-cerez-threads.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/prodvizenie-cerez-threads"
+      },
+      {
+        "title": "Socpower",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/15-socpower.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/socpower"
+      },
+      {
+        "title": "НейроThreads",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/16-threads-na-avtopilote.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/threads-na-avtopilote"
+      },
+      {
+        "title": "Взаимопиар, прямые эфиры и спикерство на курсах",
+        "file": "lessons/10-uslovno-besplatnoe-prodvizhenie/17-vzaimopiar-pramye-efiry-i-spikerstvo-na-kursah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/uslovno-besplatnoe-prodvizenie/vzaimopiar-pramye-efiry-i-spikerstvo-na-kursah"
+      }
+    ]
+  },
+  {
+    "slug": "11-reklama",
+    "title": "Реклама",
+    "count": 13,
+    "lessons": [
+      {
+        "title": "Нейрокомментинг",
+        "file": "lessons/11-reklama/01-nejrokommenting.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/nejrokommenting"
+      },
+      {
+        "title": "Реклама в MAX-каналах с подрядчиком",
+        "file": "lessons/11-reklama/02-reklama-v-max-kanalah-s-podradcikom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/reklama-v-max-kanalah-s-podradcikom"
+      },
+      {
+        "title": "Реклама в MAX-каналах самостоятельно",
+        "file": "lessons/11-reklama/03-reklama-v-max-kanalah-samostoatelno.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/reklama-v-max-kanalah-samostoatelno"
+      },
+      {
+        "title": "Реклама в TG-каналах с подрядчиком",
+        "file": "lessons/11-reklama/04-reklama-v-tg-kanalah-s-podradcikom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/reklama-v-tg-kanalah-s-podradcikom"
+      },
+      {
+        "title": "Реклама в TG-каналах самостоятельно",
+        "file": "lessons/11-reklama/05-reklama-v-tg-kanalah-samostoatelno.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/reklama-v-tg-kanalah-samostoatelno"
+      },
+      {
+        "title": "Таргет в Facebook* и Instagram* с подрядчиком",
+        "file": "lessons/11-reklama/06-target-fb-instagram-s-podradcikom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/target-fb-instagram-s-podradcikom"
+      },
+      {
+        "title": "Таргет в Facebook* и Instagram* самостоятельно",
+        "file": "lessons/11-reklama/07-target-fb-instagram-samostoatelno.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/target-fb-instagram-samostoatelno"
+      },
+      {
+        "title": "Таргет ВКонтакте самостоятельно",
+        "file": "lessons/11-reklama/08-target-vkontakte-samostoatelno.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/target-vkontakte-samostoatelno"
+      },
+      {
+        "title": "Таргет во ВКонтакте с подрядчиком",
+        "file": "lessons/11-reklama/09-target-vo-vkontakte.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/target-vo-vkontakte"
+      },
+      {
+        "title": "Telegram Ads с подрядчиком",
+        "file": "lessons/11-reklama/10-telegram-ads-s-podradcikom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/telegram-ads-s-podradcikom"
+      },
+      {
+        "title": "Telegram Ads самостоятельно",
+        "file": "lessons/11-reklama/11-telegram-ads-samostoatelno.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/telegram-ads-samostoatelno"
+      },
+      {
+        "title": "Яндекс Директ с подрядчиком",
+        "file": "lessons/11-reklama/12-yandex-direkt-s-podradcikom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/yandex-direkt-s-podradcikom"
+      },
+      {
+        "title": "Яндекс Директ самостоятельно",
+        "file": "lessons/11-reklama/13-yandex-direkt-samostoatelno.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/reklama/yandex-direkt-samostoatelno"
+      }
+    ]
+  },
+  {
+    "slug": "12-podgotovka-k-zapusku-reklamy",
+    "title": "Подготовка к запуску рекламы",
+    "count": 8,
+    "lessons": [
+      {
+        "title": "UTM-метки и Яндекс Метрика – аналитика рекламы",
+        "file": "lessons/12-podgotovka-k-zapusku-reklamy/01-analitika-rezultatov-reklamy.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podgotovka-k-zapusku-reklamy/analitika-rezultatov-reklamy"
+      },
+      {
+        "title": "Анонс лид-магнита по своей базе",
+        "file": "lessons/12-podgotovka-k-zapusku-reklamy/02-anons-lid-magnita-po-baze.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podgotovka-k-zapusku-reklamy/anons-lid-magnita-po-baze"
+      },
+      {
+        "title": "Добавление кнопки к посту в закрепе",
+        "file": "lessons/12-podgotovka-k-zapusku-reklamy/03-dobavlenie-knopki-k-postu-v-zakrepe.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podgotovka-k-zapusku-reklamy/dobavlenie-knopki-k-postu-v-zakrepe"
+      },
+      {
+        "title": "Как быстро окупать вложения в рекламу",
+        "file": "lessons/12-podgotovka-k-zapusku-reklamy/04-kak-bystro-okupat-vlozenia-v-reklamu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podgotovka-k-zapusku-reklamy/kak-bystro-okupat-vlozenia-v-reklamu"
+      },
+      {
+        "title": "Как, что и зачем писать всем новым подписчикам",
+        "file": "lessons/12-podgotovka-k-zapusku-reklamy/05-kak-cto-i-zacem-pisat-vsem-novym-podpiscikam.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podgotovka-k-zapusku-reklamy/kak-cto-i-zacem-pisat-vsem-novym-podpiscikam"
+      },
+      {
+        "title": "Подготовка к запуску рекламы",
+        "file": "lessons/12-podgotovka-k-zapusku-reklamy/06-podgotovka-k-zapusku-reklamy.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podgotovka-k-zapusku-reklamy/podgotovka-k-zapusku-reklamy"
+      },
+      {
+        "title": "Посадочная страница",
+        "file": "lessons/12-podgotovka-k-zapusku-reklamy/07-posadocnaa-stranica-dla-ad-fb-vk.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podgotovka-k-zapusku-reklamy/posadocnaa-stranica-dla-ad-fb-vk"
+      },
+      {
+        "title": "Сколько вкладывать в рекламу",
+        "file": "lessons/12-podgotovka-k-zapusku-reklamy/08-skolko-vkladyvat-v-reklamu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podgotovka-k-zapusku-reklamy/skolko-vkladyvat-v-reklamu"
+      }
+    ]
+  },
+  {
+    "slug": "13-lid-magnitnaya-voronka",
+    "title": "Лид-магнитная воронка",
+    "count": 14,
+    "lessons": [
+      {
+        "title": "Лид-магнит в формате 1 видео",
+        "file": "lessons/13-lid-magnitnaya-voronka/01-lid-magnit-1-video.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/lid-magnit-1-video"
+      },
+      {
+        "title": "Лид-магнит в формате 3 видео",
+        "file": "lessons/13-lid-magnitnaya-voronka/02-lid-magnit-3-video.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/lid-magnit-3-video"
+      },
+      {
+        "title": "Лид-магнит в формате кейса",
+        "file": "lessons/13-lid-magnitnaya-voronka/03-lid-magnit-kejs.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/lid-magnit-kejs"
+      },
+      {
+        "title": "Поиск идей для лид-магнита",
+        "file": "lessons/13-lid-magnitnaya-voronka/04-poisk-idej-dlya-lid-magnita.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/poisk-idej-dlya-lid-magnita"
+      },
+      {
+        "title": "Работа с базой подписчиков в боте",
+        "file": "lessons/13-lid-magnitnaya-voronka/05-rabota-s-bazoj-podpiscikov-v-bote.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/rabota-s-bazoj-podpiscikov-v-bote"
+      },
+      {
+        "title": "Разбор моей лид-магнитной воронки",
+        "file": "lessons/13-lid-magnitnaya-voronka/06-razbor-lid-magnitnoj-voronki.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/razbor-lid-magnitnoj-voronki"
+      },
+      {
+        "title": "Сборка лид-магнита",
+        "file": "lessons/13-lid-magnitnaya-voronka/07-sborka-lid-magnita.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/sborka-lid-magnita"
+      },
+      {
+        "title": "Сборка MAX-бота",
+        "file": "lessons/13-lid-magnitnaya-voronka/08-sborka-max-bota.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/sborka-max-bota"
+      },
+      {
+        "title": "Сборка Telegram-бота",
+        "file": "lessons/13-lid-magnitnaya-voronka/09-sborka-telegrambota.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/sborka-telegrambota"
+      },
+      {
+        "title": "Сборка ВК-бота",
+        "file": "lessons/13-lid-magnitnaya-voronka/10-sborka-vk-bota.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/sborka-vk-bota"
+      },
+      {
+        "title": "Серия сообщений для бота",
+        "file": "lessons/13-lid-magnitnaya-voronka/11-seriya-soobshenij-dlya-bota.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/seriya-soobshenij-dlya-bota"
+      },
+      {
+        "title": "Тест идей для лид-магнита с помощью TG Ads",
+        "file": "lessons/13-lid-magnitnaya-voronka/12-test-idej-dlya-lid-magnita-tg-ads.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/test-idej-dlya-lid-magnita-tg-ads"
+      },
+      {
+        "title": "Виды лид-магнитов и какой выбрать вам",
+        "file": "lessons/13-lid-magnitnaya-voronka/13-vidy-lid-magnitov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/vidy-lid-magnitov"
+      },
+      {
+        "title": "Запись видео",
+        "file": "lessons/13-lid-magnitnaya-voronka/14-zapis-video.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/lid-magnitnaya-voronka/zapis-video"
+      }
+    ]
+  },
+  {
+    "slug": "14-podryadchiki-i-soft-dlya-efirov",
+    "title": "Подрядчики и софт для эфиров",
+    "count": 5,
+    "lessons": [
+      {
+        "title": "База шаблонов",
+        "file": "lessons/14-podryadchiki-i-soft-dlya-efirov/01-baza-sablonov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podradciki-soft-efiry/baza-sablonov"
+      },
+      {
+        "title": "Чёрный список подрядчиков",
+        "file": "lessons/14-podryadchiki-i-soft-dlya-efirov/02-cernyj-spisok-podradcikov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podradciki-soft-efiry/cernyj-spisok-podradcikov"
+      },
+      {
+        "title": "Проверенные подрядчики",
+        "file": "lessons/14-podryadchiki-i-soft-dlya-efirov/03-proverennye-podradciki.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podradciki-soft-efiry/proverennye-podradciki"
+      },
+      {
+        "title": "Рекомендованные книги",
+        "file": "lessons/14-podryadchiki-i-soft-dlya-efirov/04-rekomendovannye-knigi.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podradciki-soft-efiry/rekomendovannye-knigi"
+      },
+      {
+        "title": "Рекомендованный софт",
+        "file": "lessons/14-podryadchiki-i-soft-dlya-efirov/05-rekomendovannyj-soft.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/podradciki-soft-efiry/rekomendovannyj-soft"
+      }
+    ]
+  },
+  {
+    "slug": "15-sozdanie-sajta",
+    "title": "Создание сайта",
+    "count": 3,
+    "lessons": [
+      {
+        "title": "Прототип сайта с описанием продукта",
+        "file": "lessons/15-sozdanie-sajta/01-prototip-sajta-s-opisaniem-produkta.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/sozdanie-sajta/prototip-sajta-s-opisaniem-produkta"
+      },
+      {
+        "title": "Сборка прототипа в готовый сайт",
+        "file": "lessons/15-sozdanie-sajta/02-sborka-prototipa-v-gotovyj-sajt.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/sozdanie-sajta/sborka-prototipa-v-gotovyj-sajt"
+      },
+      {
+        "title": "Создание сайта-визитки",
+        "file": "lessons/15-sozdanie-sajta/03-sozdanie-sajta-vizitki.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/sozdanie-sajta/sozdanie-sajta-vizitki"
+      }
+    ]
+  },
+  {
+    "slug": "16-prodazhi-cherez-zapuski",
+    "title": "Продажи через запуски",
+    "count": 11,
+    "lessons": [
+      {
+        "title": "Бот для напоминания о вебинаре",
+        "file": "lessons/16-prodazhi-cherez-zapuski/01-bot-dla-napominania-o-vebinare.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/bot-dla-napominania-o-vebinare"
+      },
+      {
+        "title": "Что такое запуск и из чего он состоит",
+        "file": "lessons/16-prodazhi-cherez-zapuski/02-cto-takoe-zapusk.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/cto-takoe-zapusk"
+      },
+      {
+        "title": "Добавление канала для списка предзаписи",
+        "file": "lessons/16-prodazhi-cherez-zapuski/03-dobavlenie-kanala-predzapisi.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/dobavlenie-kanala-predzapisi"
+      },
+      {
+        "title": "Масштабирование запусковой модели",
+        "file": "lessons/16-prodazhi-cherez-zapuski/04-masstabirovanie-zapuskovoj-modeli.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/masstabirovanie-zapuskovoj-modeli"
+      },
+      {
+        "title": "Обработка заявок",
+        "file": "lessons/16-prodazhi-cherez-zapuski/05-obrabotka-zaavok.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/obrabotka-zaavok"
+      },
+      {
+        "title": "Превращение вебинара в автовебинар",
+        "file": "lessons/16-prodazhi-cherez-zapuski/06-prevrasenie-vebinara-v-avtovebinar.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/prevrasenie-vebinara-v-avtovebinar"
+      },
+      {
+        "title": "Продающий эфир/вебинар",
+        "file": "lessons/16-prodazhi-cherez-zapuski/07-prodausij-efir-vebinar.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/prodausij-efir-vebinar"
+      },
+      {
+        "title": "Прогрев перед запуском",
+        "file": "lessons/16-prodazhi-cherez-zapuski/08-progrev-pered-zapuskom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/progrev-pered-zapuskom"
+      },
+      {
+        "title": "Серия постов для запуска",
+        "file": "lessons/16-prodazhi-cherez-zapuski/09-seria-postov-dla-zapuska.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/seria-postov-dla-zapuska"
+      },
+      {
+        "title": "Усиление результатов запуска",
+        "file": "lessons/16-prodazhi-cherez-zapuski/10-usilenie-rezultatov-zapuska.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/usilenie-rezultatov-zapuska"
+      },
+      {
+        "title": "Запуск через 3 видео или эфира",
+        "file": "lessons/16-prodazhi-cherez-zapuski/11-zapusk-cerez-3-video-ili-efira.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-cerez-zapuski/zapusk-cerez-3-video-ili-efira"
+      }
+    ]
+  },
+  {
+    "slug": "17-prodazhi-nedorogih-produktov",
+    "title": "Продажи недорогих продуктов",
+    "count": 5,
+    "lessons": [
+      {
+        "title": "Что важно знать перед запуском недорогого продукта",
+        "file": "lessons/17-prodazhi-nedorogih-produktov/01-cto-vazno-znat-pered-zapuskom-nedorogogo-produkta.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-nedorogih-produktov/cto-vazno-znat-pered-zapuskom-nedorogogo-produkta"
+      },
+      {
+        "title": "Настройка бота для приёма оплат",
+        "file": "lessons/17-prodazhi-nedorogih-produktov/02-nastrojka-bota-dla-priema-oplat.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-nedorogih-produktov/nastrojka-bota-dla-priema-oplat"
+      },
+      {
+        "title": "Схема продажи через запуск",
+        "file": "lessons/17-prodazhi-nedorogih-produktov/03-shema-prodazi-cerez-zapusk.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-nedorogih-produktov/shema-prodazi-cerez-zapusk"
+      },
+      {
+        "title": "Схема продажи клуба",
+        "file": "lessons/17-prodazhi-nedorogih-produktov/04-shema-prodazi-kluba.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-nedorogih-produktov/shema-prodazi-kluba"
+      },
+      {
+        "title": "Схема продажи в воронке",
+        "file": "lessons/17-prodazhi-nedorogih-produktov/05-shema-prodazi-v-voronke.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/prodazi-nedorogih-produktov/shema-prodazi-v-voronke"
+      }
+    ]
+  },
+  {
+    "slug": "18-bystrye-prodazhi",
+    "title": "Быстрые продажи",
+    "count": 21,
+    "lessons": [
+      {
+        "title": "Быстрый запуск на свою аудиторию",
+        "file": "lessons/18-bystrye-prodazhi/01-bystryj-zapusk-na-svou-auditoriu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/bystryj-zapusk-na-svou-auditoriu"
+      },
+      {
+        "title": "Челлендж бесплатных консультаций",
+        "file": "lessons/18-bystrye-prodazhi/02-cellendz-besplatnyh-konsultacij.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/cellendz-besplatnyh-konsultacij"
+      },
+      {
+        "title": "Эфир с разборами подписчиков",
+        "file": "lessons/18-bystrye-prodazhi/03-efir-s-razborami-podpiscikov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/efir-s-razborami-podpiscikov"
+      },
+      {
+        "title": "Игральная кость",
+        "file": "lessons/18-bystrye-prodazhi/04-igralnaa-kost.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/igralnaa-kost"
+      },
+      {
+        "title": "Интервью с клиентом",
+        "file": "lessons/18-bystrye-prodazhi/05-intervu-s-klientom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/intervu-s-klientom"
+      },
+      {
+        "title": "Инвайтинг",
+        "file": "lessons/18-bystrye-prodazhi/06-invajting.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/invajting"
+      },
+      {
+        "title": "Контентный прямой эфир",
+        "file": "lessons/18-bystrye-prodazhi/07-kontentnyj-pramoj-efir.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/kontentnyj-pramoj-efir"
+      },
+      {
+        "title": "Подарок в личных сообщениях",
+        "file": "lessons/18-bystrye-prodazhi/08-podarok-v-licnyh-soobseniah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/podarok-v-licnyh-soobseniah"
+      },
+      {
+        "title": "Поиск чатов с целевой аудиторией",
+        "file": "lessons/18-bystrye-prodazhi/09-poisk-catov-s-celevoj-auditoriej.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/poisk-catov-s-celevoj-auditoriej"
+      },
+      {
+        "title": "Поиск клиентов через Авито",
+        "file": "lessons/18-bystrye-prodazhi/10-poisk-klientov-cerez-avito.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/poisk-klientov-cerez-avito"
+      },
+      {
+        "title": "Поиск клиентов в чатах",
+        "file": "lessons/18-bystrye-prodazhi/11-poisk-klientov-v-catah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/poisk-klientov-v-catah"
+      },
+      {
+        "title": "Пост с приглашением на консультацию",
+        "file": "lessons/18-bystrye-prodazhi/12-post-s-priglasheniem-na-konsultaciyu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/post-s-priglasheniem-na-konsultaciyu"
+      },
+      {
+        "title": "Пост с разборами подписчиков",
+        "file": "lessons/18-bystrye-prodazhi/13-post-s-razborami-podpiscikov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/post-s-razborami-podpiscikov"
+      },
+      {
+        "title": "Прямой эфир с разбором кейса",
+        "file": "lessons/18-bystrye-prodazhi/14-pramoj-efir-s-razborom-kejsa.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/pramoj-efir-s-razborom-kejsa"
+      },
+      {
+        "title": "Приглашение списка контактов",
+        "file": "lessons/18-bystrye-prodazhi/15-priglashenie-spiska-kontaktov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/priglashenie-spiska-kontaktov"
+      },
+      {
+        "title": "Приглашение старых клиентов",
+        "file": "lessons/18-bystrye-prodazhi/16-priglashenie-staryh-klientov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/priglashenie-staryh-klientov"
+      },
+      {
+        "title": "Рассылка по своей аудитории в Instagram*",
+        "file": "lessons/18-bystrye-prodazhi/17-rassylka-po-svoej-auditorii-v-instagram.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/rassylka-po-svoej-auditorii-v-instagram"
+      },
+      {
+        "title": "Рассылка по своей аудитории в Telegram",
+        "file": "lessons/18-bystrye-prodazhi/18-rassylka-po-svoej-auditorii-v-telegram.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/rassylka-po-svoej-auditorii-v-telegram"
+      },
+      {
+        "title": "Stories с приглашением на консультацию",
+        "file": "lessons/18-bystrye-prodazhi/19-stories-s-priglasheniem-na-konsultaciyu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/stories-s-priglasheniem-na-konsultaciyu"
+      },
+      {
+        "title": "Тест в личных сообщениях",
+        "file": "lessons/18-bystrye-prodazhi/20-test-v-licnyh-soobseniah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/test-v-licnyh-soobseniah"
+      },
+      {
+        "title": "Зачем нужны быстрые продажи",
+        "file": "lessons/18-bystrye-prodazhi/21-zachem-nuzny-bystrye-prodazhi.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/bystrye-prodazhi/zachem-nuzny-bystrye-prodazhi"
+      }
+    ]
+  },
+  {
+    "slug": "19-generaciya-zayavok-s-bloga",
+    "title": "Генерация заявок с блога",
+    "count": 12,
+    "lessons": [
+      {
+        "title": "Быстрый запуск на свою аудиторию",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/01-bystryj-zapusk-na-svoyu-auditoriyu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/bystryj-zapusk-na-svoyu-auditoriyu"
+      },
+      {
+        "title": "Эфир с разборами подписчиков",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/02-efir-s-razborami-podpischikov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/efir-s-razborami-podpischikov"
+      },
+      {
+        "title": "Игральная кость",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/03-igralnaa-kost.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/igralnaa-kost"
+      },
+      {
+        "title": "Интервью с клиентом",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/04-intervyu-s-klientom.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/intervyu-s-klientom"
+      },
+      {
+        "title": "Календарь активностей для генерации заявок",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/05-kalendar-aktivnostej.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/kalendar-aktivnostej"
+      },
+      {
+        "title": "Контентный прямой эфир",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/06-kontentnyj-pryamoj-efir.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/kontentnyj-pryamoj-efir"
+      },
+      {
+        "title": "Ответы на вопросы в личных сообщениях",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/07-otvety-na-voprosy-v-licnyh-soobsheniyah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/otvety-na-voprosy-v-licnyh-soobsheniyah"
+      },
+      {
+        "title": "Подарок в личных сообщениях",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/08-podarok-v-licnyh-soobsheniyah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/podarok-v-licnyh-soobsheniyah"
+      },
+      {
+        "title": "Пост с прямым призывом на консультацию",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/09-post-s-pryamym-prizyvom-na-konsultaciyu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/post-s-pryamym-prizyvom-na-konsultaciyu"
+      },
+      {
+        "title": "Пост с разборами подписчиков",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/10-post-s-razborami-podpischikov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/post-s-razborami-podpischikov"
+      },
+      {
+        "title": "Прямой эфир с разбором кейса",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/11-pryamoj-efir-s-razborom-kejsa.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/pryamoj-efir-s-razborom-kejsa"
+      },
+      {
+        "title": "Тест в личных сообщениях",
+        "file": "lessons/19-generaciya-zayavok-s-bloga/12-test-v-licnyh-soobsheniyah.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/generaciya-zayavok-s-bloga/test-v-licnyh-soobsheniyah"
+      }
+    ]
+  },
+  {
+    "slug": "20-komanda-i-masshtabirovanie",
+    "title": "Команда и масштабирование",
+    "count": 5,
+    "lessons": [
+      {
+        "title": "Как ставить задачи ассистенту",
+        "file": "lessons/20-komanda-i-masshtabirovanie/01-kak-stavit-zadaci-assistentu.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/komanda-i-masstabirovanie/kak-stavit-zadaci-assistentu"
+      },
+      {
+        "title": "Масштабирование",
+        "file": "lessons/20-komanda-i-masshtabirovanie/02-masstabirovanie.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/komanda-i-masstabirovanie/masstabirovanie"
+      },
+      {
+        "title": "Найм ассистента",
+        "file": "lessons/20-komanda-i-masshtabirovanie/03-najm-assistenta.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/komanda-i-masstabirovanie/najm-assistenta"
+      },
+      {
+        "title": "Найм диагностов",
+        "file": "lessons/20-komanda-i-masshtabirovanie/04-najm-diagnostov.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/komanda-i-masstabirovanie/najm-diagnostov"
+      },
+      {
+        "title": "Построение отношений с командой",
+        "file": "lessons/20-komanda-i-masshtabirovanie/05-postroenie-otnosenij-s-komandoj.html",
+        "source": "https://learn.pavelshiriaev.ru/lesson/komanda-i-masstabirovanie/postroenie-otnosenij-s-komandoj"
+      }
+    ]
+  }
+]
