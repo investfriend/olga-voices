@@ -154,6 +154,22 @@ function openItem(catId, itemId) {
   const favKey = `${catId}/${itemId}`;
   const isFav = STATE.favorites.includes(favKey);
   const cont = document.getElementById('item-content');
+  const hasLessons = item.lessons && item.lessons.length > 0;
+  const lessonsHTML = hasLessons
+    ? `<h3 class="section-title" style="margin-top: 4px;">Уроки темы (${item.lessons.length})</h3>
+       <ul class="cards">
+         ${item.lessons.map((l, i) => `
+           <li class="card" onclick="openLessonLink('${l.url.replace(/'/g, "\\'")}')">
+             <div class="card-ic-circle">${i + 1}</div>
+             <div class="card-body">
+               <div class="card-t">${l.title}</div>
+               <div class="card-d">Открыть на платформе клуба</div>
+             </div>
+             <div class="card-arr">›</div>
+           </li>
+         `).join('')}
+       </ul>`
+    : `<button class="watch-btn" onclick="noLink()">▶ Откроется скоро</button>`;
   cont.innerHTML = `
     <div class="cat-header" style="background: ${cat.gradient}; min-height: 200px;">
       <div class="cat-header-emoji">${cat.icon}</div>
@@ -163,12 +179,11 @@ function openItem(catId, itemId) {
     </div>
     <div class="item-card-full">
       <div class="meta">
-        ${item.duration ? `<span>⏱ ${item.duration}</span>` : ''}
         ${item.tag ? `<span class="card-tag">${item.tag}</span>` : ''}
       </div>
       <p>${item.desc}</p>
-      <button class="watch-btn" onclick="noLink()">▶ Подробнее в клубе</button>
     </div>
+    ${lessonsHTML}
   `;
   document.getElementById('item-back').onclick = () => openCategory(catId);
   setPage('item');
@@ -244,6 +259,12 @@ function submitComplaint() {
   if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
   showToast('Жалоба отправлена, разберёмся');
   ta.value = '';
+}
+
+function openLessonLink(url) {
+  if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+  if (tg?.openLink) tg.openLink(url);
+  else window.open(url, '_blank');
 }
 
 function noLink() {
