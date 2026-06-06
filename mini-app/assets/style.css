@@ -1,0 +1,289 @@
+:root {
+  --bg: #0e1a17;
+  --bg-card: #1a2825;
+  --bg-card-2: #213330;
+  --text: #f0eee5;
+  --text-dim: #8b9c95;
+  --accent: #4dc88d;
+  --accent-soft: #2da678;
+  --tg-blue: #3390ec;
+  --line: rgba(255,255,255,0.06);
+  --danger: #ff6b6b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+body { padding-bottom: 80px; }
+
+/* === HEADER === */
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  min-height: 56px;
+}
+.hdr-close, .hdr-more {
+  background: transparent;
+  border: none;
+  color: var(--tg-blue);
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.hdr-more { color: var(--text-dim); font-size: 22px; }
+.hdr-title { text-align: center; flex: 1; }
+.hdr-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.hdr-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* === PAGES === */
+#app { padding: 0 16px; }
+.page { display: none; padding-top: 16px; padding-bottom: 16px; }
+.page.active { display: block; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  padding-top: 8px;
+}
+.page-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 22px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 26px 0 12px;
+  letter-spacing: 0.2px;
+}
+
+/* === HERO === */
+.hero-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 28px 22px;
+  text-align: center;
+  margin-top: 8px;
+}
+.hero-emoji { font-size: 42px; margin-bottom: 10px; }
+.hero-card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.hero-card p {
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* === INFO CARD (О сообществе) === */
+.info-card {
+  background: var(--bg-card);
+  border-radius: 14px;
+  padding: 22px 18px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.info-emoji { font-size: 28px; margin-bottom: 8px; }
+.info-card h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.info-card p {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+/* === CARDS === */
+.cards { list-style: none; }
+.card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.card:active { background: var(--bg-card-2); }
+.card.no-click { cursor: default; }
+.card.no-click:active { background: var(--bg-card); }
+.card-ic {
+  font-size: 22px;
+  width: 32px;
+  text-align: center;
+}
+.card-body { flex: 1; min-width: 0; }
+.card-t {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.card-d {
+  font-size: 13px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-arr {
+  color: var(--text-dim);
+  font-size: 22px;
+  font-weight: 300;
+  margin-left: 4px;
+}
+
+/* === EMPTY STATE === */
+.empty-state {
+  text-align: center;
+  padding: 80px 30px;
+  color: var(--text-dim);
+}
+.empty-emoji { font-size: 48px; margin-bottom: 14px; }
+.empty-state h3 {
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.empty-state p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* === REFERRAL === */
+.ref-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.ref-link {
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  word-break: break-all;
+  margin-bottom: 12px;
+  user-select: all;
+}
+
+/* === BUTTONS === */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: opacity .15s;
+}
+.btn:active { opacity: .8; }
+.btn-primary { background: var(--tg-blue); color: white; }
+.btn-secondary { background: var(--bg-card-2); color: var(--text); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+/* === SUB-PAGE === */
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--tg-blue);
+  font-size: 15px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 18px;
+}
+
+.rich-text {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.rich-text h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 22px 0 8px;
+  color: var(--accent);
+}
+.rich-text h3:first-child { margin-top: 0; }
+.rich-text p { color: var(--text-dim); margin-bottom: 10px; }
+.rich-text a { color: var(--tg-blue); text-decoration: none; }
+
+.form-textarea {
+  width: 100%;
+  min-height: 130px;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  margin: 16px 0;
+  outline: none;
+}
+.form-textarea:focus { border-color: var(--accent-soft); }
+
+/* === BOTTOM NAV === */
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+  z-index: 100;
+}
+.nav-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 6px 4px;
+  color: var(--text-dim);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: color .15s;
+}
+.nav-btn.active { color: var(--tg-blue); }
+.nav-ic { font-size: 22px; line-height: 1; }
+.nav-l { font-size: 11px; font-weight: 500; }

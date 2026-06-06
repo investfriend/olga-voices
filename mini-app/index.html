@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0e1a17">
+<title>ИнвестКлуб</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+<!-- Header -->
+<header class="hdr">
+  <button class="hdr-close" onclick="Telegram.WebApp.close()">Закрыть</button>
+  <div class="hdr-title">
+    <div class="hdr-name">ИнвестКлуб</div>
+    <div class="hdr-sub">мини-приложение</div>
+  </div>
+  <button class="hdr-more">⋯</button>
+</header>
+
+<!-- Pages -->
+<main id="app">
+
+  <!-- ДОМОЙ -->
+  <section class="page" data-page="home">
+    <div class="hero-card">
+      <div class="hero-emoji">📊</div>
+      <h2>ИнвестКлуб</h2>
+      <p>Закрытое сообщество частных инвесторов. Учимся думать как инвесторы, а не как трейдеры.</p>
+    </div>
+
+    <h3 class="section-title">Что нового</h3>
+    <ul class="cards">
+      <li class="card" onclick="openLink('https://t.me/+3ulbFYwiSAYxYjQy')">
+        <div class="card-ic">📅</div>
+        <div class="card-body">
+          <div class="card-t">Разбор недели</div>
+          <div class="card-d">Свежий обзор рынка от Ольги, каждую среду</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+      <li class="card" onclick="setPage('about')">
+        <div class="card-ic">📖</div>
+        <div class="card-body">
+          <div class="card-t">3 ступени обучения</div>
+          <div class="card-d">От «открыть счёт» до «всепогодный портфель»</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+      <li class="card" onclick="setPage('ambassador')">
+        <div class="card-ic">🎁</div>
+        <div class="card-body">
+          <div class="card-t">Пригласи друга — получи бонус</div>
+          <div class="card-d">Партнёрская программа клуба</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- О НАС -->
+  <section class="page" data-page="about">
+    <h2 class="page-title">О сообществе</h2>
+    <p class="page-sub">Всё, что нужно знать об ИнвестКлубе</p>
+
+    <div class="info-card">
+      <div class="info-emoji">📊</div>
+      <h3>ИнвестКлуб</h3>
+      <p>Сообщество частных инвесторов, которые системно растят капитал. Обучение, разборы рынка, готовые портфели и живое общение — всё здесь.</p>
+    </div>
+
+    <h3 class="section-title">Полезные ссылки</h3>
+    <ul class="cards">
+      <li class="card" onclick="openPage('rules')">
+        <div class="card-ic">📄</div>
+        <div class="card-body">
+          <div class="card-t">Правила сообщества</div>
+          <div class="card-d">Ознакомьтесь с правилами участия</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+      <li class="card" onclick="openPage('faq')">
+        <div class="card-ic">❓</div>
+        <div class="card-body">
+          <div class="card-t">FAQ — Частые вопросы</div>
+          <div class="card-d">Ответы на самые популярные вопросы</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+      <li class="card" onclick="openLink('https://t.me/investic_claude_bot')">
+        <div class="card-ic">💬</div>
+        <div class="card-body">
+          <div class="card-t">Поддержка</div>
+          <div class="card-d">Техническая и организационная помощь</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+      <li class="card" onclick="openPage('complaint')">
+        <div class="card-ic">⚠️</div>
+        <div class="card-body">
+          <div class="card-t">Подать жалобу</div>
+          <div class="card-d">Сообщить о нарушении правил</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ЧАТЫ -->
+  <section class="page" data-page="chats">
+    <h2 class="page-title">Чаты клуба</h2>
+    <p class="page-sub">Общение, разборы, поддержка</p>
+
+    <ul class="cards">
+      <li class="card" onclick="openLink('https://t.me/investic_claude_bot')">
+        <div class="card-ic">💬</div>
+        <div class="card-body">
+          <div class="card-t">Общий чат клуба</div>
+          <div class="card-d">Главное место общения участников</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+      <li class="card" onclick="openLink('https://t.me/investic_claude_bot')">
+        <div class="card-ic">📈</div>
+        <div class="card-body">
+          <div class="card-t">Чат разборов</div>
+          <div class="card-d">Обсуждение акций и облигаций</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+      <li class="card" onclick="openLink('https://t.me/investic_claude_bot')">
+        <div class="card-ic">🎓</div>
+        <div class="card-body">
+          <div class="card-t">Чат с куратором</div>
+          <div class="card-d">Вопросы по обучению и материалам</div>
+        </div>
+        <div class="card-arr">›</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ИЗБРАННОЕ -->
+  <section class="page" data-page="favorites">
+    <h2 class="page-title">Избранное</h2>
+    <p class="page-sub">Сохранённые посты и материалы</p>
+
+    <div class="empty-state">
+      <div class="empty-emoji">⭐</div>
+      <h3>Пока пусто</h3>
+      <p>Здесь появятся посты, которые ты сохранишь. Кнопка «звёздочка» рядом с любым постом в клубе.</p>
+    </div>
+  </section>
+
+  <!-- АМБАССАДОРЫ -->
+  <section class="page" data-page="ambassador">
+    <h2 class="page-title">Амбассадоры</h2>
+
+    <ul class="cards">
+      <li class="card no-click">
+        <div class="card-ic">🎓</div>
+        <div class="card-body">
+          <div class="card-t">Доступ к курсам</div>
+          <div class="card-d">Бесплатный доступ ко всем материалам клуба</div>
+        </div>
+      </li>
+      <li class="card no-click">
+        <div class="card-ic">🤝</div>
+        <div class="card-body">
+          <div class="card-t">Нетворкинг</div>
+          <div class="card-d">Прямой доступ к закрытым встречам и эфирам</div>
+        </div>
+      </li>
+      <li class="card no-click">
+        <div class="card-ic">🏅</div>
+        <div class="card-body">
+          <div class="card-t">Статус</div>
+          <div class="card-d">Официальный статус Амбассадора ИнвестКлуба</div>
+        </div>
+      </li>
+    </ul>
+
+    <h3 class="section-title">Твоя реферальная ссылка</h3>
+    <div class="ref-card">
+      <div class="ref-link" id="ref-link">Загрузка…</div>
+      <button class="btn btn-secondary" onclick="copyRef()">Скопировать</button>
+    </div>
+
+    <button class="btn btn-primary" onclick="shareRef()">Поделиться в Telegram</button>
+    <button class="btn btn-outline" onclick="becomeAmbassador()">Стать амбассадором</button>
+  </section>
+
+  <!-- Подстраницы (открываются как поверх) -->
+  <section class="page sub" data-page="rules">
+    <button class="back-btn" onclick="setPage('about')">← Назад</button>
+    <h2 class="page-title">Правила сообщества</h2>
+    <div class="rich-text">
+      <h3>1. Уважение</h3>
+      <p>В клубе общение на «Вы» по умолчанию. Без перехода на личности. Любая дискуссия — по существу.</p>
+      <h3>2. Реклама и спам</h3>
+      <p>Запрещено: реклама сторонних продуктов, личные продажи без согласования, спам в личку участникам.</p>
+      <h3>3. Финансовые советы</h3>
+      <p>Материалы клуба — образовательные, не индивидуальная инвестрекомендация. Решения принимаешь сам.</p>
+      <h3>4. Конфиденциальность</h3>
+      <p>То, что обсуждается внутри клуба — остаётся внутри. Не выкладывай скрины и контент в открытые источники без согласования.</p>
+    </div>
+  </section>
+
+  <section class="page sub" data-page="faq">
+    <button class="back-btn" onclick="setPage('about')">← Назад</button>
+    <h2 class="page-title">Частые вопросы</h2>
+    <div class="rich-text">
+      <h3>Сколько стоит участие?</h3>
+      <p>5 000 ₽/месяц. Подписка автоматическая, отменить можно в любой момент.</p>
+      <h3>Что я получу за этот месяц?</h3>
+      <p>Доступ ко всем 3 ступеням обучения, еженедельные разборы рынка по средам, куратор для вопросов, чат сообщества.</p>
+      <h3>А если я новичок и ничего не понимаю в инвестициях?</h3>
+      <p>Ступень 1 как раз для этого — там пошагово: открыть счёт, выбрать брокера, сделать первую покупку. Не нужен опыт.</p>
+      <h3>Можно платить с зарубежной карты?</h3>
+      <p>Да, принимаем платежи разными способами. Напиши в поддержку — поможем подобрать.</p>
+    </div>
+  </section>
+
+  <section class="page sub" data-page="complaint">
+    <button class="back-btn" onclick="setPage('about')">← Назад</button>
+    <h2 class="page-title">Подать жалобу</h2>
+    <div class="rich-text">
+      <p>Заметил нарушение правил сообщества? Расскажи нам — разберёмся быстро и без публичности.</p>
+      <p>Напиши в <a href="#" onclick="openLink('https://t.me/investic_claude_bot')">поддержку</a> или используй форму ниже.</p>
+    </div>
+    <textarea class="form-textarea" placeholder="Опиши ситуацию: кто, что, когда. Прикреплять скрины можно через поддержку."></textarea>
+    <button class="btn btn-primary" onclick="submitComplaint()">Отправить</button>
+  </section>
+
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="nav">
+  <button class="nav-btn active" data-target="home">
+    <div class="nav-ic">🏠</div>
+    <div class="nav-l">Домой</div>
+  </button>
+  <button class="nav-btn" data-target="about">
+    <div class="nav-ic">💬</div>
+    <div class="nav-l">О нас</div>
+  </button>
+  <button class="nav-btn" data-target="chats">
+    <div class="nav-ic">👥</div>
+    <div class="nav-l">Чаты</div>
+  </button>
+  <button class="nav-btn" data-target="favorites">
+    <div class="nav-ic">⭐</div>
+    <div class="nav-l">Избранное</div>
+  </button>
+  <button class="nav-btn" data-target="ambassador">
+    <div class="nav-ic">🚀</div>
+    <div class="nav-l">Амбасс.</div>
+  </button>
+</nav>
+
+<script src="assets/script.js"></script>
+</body>
+</html>
