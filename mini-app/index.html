@@ -20,44 +20,46 @@
   <button class="hdr-more">⋯</button>
 </header>
 
-<!-- Pages -->
 <main id="app">
-
   <!-- ДОМОЙ -->
-  <section class="page" data-page="home">
-    <div class="hero-card">
-      <div class="hero-emoji">📊</div>
-      <h2>ИнвестКлуб</h2>
-      <p>Закрытое сообщество частных инвесторов. Учимся думать как инвесторы, а не как трейдеры.</p>
+  <section class="page active" data-page="home">
+    <!-- Поиск -->
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="🔍 Поиск по материалам...">
     </div>
 
-    <h3 class="section-title">Что нового</h3>
-    <ul class="cards">
-      <li class="card" onclick="noLink()">
-        <div class="card-ic">📅</div>
-        <div class="card-body">
-          <div class="card-t">Разбор недели</div>
-          <div class="card-d">Свежий обзор рынка от Ольги, каждую среду</div>
-        </div>
-        <div class="card-arr">›</div>
-      </li>
-      <li class="card" onclick="setPage('about')">
-        <div class="card-ic">📖</div>
-        <div class="card-body">
-          <div class="card-t">3 ступени обучения</div>
-          <div class="card-d">От «открыть счёт» до «всепогодный портфель»</div>
-        </div>
-        <div class="card-arr">›</div>
-      </li>
-      <li class="card" onclick="setPage('ambassador')">
-        <div class="card-ic">🎁</div>
-        <div class="card-body">
-          <div class="card-t">Пригласи друга — получи бонус</div>
-          <div class="card-d">Партнёрская программа клуба</div>
-        </div>
-        <div class="card-arr">›</div>
-      </li>
-    </ul>
+    <!-- Реф-баннер -->
+    <div class="ref-banner" onclick="setPage('ambassador')">
+      <div class="ref-banner-icon">🎁</div>
+      <div class="ref-banner-body">
+        <div class="ref-banner-t">Пригласи друга в ИнвестКлуб</div>
+        <div class="ref-banner-d">Узнать о привилегиях Амбассадора</div>
+      </div>
+      <div class="ref-banner-arr">›</div>
+    </div>
+    <div class="ref-link-card" onclick="copyRef()">
+      <div class="ref-link-text">Отправьте эту ссылку другу</div>
+      <div class="ref-link-url" id="ref-link-mini">Загрузка…</div>
+      <div class="ref-link-copy">📋</div>
+    </div>
+
+    <!-- Сетка категорий -->
+    <div class="cat-grid" id="cat-grid"></div>
+
+    <!-- Фильтры -->
+    <h3 class="section-title">Недавнее в клубе</h3>
+    <div class="filters" id="filters"></div>
+
+    <!-- Промо-блок -->
+    <div class="promo-block" onclick="noLink()">
+      <div class="promo-overlay">
+        <div class="promo-title">Все разборы по нишам за год</div>
+        <div class="promo-sub">Подборка лучших материалов 2025</div>
+      </div>
+    </div>
+
+    <!-- Результаты фильтра -->
+    <div class="filtered-list" id="filtered-list"></div>
   </section>
 
   <!-- О НАС -->
@@ -68,7 +70,7 @@
     <div class="info-card">
       <div class="info-emoji">📊</div>
       <h3>ИнвестКлуб</h3>
-      <p>Сообщество частных инвесторов, которые системно растят капитал. Обучение, разборы рынка, готовые портфели и живое общение — всё здесь.</p>
+      <p>Закрытое сообщество частных инвесторов. Системно растим капитал — через обучение, разборы рынка и живое общение.</p>
     </div>
 
     <h3 class="section-title">Полезные ссылки</h3>
@@ -110,46 +112,35 @@
 
   <!-- ЧАТЫ -->
   <section class="page" data-page="chats">
-    <h2 class="page-title">Чаты клуба</h2>
-    <p class="page-sub">Общение, разборы, поддержка</p>
-
     <ul class="cards">
       <li class="card" onclick="noLink()">
-        <div class="card-ic">💬</div>
+        <div class="card-ic-circle">📊</div>
         <div class="card-body">
-          <div class="card-t">Общий чат клуба</div>
-          <div class="card-d">Главное место общения участников</div>
+          <div class="card-t">ИнвестКлуб</div>
+          <div class="card-d">Основной канал</div>
         </div>
-        <div class="card-arr">›</div>
       </li>
       <li class="card" onclick="noLink()">
-        <div class="card-ic">📈</div>
+        <div class="card-ic-circle blue">💬</div>
         <div class="card-body">
-          <div class="card-t">Чат разборов</div>
-          <div class="card-d">Обсуждение акций и облигаций</div>
-        </div>
-        <div class="card-arr">›</div>
-      </li>
-      <li class="card" onclick="noLink()">
-        <div class="card-ic">🎓</div>
-        <div class="card-body">
-          <div class="card-t">Чат с куратором</div>
-          <div class="card-d">Вопросы по обучению и материалам</div>
+          <div class="card-t">Чаты по нишам</div>
         </div>
         <div class="card-arr">›</div>
       </li>
     </ul>
+    <h3 class="section-title">Чаты по городам</h3>
+    <button class="add-chat-btn" onclick="noLink()">Добавить чат города</button>
   </section>
 
   <!-- ИЗБРАННОЕ -->
   <section class="page" data-page="favorites">
     <h2 class="page-title">Избранное</h2>
-    <p class="page-sub">Сохранённые посты и материалы</p>
-
-    <div class="empty-state">
+    <p class="page-sub">Сохранённые материалы</p>
+    <div id="favorites-list"></div>
+    <div class="empty-state" id="favorites-empty">
       <div class="empty-emoji">⭐</div>
       <h3>Пока пусто</h3>
-      <p>Здесь появятся посты, которые ты сохранишь. Кнопка «звёздочка» рядом с любым постом в клубе.</p>
+      <p>Нажми на звёздочку на любой карточке — она появится здесь.</p>
     </div>
   </section>
 
@@ -191,7 +182,19 @@
     <button class="btn btn-outline" onclick="becomeAmbassador()">Стать амбассадором</button>
   </section>
 
-  <!-- Подстраницы (открываются как поверх) -->
+  <!-- Категория (динамическая) -->
+  <section class="page sub" data-page="category">
+    <button class="back-btn" onclick="setPage('home')">← Назад</button>
+    <div id="category-content"></div>
+  </section>
+
+  <!-- Карточка материала (динамическая) -->
+  <section class="page sub" data-page="item">
+    <button class="back-btn" id="item-back">← Назад</button>
+    <div id="item-content"></div>
+  </section>
+
+  <!-- Подстраницы (Правила, FAQ, Жалоба) -->
   <section class="page sub" data-page="rules">
     <button class="back-btn" onclick="setPage('about')">← Назад</button>
     <h2 class="page-title">Правила сообщества</h2>
@@ -218,7 +221,7 @@
       <h3>А если я новичок и ничего не понимаю в инвестициях?</h3>
       <p>Ступень 1 как раз для этого — там пошагово: открыть счёт, выбрать брокера, сделать первую покупку. Не нужен опыт.</p>
       <h3>Можно платить с зарубежной карты?</h3>
-      <p>Да, принимаем платежи разными способами. Напиши в поддержку — поможем подобрать.</p>
+      <p>Да, принимаем платежи разными способами. Уточни в поддержке — поможем подобрать.</p>
     </div>
   </section>
 
@@ -227,12 +230,11 @@
     <h2 class="page-title">Подать жалобу</h2>
     <div class="rich-text">
       <p>Заметил нарушение правил сообщества? Расскажи нам — разберёмся быстро и без публичности.</p>
-      <p>Опиши ситуацию в форме ниже — разберёмся.</p>
+      <p>Опиши ситуацию в форме ниже.</p>
     </div>
-    <textarea class="form-textarea" placeholder="Опиши ситуацию: кто, что, когда. Прикреплять скрины можно через поддержку."></textarea>
+    <textarea class="form-textarea" placeholder="Опиши ситуацию: кто, что, когда."></textarea>
     <button class="btn btn-primary" onclick="submitComplaint()">Отправить</button>
   </section>
-
 </main>
 
 <!-- Bottom Navigation -->
@@ -259,6 +261,7 @@
   </button>
 </nav>
 
+<script src="assets/data.js"></script>
 <script src="assets/script.js"></script>
 </body>
 </html>
