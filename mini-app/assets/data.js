@@ -10,7 +10,7 @@ window.DATA = {
       title: "Ступень 1",
       subtitle: "Финансовая грамотность",
       icon: "1️⃣",
-      gradient: "linear-gradient(135deg, #1a4d3e, #2da678)",
+      gradient: "linear-gradient(135deg, #1a3a32, #4a6b56)",
       items: [
         {
           id: "krysiny-bega",
@@ -110,7 +110,7 @@ window.DATA = {
       title: "Ступень 2",
       subtitle: "Инвестиции",
       icon: "2️⃣",
-      gradient: "linear-gradient(135deg, #2d4a6e, #3d8bff)",
+      gradient: "linear-gradient(135deg, #1d3530, #8a7a55)",
       items: [
         {
           id: "passiv-dohod-nulya",
@@ -207,7 +207,7 @@ window.DATA = {
       title: "Ступень 3",
       subtitle: "Продвинутые инструменты",
       icon: "3️⃣",
-      gradient: "linear-gradient(135deg, #4d2d6e, #8b3fff)",
+      gradient: "linear-gradient(135deg, #2a4038, #b89860)",
       items: [
         {
           id: "zarub-rynok",
@@ -304,7 +304,7 @@ window.DATA = {
       title: "Живые интенсивы",
       subtitle: "Записи закрытых сессий",
       icon: "🎯",
-      gradient: "linear-gradient(135deg, #6e4d2d, #ff9a3d)",
+      gradient: "linear-gradient(135deg, #2a3d2f, #c9a560)",
       items: [
         {
           id: "april-intensiv",
@@ -362,7 +362,7 @@ window.DATA = {
       title: "Эфиры",
       subtitle: "Прямые трансляции",
       icon: "🎙️",
-      gradient: "linear-gradient(135deg, #6e2d5e, #d83fa8)",
+      gradient: "linear-gradient(135deg, #2c3d36, #a39068)",
       items: [
         {
           id: "weekly-razbor",
@@ -387,7 +387,7 @@ window.DATA = {
       title: "Разборы",
       subtitle: "Акции, облигации, идеи",
       icon: "📈",
-      gradient: "linear-gradient(135deg, #2d6e4d, #4dc88d)",
+      gradient: "linear-gradient(135deg, #1c3530, #6e7a5e)",
       items: [
         {
           id: "razbor-akcii",
