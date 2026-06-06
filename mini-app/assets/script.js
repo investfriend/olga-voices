@@ -34,6 +34,12 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => setPage(btn.dataset.target));
 });
 
+// === Placeholder for disabled links ===
+function noLink() {
+  if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+  showToast('Скоро будет доступно');
+}
+
 // === Open external link ===
 function openLink(url) {
   if (tg?.openTelegramLink && url.startsWith('https://t.me/')) {
