@@ -131,6 +131,7 @@ function getIconForItem(item) {
 function openCategory(id) {
   const cat = DATA.categories.find(c => c.id === id);
   if (!cat) return;
+  localStorage.setItem('iv_last_cat', id);
   STATE.activeCategory = id;
   const cont = document.getElementById('category-content');
   cont.innerHTML = `
@@ -305,7 +306,33 @@ document.getElementById('search-input').addEventListener('input', e => {
   list.innerHTML = items.map(i => itemCardHTML(i)).join('');
 });
 
+// === Карточка обучения ===
+const BOOK_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,56V200H160a32,32,0,0,0-32,32,32,32,0,0,0-32-32H24V56H96a32,32,0,0,1,32,32,32,32,0,0,1,32-32Z" opacity="0.2"/><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></svg>';
+
+function renderLearningCard() {
+  const el = document.getElementById('learning-card');
+  if (!el) return;
+  const lastCatId = localStorage.getItem('iv_last_cat');
+  const lastCat = lastCatId ? DATA.categories.find(c => c.id === lastCatId) : null;
+  const defaultCat = DATA.categories[0];
+  const cat = lastCat || defaultCat;
+  const label = lastCat ? 'Продолжить обучение' : 'Начните обучение';
+  const btnText = lastCat ? 'Продолжить' : 'Открыть ступень 1';
+  el.innerHTML = `
+    <div class="learning-card-top">
+      <div class="learning-card-icon">${BOOK_ICON}</div>
+      <div class="learning-card-body">
+        <div class="learning-card-label">${label}</div>
+        <div class="learning-card-title">${cat.title}</div>
+        <div class="learning-card-desc">${cat.subtitle}</div>
+      </div>
+    </div>
+    <button class="learning-card-btn" onclick="openCategory('${cat.id}')">${btnText}</button>
+  `;
+}
+
 // === Init ===
 setRefLinks();
 renderCategories();
 renderFilters();
+renderLearningCard();
