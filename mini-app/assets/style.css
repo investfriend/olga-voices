@@ -129,17 +129,20 @@
 }
 
 :root {
-  --bg: #031F17;
-  --bg-card: #073329;
-  --bg-card-2: #0A4937;
-  --text: #F4FFF9;
-  --text-dim: #ABC9BC;
-  --text-muted: #78988B;
-  --accent: #18D990;
-  --accent-soft: #8FFFD0;
-  --accent-dim: #0FA86B;
-  --tg-blue: #18D990;
-  --line: rgba(24, 217, 144, 0.12);
+  --bg: #101311;
+  --bg-card: #181D1B;
+  --bg-card-2: #1D2421;
+  --bg-search: #151917;
+  --text: #F3F1EA;
+  --text-dim: #A6AFAA;
+  --text-muted: #78837E;
+  --accent: #27C98A;
+  --accent-soft: #7FE0B7;
+  --accent-dim: #1FAE77;
+  --tg-blue: #27C98A;
+  --line: rgba(243, 241, 234, 0.06);
+  --border: rgba(243, 241, 234, 0.09);
+  --btn-text: #071A13;
   --danger: #FF7078;
   --warning: #FFC866;
   --gold: #FFC866;
@@ -217,28 +220,28 @@ button, input, textarea, select { font-family: inherit; }
 .search-bar input {
   width: 100%;
   padding: 12px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
+  background: var(--bg-search);
+  border: 1px solid var(--border);
   border-radius: 12px;
   color: var(--text);
   font-size: 15px;
   outline: none;
 }
-.search-bar input::placeholder { color: var(--text-dim); }
-.search-bar input:focus { border-color: var(--accent-soft); }
+.search-bar input::placeholder { color: var(--text-muted); }
+.search-bar input:focus { border-color: var(--accent); }
 
 /* === REF BANNER === */
 .ref-banner {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: linear-gradient(135deg, var(--bg-card), var(--bg-card-2));
+  background: var(--bg-card);
   padding: 14px 16px;
   border-radius: 12px 12px 0 0;
   margin-bottom: 0;
   cursor: pointer;
-  color: var(--accent);
-  border: 1px solid var(--line);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 .ref-banner-icon { font-size: 28px; }
 .ref-banner-body { flex: 1; min-width: 0; }
@@ -250,8 +253,8 @@ button, input, textarea, select { font-family: inherit; }
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(24, 217, 144, 0.06);
-  border: 1px solid rgba(24, 217, 144, 0.18);
+  background: var(--bg-search);
+  border: 1px solid var(--border);
   border-top: none;
   padding: 10px 14px;
   border-radius: 0 0 12px 12px;
@@ -289,6 +292,8 @@ button, input, textarea, select { font-family: inherit; }
   justify-content: space-between;
   padding: 14px;
   transition: transform .15s;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
 }
 .cat-tile:active { transform: scale(0.97); }
 .cat-tile-bg {
@@ -352,7 +357,7 @@ button, input, textarea, select { font-family: inherit; }
   white-space: nowrap;
   transition: all .15s;
 }
-.filter-chip.active { background: var(--accent); color: var(--bg); }
+.filter-chip.active { background: var(--accent); color: var(--btn-text); }
 
 /* === PROMO BLOCK === */
 .promo-block {
@@ -360,10 +365,10 @@ button, input, textarea, select { font-family: inherit; }
   height: 140px;
   border-radius: 14px;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--bg-card), var(--bg-card-2));
+  background: var(--bg-card-2);
   cursor: pointer;
   margin-bottom: 16px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
 }
 .promo-overlay {
   position: absolute;
@@ -392,6 +397,7 @@ button, input, textarea, select { font-family: inherit; }
   padding: 22px 18px;
   text-align: center;
   margin-bottom: 8px;
+  border: 1px solid var(--border);
 }
 .info-emoji { font-size: 28px; margin-bottom: 8px; }
 .info-card h3 { font-size: 22px; font-weight: 600; margin-bottom: 10px; }
@@ -410,6 +416,8 @@ button, input, textarea, select { font-family: inherit; }
   cursor: pointer;
   transition: background .15s;
   position: relative;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
 }
 .card:active { background: var(--bg-card-2); }
 .card.no-click { cursor: default; }
@@ -453,7 +461,7 @@ button, input, textarea, select { font-family: inherit; }
   margin-top: 6px;
 }
 .card-tag {
-  background: rgba(24, 217, 144, 0.10);
+  background: rgba(39, 201, 138, 0.10);
   color: var(--accent);
   padding: 2px 8px;
   border-radius: 4px;
@@ -461,7 +469,7 @@ button, input, textarea, select { font-family: inherit; }
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  border: 1px solid rgba(24, 217, 144, 0.20);
+  border: 1px solid rgba(39, 201, 138, 0.20);
 }
 .card-arr {
   color: var(--text-dim);
@@ -525,6 +533,7 @@ button, input, textarea, select { font-family: inherit; }
   border-radius: 14px;
   padding: 18px;
   margin-bottom: 14px;
+  border: 1px solid var(--border);
 }
 .item-card-full h2 {
   font-size: 20px;
@@ -553,7 +562,7 @@ button, input, textarea, select { font-family: inherit; }
   width: 100%;
   padding: 14px;
   background: var(--bg-card-2);
-  border: none;
+  border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
   font-size: 15px;
@@ -577,6 +586,7 @@ button, input, textarea, select { font-family: inherit; }
   border-radius: 12px;
   padding: 14px 16px;
   margin-bottom: 14px;
+  border: 1px solid var(--border);
 }
 .ref-link {
   font-family: "SF Mono", Menlo, monospace;
@@ -601,18 +611,20 @@ button, input, textarea, select { font-family: inherit; }
   transition: opacity .15s;
 }
 .btn:active { opacity: .8; }
-.btn-primary { background: var(--accent); color: var(--bg); font-weight: 600; }
+.btn-primary { background: var(--accent); color: var(--btn-text); font-weight: 600; }
+.btn-primary:active { background: var(--accent-dim); opacity: 1; }
+.btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn-secondary { background: var(--bg-card-2); color: var(--text); }
 .btn-outline {
   background: transparent;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   color: var(--text);
 }
 .add-chat-btn {
   width: 100%;
   padding: 14px;
   background: var(--bg-card);
-  border: none;
+  border: 1px solid var(--border);
   border-radius: 12px;
   color: var(--text);
   font-size: 15px;
@@ -649,8 +661,8 @@ button, input, textarea, select { font-family: inherit; }
   width: 100%;
   min-height: 130px;
   padding: 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
+  background: var(--bg-search);
+  border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
   font-family: inherit;
@@ -659,7 +671,7 @@ button, input, textarea, select { font-family: inherit; }
   margin: 16px 0;
   outline: none;
 }
-.form-textarea:focus { border-color: var(--accent-soft); }
+.form-textarea:focus { border-color: var(--accent); }
 
 /* === BOTTOM NAV === */
 .nav {
@@ -668,10 +680,12 @@ button, input, textarea, select { font-family: inherit; }
   left: 0;
   right: 0;
   display: flex;
-  background: var(--bg);
-  border-top: 1px solid var(--line);
+  background: rgba(16, 19, 17, 0.94);
+  border-top: 1px solid rgba(243, 241, 234, 0.08);
   padding: 6px 0 max(6px, env(safe-area-inset-bottom));
   z-index: 100;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .nav-btn {
   flex: 1;
@@ -699,7 +713,7 @@ button, input, textarea, select { font-family: inherit; }
   justify-content: center;
   width: 48px;
   height: 48px;
-  background: rgba(143, 255, 208, 0.12);
+  background: rgba(39, 201, 138, 0.10);
   border-radius: 12px;
 }
 .cat-icon-wrap svg { width: 32px; height: 32px; }
@@ -725,13 +739,14 @@ button, input, textarea, select { font-family: inherit; }
 /* === LEARNING CARD === */
 .learning-card {
   background: var(--bg-card-2);
-  border: 1px solid rgba(143, 255, 208, 0.18);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
 }
 .learning-card-top {
   display: flex;
@@ -741,7 +756,7 @@ button, input, textarea, select { font-family: inherit; }
 .learning-card-icon {
   width: 48px;
   height: 48px;
-  background: rgba(143, 255, 208, 0.12);
+  background: rgba(39, 201, 138, 0.10);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -781,13 +796,14 @@ button, input, textarea, select { font-family: inherit; }
   width: 100%;
   min-height: 44px;
   background: var(--accent);
-  color: var(--bg);
+  color: var(--btn-text);
   border: none;
   border-radius: 12px;
   font-family: inherit;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity .15s;
+  transition: background .15s;
 }
-.learning-card-btn:active { opacity: .8; }
+.learning-card-btn:active { background: var(--accent-dim); }
+.learning-card-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
