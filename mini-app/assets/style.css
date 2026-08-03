@@ -690,3 +690,34 @@ button, input, textarea, select { font-family: inherit; }
 .nav-btn.active { color: var(--accent); }
 .nav-ic { font-size: 22px; line-height: 1; }
 .nav-l { font-size: 11px; font-weight: 500; }
+
+/* === PHOSPHOR ICONS === */
+.cat-tile-emoji { color: var(--accent-soft); }
+.cat-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(143, 255, 208, 0.12);
+  border-radius: 12px;
+}
+.cat-icon-wrap svg { width: 32px; height: 32px; }
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  display: flex;
+  pointer-events: none;
+}
+.search-icon svg { width: 18px; height: 18px; }
+.search-bar input { padding-left: 44px; }
+.nav-ic svg { width: 24px; height: 24px; display: block; }
+.ref-banner-icon { display: flex; align-items: center; }
+.ref-banner-icon svg { width: 28px; height: 28px; }
+.ref-banner-arr { display: flex; align-items: center; }
+.ref-banner-arr svg { width: 20px; height: 20px; }
+.ref-link-copy { display: flex; align-items: center; }
+.ref-link-copy svg { width: 18px; height: 18px; }
