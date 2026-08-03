@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0a1411">
 <title>ИнвестКлуб</title>
-<link rel="stylesheet" href="assets/style.css?v=3">
+<link rel="stylesheet" href="assets/style.css?v=4">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -25,45 +25,52 @@
   <section class="page active" data-page="home">
     <!-- Поиск -->
     <div class="search-bar">
-      <span class="search-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M192,112a80,80,0,1,1-80-80A80,80,0,0,1,192,112Z" opacity="0.2"/><path d="M229.66,218.34,179.6,168.28a88.21,88.21,0,1,0-11.32,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
+      <button type="button" id="search-icon-btn" class="search-icon" aria-label="Найти материалы"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M192,112a80,80,0,1,1-80-80A80,80,0,0,1,192,112Z" opacity="0.2"/><path d="M229.66,218.34,179.6,168.28a88.21,88.21,0,1,0-11.32,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></button>
       <input type="text" id="search-input" placeholder="Поиск по материалам...">
+      <button type="button" id="search-clear" class="search-clear" aria-label="Очистить поиск" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,128A80,80,0,1,1,128,48,80,80,0,0,1,208,128Z" opacity="0.2"/><path d="M165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg></button>
     </div>
 
-    <!-- Карточка обучения -->
-    <div class="learning-card" id="learning-card"></div>
+    <!-- Результаты поиска -->
+    <div id="search-results" style="display:none;"></div>
 
-    <!-- Сетка категорий -->
-    <div class="cat-grid" id="cat-grid"></div>
+    <!-- Основной контент (скрывается при активном поиске) -->
+    <div id="home-default">
+      <!-- Карточка обучения -->
+      <div class="learning-card" id="learning-card"></div>
 
-    <!-- Реф-баннер -->
-    <div class="ref-banner" onclick="setPage('ambassador')">
-      <div class="ref-banner-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,128v72a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V128Z" opacity="0.2"/><path d="M216,72H180.92c.39-.33.79-.65,1.17-1A29.53,29.53,0,0,0,192,49.57,32.62,32.62,0,0,0,158.44,16,29.53,29.53,0,0,0,137,25.91a54.94,54.94,0,0,0-9,14.48,54.94,54.94,0,0,0-9-14.48A29.53,29.53,0,0,0,97.56,16,32.62,32.62,0,0,0,64,49.57,29.53,29.53,0,0,0,73.91,71c.38.33.78.65,1.17,1H40A16,16,0,0,0,24,88v32a16,16,0,0,0,16,16v64a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V136a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72ZM149,36.51a13.69,13.69,0,0,1,10-4.5h.49A16.62,16.62,0,0,1,176,49.08a13.69,13.69,0,0,1-4.5,10c-9.49,8.4-25.24,11.36-35,12.4C137.7,60.89,141,45.5,149,36.51Zm-64.09.36A16.63,16.63,0,0,1,96.59,32h.49a13.69,13.69,0,0,1,10,4.5c8.39,9.48,11.35,25.2,12.39,34.92-9.72-1-25.44-4-34.92-12.39a13.69,13.69,0,0,1-4.5-10A16.6,16.6,0,0,1,84.87,36.87ZM40,88h80v32H40Zm16,48h64v64H56Zm144,64H136V136h64Zm16-80H136V88h80v32Z"/></svg></div>
-      <div class="ref-banner-body">
-        <div class="ref-banner-t">Пригласи друга в ИнвестКлуб</div>
-        <div class="ref-banner-d">Узнать о привилегиях Амбассадора</div>
+      <!-- Сетка категорий -->
+      <div class="cat-grid" id="cat-grid"></div>
+
+      <!-- Реф-баннер -->
+      <div class="ref-banner" onclick="setPage('ambassador')">
+        <div class="ref-banner-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,128v72a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V128Z" opacity="0.2"/><path d="M216,72H180.92c.39-.33.79-.65,1.17-1A29.53,29.53,0,0,0,192,49.57,32.62,32.62,0,0,0,158.44,16,29.53,29.53,0,0,0,137,25.91a54.94,54.94,0,0,0-9,14.48,54.94,54.94,0,0,0-9-14.48A29.53,29.53,0,0,0,97.56,16,32.62,32.62,0,0,0,64,49.57,29.53,29.53,0,0,0,73.91,71c.38.33.78.65,1.17,1H40A16,16,0,0,0,24,88v32a16,16,0,0,0,16,16v64a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V136a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72ZM149,36.51a13.69,13.69,0,0,1,10-4.5h.49A16.62,16.62,0,0,1,176,49.08a13.69,13.69,0,0,1-4.5,10c-9.49,8.4-25.24,11.36-35,12.4C137.7,60.89,141,45.5,149,36.51Zm-64.09.36A16.63,16.63,0,0,1,96.59,32h.49a13.69,13.69,0,0,1,10,4.5c8.39,9.48,11.35,25.2,12.39,34.92-9.72-1-25.44-4-34.92-12.39a13.69,13.69,0,0,1-4.5-10A16.6,16.6,0,0,1,84.87,36.87ZM40,88h80v32H40Zm16,48h64v64H56Zm144,64H136V136h64Zm16-80H136V88h80v32Z"/></svg></div>
+        <div class="ref-banner-body">
+          <div class="ref-banner-t">Пригласи друга в ИнвестКлуб</div>
+          <div class="ref-banner-d">Узнать о привилегиях Амбассадора</div>
+        </div>
+        <div class="ref-banner-arr" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,128,96,208V48Z" opacity="0.2"/><path d="M181.66,122.34l-80-80A8,8,0,0,0,88,48V208a8,8,0,0,0,13.66,5.66l80-80A8,8,0,0,0,181.66,122.34ZM104,188.69V67.31L164.69,128Z"/></svg></div>
       </div>
-      <div class="ref-banner-arr" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,128,96,208V48Z" opacity="0.2"/><path d="M181.66,122.34l-80-80A8,8,0,0,0,88,48V208a8,8,0,0,0,13.66,5.66l80-80A8,8,0,0,0,181.66,122.34ZM104,188.69V67.31L164.69,128Z"/></svg></div>
-    </div>
-    <div class="ref-link-card" onclick="copyRef()">
-      <div class="ref-link-text">Отправьте эту ссылку другу</div>
-      <div class="ref-link-url" id="ref-link-mini">Загрузка…</div>
-      <div class="ref-link-copy" aria-label="Скопировать ссылку"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,40V168H168V88H88V40Z" opacity="0.2"/><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></div>
-    </div>
-
-    <!-- Фильтры -->
-    <h3 class="section-title">Недавнее в клубе</h3>
-    <div class="filters" id="filters"></div>
-
-    <!-- Промо-блок -->
-    <div class="promo-block" onclick="noLink()">
-      <div class="promo-overlay">
-        <div class="promo-title">Все разборы по нишам за год</div>
-        <div class="promo-sub">Подборка лучших материалов 2025</div>
+      <div class="ref-link-card" onclick="copyRef()">
+        <div class="ref-link-text">Отправьте эту ссылку другу</div>
+        <div class="ref-link-url" id="ref-link-mini">Загрузка…</div>
+        <div class="ref-link-copy" aria-label="Скопировать ссылку"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,40V168H168V88H88V40Z" opacity="0.2"/><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></div>
       </div>
-    </div>
 
-    <!-- Результаты фильтра -->
-    <div class="filtered-list" id="filtered-list"></div>
+      <!-- Фильтры -->
+      <h3 class="section-title">Недавнее в клубе</h3>
+      <div class="filters" id="filters"></div>
+
+      <!-- Промо-блок -->
+      <div class="promo-block" onclick="noLink()">
+        <div class="promo-overlay">
+          <div class="promo-title">Все разборы по нишам за год</div>
+          <div class="promo-sub">Подборка лучших материалов 2025</div>
+        </div>
+      </div>
+
+      <!-- Результаты фильтра -->
+      <div class="filtered-list" id="filtered-list"></div>
+    </div>
   </section>
 
   <!-- О НАС -->
@@ -269,6 +276,6 @@
 </nav>
 
 <script src="assets/data.js?v=2"></script>
-<script src="assets/script.js?v=2"></script>
+<script src="assets/script.js?v=3"></script>
 </body>
 </html>

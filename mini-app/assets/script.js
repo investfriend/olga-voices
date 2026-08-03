@@ -287,24 +287,69 @@ function showToast(msg) {
 }
 
 // === Поиск ===
-document.getElementById('search-input').addEventListener('input', e => {
-  const q = e.target.value.toLowerCase().trim();
-  const list = document.getElementById('filtered-list');
-  if (!q) { renderFilteredList(); return; }
+const SEARCH_INPUT = document.getElementById('search-input');
+const SEARCH_RESULTS = document.getElementById('search-results');
+const HOME_DEFAULT = document.getElementById('home-default');
+
+function normalizeQ(s) {
+  return s.toLowerCase().replace(/ё/g, 'е');
+}
+
+function runSearch(raw) {
+  const q = normalizeQ(raw.trim());
+  if (!q) { exitSearch(); return; }
+  HOME_DEFAULT.style.display = 'none';
+  SEARCH_RESULTS.style.display = 'block';
   let items = [];
   DATA.categories.forEach(c => {
+    const catHay = normalizeQ([c.title, c.subtitle || ''].join(' '));
     c.items.forEach(i => {
-      if (i.title.toLowerCase().includes(q) || (i.desc || '').toLowerCase().includes(q)) {
-        items.push({ ...i, _cat: c.id });
-      }
+      const hay = normalizeQ([i.title, i.desc || '', i.tag || '', catHay].join(' '));
+      if (hay.includes(q)) items.push({ ...i, _cat: c.id, _catTitle: c.title });
     });
   });
   if (!items.length) {
-    list.innerHTML = `<div class="empty-state" style="padding: 30px;"><p>Ничего не найдено по запросу «${q}»</p></div>`;
+    SEARCH_RESULTS.innerHTML = '<div class="empty-state" style="padding:30px 0;"><p>Ничего не найдено. Попробуйте изменить запрос.</p></div>';
     return;
   }
-  list.innerHTML = items.map(i => itemCardHTML(i)).join('');
+  SEARCH_RESULTS.innerHTML = items.map(i => itemCardHTML(i)).join('');
+}
+
+function exitSearch() {
+  SEARCH_INPUT.value = '';
+  updateSearchClear();
+  HOME_DEFAULT.style.display = '';
+  SEARCH_RESULTS.style.display = 'none';
+  SEARCH_RESULTS.innerHTML = '';
+}
+
+function updateSearchClear() {
+  const btn = document.getElementById('search-clear');
+  if (btn) btn.style.display = SEARCH_INPUT.value ? 'flex' : 'none';
+}
+
+SEARCH_INPUT.addEventListener('input', e => {
+  updateSearchClear();
+  runSearch(e.target.value);
 });
+
+SEARCH_INPUT.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    SEARCH_INPUT.blur();
+    runSearch(SEARCH_INPUT.value);
+  }
+});
+
+document.getElementById('search-icon-btn').addEventListener('click', () => {
+  if (SEARCH_INPUT.value.trim()) {
+    runSearch(SEARCH_INPUT.value);
+  } else {
+    SEARCH_INPUT.focus();
+  }
+});
+
+document.getElementById('search-clear').addEventListener('click', exitSearch);
 
 // === Карточка обучения ===
 const BOOK_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,56V200H160a32,32,0,0,0-32,32,32,32,0,0,0-32-32H24V56H96a32,32,0,0,1,32,32,32,32,0,0,1,32-32Z" opacity="0.2"/><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></svg>';

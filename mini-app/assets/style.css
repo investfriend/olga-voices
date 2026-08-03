@@ -724,10 +724,29 @@ button, input, textarea, select { font-family: inherit; }
   transform: translateY(-50%);
   color: var(--text-dim);
   display: flex;
-  pointer-events: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 .search-icon svg { width: 18px; height: 18px; }
-.search-bar input { padding-left: 44px; }
+.search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  display: none;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+}
+.search-clear:hover { color: var(--text-dim); }
+.search-clear svg { width: 18px; height: 18px; }
+.search-bar input { padding-left: 44px; padding-right: 44px; }
+.search-results { margin-bottom: 16px; }
 .nav-ic svg { width: 24px; height: 24px; display: block; }
 .ref-banner-icon { display: flex; align-items: center; }
 .ref-banner-icon svg { width: 28px; height: 28px; }
