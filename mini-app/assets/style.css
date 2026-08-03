@@ -166,6 +166,7 @@ button { font-family: inherit; }
   inset: 0;
   opacity: 0.85;
   z-index: 0;
+  background: var(--bg-card-2) !important;
 }
 .cat-tile-emoji {
   position: relative;
