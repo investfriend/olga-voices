@@ -1237,3 +1237,60 @@ button, input, textarea, select { font-family: inherit; }
 }
 .faq-empty b { display: block; font-size: 16px; color: var(--text); margin-bottom: 8px; }
 .faq-empty p { font-size: 14px; }
+
+/* === FAQ v3 — SVG toggle + icon overrides === */
+
+/* toggle: SVG plus/minus instead of text + */
+.faq-card-toggle {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: var(--bg-card-2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.faq-card-toggle svg { width: 20px; height: 20px; }
+.faq-toggle-minus { display: none; }
+.faq-card.is-open .faq-toggle-plus  { display: none; }
+.faq-card.is-open .faq-toggle-minus { display: flex; }
+.faq-card.is-open .faq-card-toggle  { background: rgba(39,201,138,.12); color: var(--accent); }
+
+/* category button icons */
+.faq-cat-icon {
+  display: inline-flex; align-items: center;
+  width: 14px; height: 14px; margin-right: 5px; vertical-align: middle;
+  flex-shrink: 0;
+}
+.faq-cat-icon svg { width: 14px; height: 14px; }
+
+/* group title icons */
+.faq-group-icon {
+  display: inline-flex; align-items: center;
+  width: 14px; height: 14px; margin-right: 6px;
+  color: var(--text-muted); flex-shrink: 0;
+}
+.faq-group-icon svg { width: 14px; height: 14px; }
+
+/* card label icons */
+.faq-card-label { display: inline-flex; align-items: center; }
+.faq-card-label-icon {
+  display: inline-flex; align-items: center;
+  width: 12px; height: 12px; margin-right: 4px; flex-shrink: 0;
+}
+.faq-card-label-icon svg { width: 12px; height: 12px; }
+
+/* topics heading icon */
+.faq-topics-icon {
+  display: inline-flex; align-items: center;
+  width: 16px; height: 16px; margin-right: 6px;
+  color: var(--accent); flex-shrink: 0;
+}
+.faq-topics-icon svg { width: 16px; height: 16px; }
+
+/* action button external link icon */
+.faq-act-btn svg { width: 13px; height: 13px; display: inline; vertical-align: middle; }
+
+/* accordion body: use hidden attr, not just is-open class */
+.faq-card-body[hidden] { display: none !important; }
+.faq-card-body:not([hidden]) { display: block; }
