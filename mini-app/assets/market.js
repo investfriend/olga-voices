@@ -1,4 +1,4 @@
-// assets/market.js v2 — Раздел «Котировки и обзор рынка»
+// assets/market.js v3 — Раздел «Котировки и обзор рынка»
 // Режим: demo. MOEX не подключён (MOEX_DISPLAY_RIGHTS_CONFIRMED = false).
 // USA: TradingView виджеты с обработкой ошибок и error-state.
 
@@ -352,7 +352,7 @@
           toolbar_bg:         '#181D1B',
           enable_publishing:  false,
           hide_side_toolbar:  true,
-          allow_symbol_change: false,
+          allow_symbol_change: true,
           withdateranges:     true,
           save_image:         false,
           calendar:           false,
@@ -419,40 +419,24 @@
 
   // ── HTML блока США ────────────────────────────────────────────────────────
   function buildUSHTML() {
-    var cards = '';
-    D.us.overview.forEach(function (item) {
-      var c = cls(item.change);
-      var ic = icon(item.change);
-      cards += '<div class="mkt-ticker-card mkt-ticker-demo" data-mkt-sel="' + item.ticker + '">'
-        + '<div class="mkt-ticker-name">' + item.name + '</div>'
-        + '<div class="mkt-ticker-sym">' + item.ticker + ' <span class="mkt-demo-inline" style="font-size:8px">ДЕМО</span></div>'
-        + '<div class="mkt-ticker-val">' + fNum(item.value, item.unit) + ' <span style="font-size:10px;color:var(--text-muted)">' + item.unit + '</span></div>'
-        + '<div class="mkt-ticker-chg ' + c + '">' + ic + fChg(item.change, item.unit) + ' <span style="opacity:.7">' + fPct(item.pct) + '</span></div>'
-        + '<div class="mkt-ticker-time">' + item.time + '</div>'
-        + '</div>';
-    });
-
-    var tvErrorHTML = ''
+    var tvErr = ''
       + '<div class="mkt-tv-error-ico">📡</div>'
       + '<div class="mkt-tv-error-msg">Виджет не загрузился</div>'
       + '<div class="mkt-tv-error-sub">Браузер ограничил внешний скрипт или нет соединения</div>'
       + '<div class="mkt-tv-btns">';
 
     return ''
-      // Обзорные карточки США (с пометкой ДЕМО)
-      + '<div class="mkt-section-head" id="mkt-anchor-us-overview">Быстрый обзор' + demoBadge() + '</div>'
-      + '<div class="mkt-tv-delay-notice">Карточки ниже — демонстрационные данные без подключённого источника</div>'
-      + '<div class="mkt-overview-scroll"><div class="mkt-overview-track" id="mktUSOverviewTrack">' + cards + '</div></div>'
-
       // Предупреждение о задержке TradingView
-      + '<div class="mkt-tv-delay-notice" style="margin-top:8px">⏱ Виджеты ниже получают данные от TradingView · Cboe One с возможной задержкой 15–30 мин</div>'
+      + '<div class="mkt-tv-delay-notice">⏱ Данные от TradingView · Cboe One с возможной задержкой 15–30 мин</div>'
 
       // Advanced Chart
-      + '<div class="mkt-section-head" id="mkt-anchor-us-chart">График — S&amp;P 500 (TradingView)</div>'
+      + '<div class="mkt-section-head" id="mkt-anchor-us-chart">Интерактивный график рынка США</div>'
+      + '<div class="mkt-tv-delay-notice" style="margin-bottom:4px">По умолчанию — S&amp;P 500 (SP:SPX). Инструмент можно сменить внутри графика.</div>'
+      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Период (1 мес, 3 мес…) — глубина истории. Интервал свечи настраивается внутри графика отдельно.</div>'
       + '<div class="mkt-tv-wrap">'
       + '<div class="mkt-tv-loading" id="tvChartLoading"><div class="mkt-tv-spinner"></div>Загрузка TradingView...</div>'
       + '<div class="mkt-tv-error" id="tvChartError" style="display:none">'
-      + tvErrorHTML
+      + tvErr
       + '<button class="mkt-tv-retry-btn" data-tv-retry="chart">↺ Повторить</button>'
       + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/chart/?symbol=SP:SPX">Открыть во внешнем окне ↗</button>'
       + '</div></div>'
@@ -464,7 +448,7 @@
       + '<div class="mkt-tv-wrap">'
       + '<div class="mkt-tv-loading" id="tvOverviewLoading"><div class="mkt-tv-spinner"></div>Загрузка виджета...</div>'
       + '<div class="mkt-tv-error" id="tvOverviewError" style="display:none">'
-      + tvErrorHTML
+      + tvErr
       + '<button class="mkt-tv-retry-btn" data-tv-retry="overview">↺ Повторить</button>'
       + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/markets/">TradingView.com ↗</button>'
       + '</div></div>'
@@ -476,7 +460,7 @@
       + '<div class="mkt-tv-wrap">'
       + '<div class="mkt-tv-loading" id="tvHeatmapLoading"><div class="mkt-tv-spinner"></div>Загрузка виджета...</div>'
       + '<div class="mkt-tv-error" id="tvHeatmapError" style="display:none">'
-      + tvErrorHTML
+      + tvErr
       + '<button class="mkt-tv-retry-btn" data-tv-retry="heatmap">↺ Повторить</button>'
       + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/heatmap/stock/">TradingView.com ↗</button>'
       + '</div></div>'
@@ -595,7 +579,6 @@
         usContent._built = true;
         usContent.innerHTML = buildUSHTML();
       }
-      renderOverview(page, D.us.overview, 'mktUSOverviewTrack');
       renderChart(page);
       initUSSection(page);
     } else {
