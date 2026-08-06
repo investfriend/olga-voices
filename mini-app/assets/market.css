@@ -371,14 +371,184 @@
   margin-top: 8px;
 }
 
-/* ── Пустой блок США ─────────────────────────────────────────────────────── */
-.mkt-us-note {
+/* ── Постоянная маркировка ДЕМО (инлайн бейдж в заголовке блока) ────────── */
+.mkt-demo-inline {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  background: rgba(255,193,7,.18);
+  color: #FFC107;
+  border: 1px solid rgba(255,193,7,.3);
+  border-radius: 4px;
+  padding: 1px 5px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+.mkt-demo-src-link {
+  color: #FFC107;
+  text-decoration: underline;
+  text-decoration-color: rgba(255,193,7,.4);
+  font-size: 11px;
+}
+.mkt-block-demo-note {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  opacity: .7;
+}
+
+/* ── Задержка TradingView ────────────────────────────────────────────────── */
+.mkt-tv-delay-notice {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+/* ── TradingView виджет — обёртка ────────────────────────────────────────── */
+.mkt-tv-wrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* Состояние загрузки */
+.mkt-tv-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px;
   font-size: 13px;
   color: var(--text-dim);
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 14px 16px;
-  margin-top: 16px;
-  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.mkt-tv-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: mkt-spin .8s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes mkt-spin { to { transform: rotate(360deg); } }
+
+/* Состояние ошибки */
+.mkt-tv-error {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 16px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.mkt-tv-error-ico  { font-size: 28px; margin-bottom: 8px; }
+.mkt-tv-error-msg  { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.mkt-tv-error-sub  { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4; }
+.mkt-tv-btns       { display: flex; flex-direction: column; gap: 8px; }
+.mkt-tv-retry-btn {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mkt-tv-ext-btn {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card-2);
+  color: var(--text-dim);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Карточка США с пометкой ДЕМО */
+.mkt-ticker-demo { position: relative; }
+
+/* ── Аккордеон «Как читать этот экран» ─────────────────────────────────── */
+.mkt-acc-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.mkt-acc-item.mkt-acc-warning {
+  border-color: rgba(255,193,7,.3);
+  background: rgba(255,193,7,.04);
+}
+.mkt-acc-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 8px;
+}
+.mkt-acc-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.3;
+}
+.mkt-acc-warning .mkt-acc-title { color: #FFC107; }
+.mkt-acc-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform .2s;
+  display: flex;
+  align-items: center;
+}
+.mkt-acc-header.is-open .mkt-acc-icon { transform: rotate(180deg); }
+.mkt-acc-body {
+  padding: 0 14px 14px;
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+.mkt-acc-body b { color: var(--text); font-weight: 600; }
+
+/* ── Результаты поиска из FAQ ──────────────────────────────────────────── */
+.mkt-search-card {
+  cursor: pointer;
+}
+.mkt-search-card .faq-card-header {
+  cursor: pointer;
+}
+.mkt-search-card:hover .faq-card-header,
+.mkt-search-card:focus .faq-card-header {
+  background: var(--mkt-bg-band);
+}
+.mkt-search-card .faq-card-toggle svg { color: var(--accent); }
+
+/* Адаптивность 320px / 390px / 430px */
+@media (max-width: 340px) {
+  .mkt-section-head  { font-size: 11px; }
+  .mkt-ticker-card   { width: 104px; }
+  .mkt-tab-btn       { font-size: 12px; padding: 7px 0; }
+  .mkt-bond-card-val { font-size: 16px; }
+  .mkt-chart-val     { font-size: 19px; }
+  .mkt-acc-title     { font-size: 12px; }
+}
+@media (min-width: 420px) {
+  .mkt-ticker-card { width: 134px; }
+  .mkt-acc-title   { font-size: 14px; }
 }

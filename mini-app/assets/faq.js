@@ -208,8 +208,11 @@
         : (fCat === 'all' ? 'Все вопросы' : getCat(fCat).label);
     }
 
+    // Market search results (injected before FAQ results)
+    const mktHtml = (fQ && window.marketSearchHtml) ? window.marketSearchHtml(fQ) : '';
+
     if (!list.length) {
-      el.innerHTML = `<div class="faq-empty"><b>Ответ не найден</b><p>Сократите запрос или попробуйте другое слово.</p></div>`;
+      el.innerHTML = mktHtml || `<div class="faq-empty"><b>Ответ не найден</b><p>Сократите запрос или попробуйте другое слово.</p></div>`;
       return;
     }
 
@@ -220,7 +223,7 @@
       (groups[key] || (groups[key] = [])).push(i);
     });
 
-    el.innerHTML = Object.entries(groups).map(([key, items]) => {
+    el.innerHTML = mktHtml + Object.entries(groups).map(([key, items]) => {
       const meta = key === '__results__'
         ? { id: '__results__', label: 'Найденные ответы' }
         : getCat(key);
