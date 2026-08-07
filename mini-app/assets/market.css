@@ -24,7 +24,13 @@
 .mkt-demo-banner svg { flex-shrink: 0; }
 
 /* ── Заголовок страницы ─────────────────────────────────────────────────── */
-.mkt-header { margin-bottom: 14px; }
+.mkt-header {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.mkt-header .mkt-tabs { flex: 1; margin-bottom: 0; }
 .mkt-title  { font-size: 18px; font-weight: 700; color: var(--text); margin: 0 0 10px; }
 
 /* Вкладки Россия / США */
@@ -51,7 +57,88 @@
   color: #0a1a12;
 }
 
-/* Статус данных */
+/* ── Статусная строка (v4) ───────────────────────────────────────────────── */
+.mkt-status-bar {
+  font-size: 11px;
+  min-height: 20px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+.mkt-status-loading { color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+.mkt-status-ok      { color: var(--text-muted); }
+.mkt-status-stale   { color: #FFC107; font-weight: 600; }
+.mkt-status-error   { color: var(--mkt-down); font-weight: 600; }
+.mkt-status-spin {
+  width: 10px; height: 10px;
+  border: 2px solid rgba(255,255,255,.18);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: mkt-spin .7s linear infinite;
+  flex-shrink: 0;
+}
+.mkt-status-retry {
+  margin-left: 8px;
+  background: none;
+  border: 1px solid var(--mkt-down);
+  color: var(--mkt-down);
+  font-size: 11px;
+  border-radius: 4px;
+  padding: 1px 7px;
+  cursor: pointer;
+}
+@keyframes mkt-spin { to { transform: rotate(360deg); } }
+
+/* ── ДЕМО-инлайн бейдж ───────────────────────────────────────────────────── */
+.mkt-demo-inline {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: #FFC107;
+  background: rgba(255,193,7,.12);
+  border: 1px solid rgba(255,193,7,.28);
+  border-radius: 4px;
+  padding: 1px 5px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* ── Обёртка Lightweight Charts ─────────────────────────────────────────── */
+.mkt-lw-wrap {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-card);
+  min-height: 160px;
+}
+#mktLwChartContainer {
+  display: block;
+}
+.mkt-chart-error {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.mkt-chart-err-msg { color: var(--mkt-down); font-weight: 600; }
+.mkt-chart-retry-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 12px;
+  border-radius: 6px;
+  padding: 5px 14px;
+  cursor: pointer;
+}
+
+/* ── Статус данных (legacy) ─────────────────────────────────────────────── */
 .mkt-meta {
   font-size: 11px;
   color: var(--text-muted);
