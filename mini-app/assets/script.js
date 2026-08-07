@@ -208,23 +208,8 @@ function toggleFav(key, btn) {
 }
 
 function renderFavorites() {
-  const list = document.getElementById('favorites-list');
-  const empty = document.getElementById('favorites-empty');
-  if (!STATE.favorites.length) {
-    list.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-  const items = STATE.favorites.map(key => {
-    const [catId, itemId] = key.split('/');
-    const cat = DATA.categories.find(c => c.id === catId);
-    if (!cat) return '';
-    const item = cat.items.find(i => i.id === itemId);
-    if (!item) return '';
-    return itemCardHTML({ ...item, _cat: catId });
-  }).filter(Boolean).join('');
-  list.innerHTML = items;
+  if (typeof FAV !== 'undefined') { FAV.renderScreen(); return; }
+  // legacy fallback (no-op if favorites.js not loaded)
 }
 
 // === Referral ===

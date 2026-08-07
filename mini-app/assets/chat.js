@@ -175,7 +175,7 @@
   }
 
   // ── Карточка ─────────────────────────────────────────────────────────────────
-  function _cardHTML(item) {
+  function _cardHTML(item, favKey) {
     var isSoon = item.access === 'coming_soon';
     var btnIcon = item.external ? _IC.ext : _IC.arrow;
     var btn = '<button class="ch-btn' + (isSoon ? ' ch-btn--disabled' : '') + '"'
@@ -185,6 +185,17 @@
       + item.btn
       + '</button>';
 
+    var starBtn = '';
+    if (favKey && typeof FAV !== 'undefined') {
+      var isFav = FAV.isFav(favKey);
+      starBtn = '<button class="fav-star-btn ch-res-star' + (isFav ? ' is-fav' : '') + '"'
+        + ' data-fav-key="' + favKey + '"'
+        + ' data-res-fav="' + item.id + '"'
+        + ' aria-label="' + (isFav ? 'Убрать из избранного' : 'Добавить в избранное') + '">'
+        + (isFav ? FAV.starFill : FAV.starEmpty)
+        + '</button>';
+    }
+
     return '<div class="ch-card' + (item.featured ? ' ch-card--featured' : '') + '">'
       + '<div class="ch-card-head">'
       + '<div class="ch-ic">' + (_IC[item.icon] || _IC.chat) + '</div>'
@@ -192,6 +203,7 @@
       + '<div class="ch-card-title">' + item.title + '</div>'
       + _badgeHTML(item)
       + '</div>'
+      + starBtn
       + '</div>'
       + '<p class="ch-card-desc">' + item.desc + '</p>'
       + (item.note ? '<p class="ch-card-note">' + item.note + '</p>' : '')
@@ -204,7 +216,10 @@
     return '<div class="ch-section">'
       + '<h3 class="ch-section-title">' + sec.title + '</h3>'
       + (sec.intro ? '<p class="ch-section-intro">' + sec.intro + '</p>' : '')
-      + sec.items.map(_cardHTML).join('')
+      + sec.items.map(function (item) {
+          var favKey = sec.id === 'resources' ? 'resource/' + item.id : null;
+          return _cardHTML(item, favKey);
+        }).join('')
       + '</div>';
   }
 
@@ -212,6 +227,11 @@
   var _pendingUrl = null;
 
   function _handleClick(e) {
+    var resFavBtn = e.target.closest('[data-res-fav]');
+    if (resFavBtn) {
+      if (typeof FAV !== 'undefined') FAV.toggle(resFavBtn.dataset.favKey, resFavBtn);
+      return;
+    }
     var btn = e.target.closest('[data-action]');
     if (!btn) return;
     var item = _findItem(btn.dataset.action);

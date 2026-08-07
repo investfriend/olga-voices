@@ -242,6 +242,14 @@
                          data-action-url="${esc(a.url)}">${esc(a.label)}&nbsp;${SVG.external}</button>`
               ).join('')}</div>`
             : '';
+          const faqFavKey = `faq/${esc(i.id)}`;
+          const faqIsFav = typeof FAV !== 'undefined' && FAV.isFav('faq/' + i.id);
+          const faqStar = typeof FAV !== 'undefined'
+            ? `<button class="fav-star-btn faq-fav-btn${faqIsFav ? ' is-fav' : ''}"
+                 data-faq-fav="${esc(i.id)}"
+                 data-fav-key="${faqFavKey}"
+                 aria-label="${faqIsFav ? 'Убрать из избранного' : 'Добавить в избранное'}">${faqIsFav ? FAV.starFill : FAV.starEmpty}</button>`
+            : '';
           return `<div class="faq-card" id="faqcard-${esc(i.id)}">
             <div class="faq-card-header"
                  data-faq-toggle="${esc(i.id)}"
@@ -255,9 +263,12 @@
                 <div class="faq-card-q">${esc(i.question)}</div>
                 <div class="faq-card-short">${esc(i.short)}</div>
               </div>
-              <div class="faq-card-toggle" aria-hidden="true">
-                <span class="faq-toggle-plus">${SVG.plus}</span>
-                <span class="faq-toggle-minus">${SVG.minus}</span>
+              <div class="faq-card-right">
+                ${faqStar}
+                <div class="faq-card-toggle" aria-hidden="true">
+                  <span class="faq-toggle-plus">${SVG.plus}</span>
+                  <span class="faq-toggle-minus">${SVG.minus}</span>
+                </div>
               </div>
             </div>
             <div class="faq-card-body" id="faqbody-${esc(i.id)}" hidden>
@@ -314,6 +325,13 @@
       const bodyLink = e.target.closest('.faq-card-body a[href]');
       if (bodyLink) { e.preventDefault(); openLink(bodyLink.href); return; }
 
+      // Star button — must check BEFORE toggle to avoid opening accordion
+      const favBtn = e.target.closest('[data-faq-fav]');
+      if (favBtn) {
+        if (typeof FAV !== 'undefined') FAV.toggle('faq/' + favBtn.dataset.faqFav, favBtn);
+        return;
+      }
+
       // Find nearest data-* handler
       const t = e.target.closest(
         '[data-faq-query],[data-faq-cat],[data-faq-toggle],[data-lesson-url],[data-action-url]'
@@ -369,6 +387,14 @@
       render();
     });
   }
+
+  // Expose: navigate to FAQ and expand a card by ID (used by favorites screen)
+  window._faqExpand = function (id) {
+    const card = document.getElementById('faqcard-' + id);
+    if (!card) return;
+    if (!card.classList.contains('is-open')) toggleCard(id);
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

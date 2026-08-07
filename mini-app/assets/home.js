@@ -622,13 +622,26 @@
     }).join('');
 
     var archHtml = HOME_CFG.archives.map(function (a) {
+      var arcKey = 'home/' + a.id;
+      var arcFav = typeof FAV !== 'undefined' && FAV.isFav(arcKey);
+      var arcStar = typeof FAV !== 'undefined'
+        ? '<button class="fav-star-btn hp-arc-star' + (arcFav ? ' is-fav' : '') + '"'
+          + ' data-fav-key="' + arcKey + '"'
+          + ' data-arc-fav="' + a.id + '"'
+          + ' aria-label="' + (arcFav ? 'Убрать из избранного' : 'Добавить в избранное') + '">'
+          + (arcFav ? FAV.starFill : FAV.starEmpty)
+          + '</button>'
+        : '';
       return '<div class="hp-acc-wrap hp-archive-item">'
         + '<button class="hp-acc-btn" data-hp-acc="' + a.id + '">'
         + '<span class="hp-acc-title">' + a.title + '</span>'
         + '<span class="hp-acc-icon">' + CHEVRON_SVG + '</span>'
         + '</button>'
         + '<div class="hp-acc-body" data-hp-body="' + a.id + '" hidden>'
+        + '<div class="hp-archive-row">'
         + '<a class="hp-archive-link" data-url="' + a.url + '">Перейти к материалам →</a>'
+        + arcStar
+        + '</div>'
         + '</div>'
         + '</div>';
     }).join('');
@@ -653,6 +666,12 @@
       if (favBtn) {
         e.stopPropagation();
         toggleStepFav(favBtn.dataset.step, favBtn);
+        return;
+      }
+      var arcFavBtn = e.target.closest('[data-arc-fav]');
+      if (arcFavBtn) {
+        e.stopPropagation();
+        if (typeof FAV !== 'undefined') FAV.toggle(arcFavBtn.dataset.favKey, arcFavBtn);
         return;
       }
       var openBtn = e.target.closest('.hp-step-open');
