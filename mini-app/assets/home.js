@@ -1,25 +1,137 @@
-// assets/home.js v1 — Home screen rendering
-// Depends on: script.js (STATE, setPage), data.js (DATA)
+// assets/home.js v3 — Home screen rendering
+// Depends on: script.js (STATE, setPage, showToast), data.js (DATA)
 
 (function () {
   'use strict';
 
   // ── Configuration ───────────────────────────────────────────────────────────
   var HOME_CFG = {
+
+    // ── Карусель портфелей (верхний блок главной) ──────────────────────────
+    portfolioCarousel: {
+      title:    'Портфели клуба',
+      subtitle: 'Динамика портфелей относительно выбранных рыночных ориентиров',
+      portfolios: [
+        {
+          id: 'invest',
+          title: 'Инвестиционный портфель',
+          snowballPublicUrl:      null,
+          dataEndpoint:           null,
+          benchmarkCode:          'IMOEX',
+          benchmarkLabel:         'Индекс Мосбиржи',
+          defaultPeriod:          'С начала года',
+          currency:               'RUB',
+          portfolioReturn:        null,
+          benchmarkReturn:        null,
+          differencePp:           null,
+          status:                 null,
+          chartSeries:            null,
+          lastUpdatedAt:          null,
+          updateIntervalMinutes:  15,
+          dataState:              'awaiting_source',
+        },
+        {
+          id: 'passive',
+          title: 'Пассивный портфель',
+          snowballPublicUrl:      null,
+          dataEndpoint:           null,
+          benchmarkCode:          'IMOEX',
+          benchmarkLabel:         'Индекс Мосбиржи',
+          defaultPeriod:          'С начала года',
+          currency:               'RUB',
+          portfolioReturn:        null,
+          benchmarkReturn:        null,
+          differencePp:           null,
+          status:                 null,
+          chartSeries:            null,
+          lastUpdatedAt:          null,
+          updateIntervalMinutes:  15,
+          dataState:              'awaiting_source',
+        },
+        {
+          id: 'crypto',
+          title: 'Криптопортфель',
+          snowballPublicUrl:      null,
+          dataEndpoint:           null,
+          benchmarkCode:          'BTC',
+          benchmarkLabel:         'Bitcoin',
+          defaultPeriod:          'С начала года',
+          currency:               'USD',
+          portfolioReturn:        null,
+          benchmarkReturn:        null,
+          differencePp:           null,
+          status:                 null,
+          chartSeries:            null,
+          lastUpdatedAt:          null,
+          updateIntervalMinutes:  15,
+          dataState:              'awaiting_source',
+        },
+        {
+          id: 'foreign',
+          title: 'Зарубежный портфель',
+          snowballPublicUrl:      null,
+          dataEndpoint:           null,
+          benchmarkCode:          'SPX',
+          benchmarkLabel:         'S&P 500',
+          defaultPeriod:          'С начала года',
+          currency:               'USD',
+          portfolioReturn:        null,
+          benchmarkReturn:        null,
+          differencePp:           null,
+          status:                 null,
+          chartSeries:            null,
+          lastUpdatedAt:          null,
+          updateIntervalMinutes:  15,
+          dataState:              'awaiting_source',
+        },
+        {
+          id: 'highrisk',
+          title: 'Портфель высокого риска',
+          snowballPublicUrl:      null,
+          dataEndpoint:           null,
+          benchmarkCode:          'IMOEX',
+          benchmarkLabel:         'Индекс Мосбиржи',
+          defaultPeriod:          'С начала года',
+          currency:               'RUB',
+          portfolioReturn:        null,
+          benchmarkReturn:        null,
+          differencePp:           null,
+          status:                 null,
+          chartSeries:            null,
+          lastUpdatedAt:          null,
+          updateIntervalMinutes:  15,
+          dataState:              'awaiting_source',
+        },
+      ],
+    },
+
+    // ── Плашка интенсива по крипте (сразу под каруселью) ───────────────────
+    cryptoEvent: {
+      tag:      'Живой интенсив · Август',
+      title:    'Криптовалюты',
+      subtitle: 'Программа, даты и подробности появятся после согласования.',
+      url:      null,
+      btnLabel: 'Подробнее',
+      btnToast: 'Подробности о криптоинтенсиве появятся после согласования программы.',
+    },
+
+    // ── Карточка-ссылка «Портфели клуба» ──────────────────────────────────
     portfolios: {
       title: 'Портфели клуба',
       desc:  'Актуальные портфели и материалы по их ведению',
       url:   'https://investfriend.ru/teach/control/lesson/view/id/348403796',
     },
 
+    // ── Макро-интенсив (секция «Сейчас в клубе») ──────────────────────────
     intensiv: {
-      tag:    'МАКРО',
-      title:  'Экономика и портфель: как принимать решения по данным',
-      start:  '2026-08-03',
-      end:    '2026-08-10',
-      url:    'https://investfriend.ru/teach/control/stream/view/id/935709630',
+      tag:   'МАКРО',
+      title: 'Экономика и портфель: как принимать решения по данным',
+      start: '2026-08-03',
+      end:   '2026-08-10',
+      url:   'https://investfriend.ru/teach/control/stream/view/id/935709630',
     },
 
+    // ── Расписание событий ─────────────────────────────────────────────────
     events: [
       { date: '2026-08-03', title: 'День 1. Где находится экономика сейчас',           desc: 'В течение дня',     allDay: true  },
       { date: '2026-08-04', title: 'День 2. Инфляция и ставка',                        desc: 'В течение дня',     allDay: true  },
@@ -49,54 +161,6 @@
       title: 'Как пользоваться обучением',
       body:  'Обучение разделено на три ступени — от основ до продвинутых инструментов. Начните с первой: финансовая грамотность, активы, первые инвестиции. После завершения переходите к следующей. Нажмите «Открыть» на любой ступени, чтобы попасть в неё. Звёздочку ★ используйте, чтобы отметить ступень как важную.',
     },
-
-    // Слайдер: массив слайдов. Порядок = порядок показа.
-    slider: [
-      {
-        id:   'slider-results',
-        type: 'results',
-        tag:  'Результаты клуба',
-        title:   'Портфели выше рынка',
-        subtitle: 'Сравнение с индексом Мосбиржи',
-        isPlaceholder: true,
-        period:    null,        // строка: 'с начала 2025 года'
-        updatedAt: null,        // строка: '05.08.2026'
-        source:    null,
-        comment:   'По данным клуба оба портфеля опережают индекс Мосбиржи. Точные показатели появятся после подключения данных аналитика.',
-        portfolios: [
-          {
-            id: 'passive',
-            name: 'Пассивный портфель',
-            return: null,       // число: 18.4 → отобразится как '+18.4%'
-            indexReturn: null,  // число: 12.1
-            diff:   null,       // null = считается авто: return - indexReturn
-            status: 'Выше индекса',
-          },
-          {
-            id: 'invest',
-            name: 'Инвест. портфель',
-            return: null,
-            indexReturn: null,
-            diff:   null,
-            status: 'Выше индекса',
-          },
-        ],
-      },
-      {
-        id:   'slider-crypto',
-        type: 'event',
-        tag:  'Живой интенсив · Август',
-        title:    'Криптовалюты',
-        subtitle: 'Программа, даты и подробности появятся после согласования.',
-        fullTitle:   null,
-        description: null,
-        dates:       null,
-        status:      null,
-        url:         null,
-        btnLabel: 'Подробнее',
-        btnToast: 'Подробности о криптоинтенсиве появятся после согласования программы.',
-      },
-    ],
   };
 
   window.HOME_CFG = HOME_CFG;
@@ -139,13 +203,6 @@
     return { label: 'Идёт сейчас', cls: 'hp-status-live' };
   }
 
-  function nearestEvent() {
-    for (var i = 0; i < HOME_CFG.events.length; i++) {
-      if (eventStatus(HOME_CFG.events[i]).cls !== 'hp-status-done') return HOME_CFG.events[i];
-    }
-    return HOME_CFG.events[HOME_CFG.events.length - 1];
-  }
-
   // ── Utilities ────────────────────────────────────────────────────────────────
   function openUrl(url) {
     var tg = window.Telegram && window.Telegram.WebApp;
@@ -180,7 +237,275 @@
 
   var CHEVRON_SVG = '<svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>';
 
-  // ── Render: Портфели клуба ────────────────────────────────────────────────
+  var MONTH_SHORT = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+
+  // ── SVG-график (два временных ряда) ─────────────────────────────────────────
+  // chartSeries: [{label, color, points: [{date:'YYYY-MM-DD', value:number}]}]
+  // Возвращает строку SVG или null (если данных нет).
+  function _svgChart(chartSeries) {
+    if (!chartSeries || !chartSeries.length) return null;
+    var valid = chartSeries.filter(function (s) {
+      return s && s.points && s.points.length >= 2;
+    });
+    if (!valid.length) return null;
+
+    var W = 280, H = 56;
+
+    // Нормализуем каждый ряд: первая точка = 100
+    var norm = valid.map(function (s) {
+      var base = s.points[0].value || 1;
+      return {
+        color: s.color,
+        pts: s.points.map(function (p, i) {
+          return { i: i, y: p.value / base * 100, n: s.points.length };
+        }),
+      };
+    });
+
+    // Y-домен с 10%-отступом
+    var allY = [];
+    norm.forEach(function (s) { s.pts.forEach(function (p) { allY.push(p.y); }); });
+    var minY = Math.min.apply(null, allY);
+    var maxY = Math.max.apply(null, allY);
+    var rng  = maxY - minY || 1;
+    var yMin = minY - rng * 0.1;
+    var yMax = maxY + rng * 0.1;
+
+    function svgY(v) { return ((yMax - v) / (yMax - yMin) * H).toFixed(1); }
+    function svgX(i, n) { return (n > 1 ? i / (n - 1) * W : W / 2).toFixed(1); }
+
+    // Базовая линия на уровне 100 (начало периода)
+    var zy = parseFloat(svgY(100));
+    var baseline = (zy > 1 && zy < H - 1)
+      ? '<line x1="0" y1="' + zy.toFixed(1) + '" x2="' + W + '" y2="' + zy.toFixed(1)
+        + '" stroke="rgba(255,255,255,.1)" stroke-width="1" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"/>'
+      : '';
+
+    var polylines = norm.map(function (s) {
+      var pts = s.pts.map(function (p) { return svgX(p.i, p.n) + ',' + svgY(p.y); }).join(' ');
+      return '<polyline points="' + pts + '" fill="none" stroke="' + s.color
+        + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>';
+    }).join('');
+
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H
+      + '" preserveAspectRatio="none" aria-hidden="true" style="display:block">'
+      + baseline + polylines + '</svg>';
+  }
+
+  // ── Карусель портфелей ────────────────────────────────────────────────────────
+
+  function _statusBadge(p) {
+    if (p.dataState === 'awaiting_source' || p.differencePp === null) {
+      return '<span class="hp-pcc-badge hp-pcc-badge--waiting">Подключается</span>';
+    }
+    if (p.differencePp > 0)  return '<span class="hp-pcc-badge hp-pcc-badge--ahead">Опережает ориентир</span>';
+    if (p.differencePp === 0) return '<span class="hp-pcc-badge hp-pcc-badge--even">На уровне ориентира</span>';
+    return '<span class="hp-pcc-badge hp-pcc-badge--behind">Отстаёт от ориентира</span>';
+  }
+
+  function _fmtPct(v) {
+    if (v === null || v === undefined) return '<span class="hp-ph">—</span>';
+    return (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+  }
+
+  function _fmtPp(v) {
+    if (v === null || v === undefined) return '<span class="hp-ph">—</span>';
+    return (v >= 0 ? '+' : '') + v.toFixed(1) + ' п.п.';
+  }
+
+  function _portfolioCardHTML(p, idx, total) {
+    var svgStr = _svgChart(p.chartSeries);
+
+    // Даты из первого ряда
+    var firstDate = '', lastDate = '';
+    if (p.chartSeries && p.chartSeries[0] && p.chartSeries[0].points && p.chartSeries[0].points.length >= 2) {
+      var pts = p.chartSeries[0].points;
+      var d0 = new Date(pts[0].date + 'T00:00:00');
+      var dN = new Date(pts[pts.length - 1].date + 'T00:00:00');
+      firstDate = d0.getDate() + ' ' + MONTH_SHORT[d0.getMonth()];
+      lastDate  = dN.getDate() + ' ' + MONTH_SHORT[dN.getMonth()];
+    }
+
+    // Легенда
+    var legendSeries = p.chartSeries && p.chartSeries.length
+      ? p.chartSeries
+      : [
+          { label: 'Портфель',        color: '#27C98A' },
+          { label: p.benchmarkLabel,  color: '#8B8FA8' },
+        ];
+    var legHTML = '<div class="hp-pcc-legend">'
+      + legendSeries.map(function (s) {
+        return '<span class="hp-pcc-leg-item">'
+          + '<span class="hp-pcc-leg-dot" style="background:' + s.color + '"></span>'
+          + s.label
+          + '</span>';
+      }).join('') + '</div>';
+
+    var updStr = p.lastUpdatedAt
+      ? 'Обновлено ' + p.lastUpdatedAt
+      : 'Источник подключается';
+
+    return '<div class="hp-pcslide" role="group" aria-label="' + (idx + 1) + ' из ' + total + ': ' + p.title + '">'
+      + '<div class="hp-pccard">'
+
+      // Название + период
+      + '<div class="hp-pcc-name">' + p.title + '</div>'
+      + '<div class="hp-pcc-period">' + p.defaultPeriod + '</div>'
+
+      // Метрики — вертикальный список
+      + '<div class="hp-pcc-metrics">'
+      + '<div class="hp-pcc-metric">'
+      + '<span class="hp-pcc-mlbl">Портфель</span>'
+      + '<span class="hp-pcc-mval font-num">' + _fmtPct(p.portfolioReturn) + '</span>'
+      + '</div>'
+      + '<div class="hp-pcc-metric">'
+      + '<span class="hp-pcc-mlbl">' + p.benchmarkLabel + '</span>'
+      + '<span class="hp-pcc-mval font-num">' + _fmtPct(p.benchmarkReturn) + '</span>'
+      + '</div>'
+      + '<div class="hp-pcc-metric hp-pcc-metric--diff">'
+      + '<span class="hp-pcc-mlbl">Разница</span>'
+      + '<span class="hp-pcc-mval font-num">' + _fmtPp(p.differencePp) + '</span>'
+      + '</div>'
+      + '</div>'
+
+      // Статус
+      + _statusBadge(p)
+
+      // График
+      + '<div class="hp-pcc-chart">'
+      + (svgStr
+        ? svgStr
+          + '<div class="hp-pcc-chart-dates"><span>' + firstDate + '</span><span>' + lastDate + '</span></div>'
+        : '<div class="hp-pcc-chart-empty"><span>График подключается</span></div>'
+      )
+      + '</div>'
+
+      // Легенда
+      + legHTML
+
+      // Футер
+      + '<div class="hp-pcc-footer">'
+      + '<span class="hp-pcc-source">Данные Snowball Income</span>'
+      + '<span class="hp-pcc-updated">' + updStr + '</span>'
+      + '</div>'
+      + '<div class="hp-pcc-warning">Данные могут отображаться с задержкой до 15 минут</div>'
+
+      + '</div>' // hp-pccard
+      + '</div>'; // hp-pcslide
+  }
+
+  function _initPortfolioCarousel(wrap, total) {
+    var track = wrap.querySelector('.hp-pctrack');
+    var dots  = wrap.querySelectorAll('.hp-dot');
+    var counter = wrap.querySelector('.hp-pc-counter');
+    var cur = 0;
+    var sX, sY, dragging = false;
+
+    function stepPx() {
+      var slide = track && track.querySelector('.hp-pcslide');
+      if (!slide) return 300;
+      return slide.offsetWidth + 10; // 10 = margin-right
+    }
+
+    function updateUI() {
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === cur); });
+      if (counter) counter.textContent = (cur + 1) + ' из ' + total;
+    }
+
+    function goTo(idx) {
+      if (idx < 0 || idx >= total) return;
+      cur = idx;
+      track.style.transition = 'transform .3s ease';
+      track.style.transform  = 'translateX(-' + (stepPx() * cur) + 'px)';
+      updateUI();
+    }
+
+    updateUI();
+
+    dots.forEach(function (d) {
+      d.addEventListener('click', function () { goTo(+d.dataset.idx); });
+    });
+
+    wrap.addEventListener('touchstart', function (e) {
+      sX = e.touches[0].clientX;
+      sY = e.touches[0].clientY;
+      dragging = true;
+      if (track) track.style.transition = 'none';
+    }, { passive: true });
+
+    wrap.addEventListener('touchmove', function (e) {
+      if (!dragging) return;
+      var dx = e.touches[0].clientX - sX;
+      var dy = e.touches[0].clientY - sY;
+      if (Math.abs(dx) > Math.abs(dy) + 5) {
+        e.preventDefault();
+        if (track) track.style.transform = 'translateX(' + (-cur * stepPx() + dx) + 'px)';
+      }
+    }, { passive: false });
+
+    wrap.addEventListener('touchend', function (e) {
+      if (!dragging) return;
+      dragging = false;
+      var dx = e.changedTouches[0].clientX - sX;
+      goTo(Math.abs(dx) > 44 ? (dx < 0 ? cur + 1 : cur - 1) : cur);
+    }, { passive: true });
+  }
+
+  function renderPortfolioCarousel() {
+    var wrap = document.getElementById('hp-slider-wrap');
+    if (!wrap) return;
+    var cfg   = HOME_CFG.portfolioCarousel;
+    var items = cfg.portfolios;
+    var total = items.length;
+
+    var slidesHTML = items.map(function (p, i) {
+      return _portfolioCardHTML(p, i, total);
+    }).join('');
+
+    var dotsHTML = items.map(function (_, i) {
+      return '<button class="hp-dot' + (i === 0 ? ' active' : '') + '" data-idx="' + i
+        + '" aria-label="Портфель ' + (i + 1) + '"></button>';
+    }).join('');
+
+    wrap.innerHTML =
+      '<div class="hp-pc-head">'
+      + '<div class="hp-pc-head-title">' + cfg.title + '</div>'
+      + '<div class="hp-pc-head-sub">' + cfg.subtitle + '</div>'
+      + '</div>'
+      + '<div class="hp-pctrack">' + slidesHTML + '</div>'
+      + '<div class="hp-pc-controls">'
+      + '<span class="hp-pc-counter">1 из ' + total + '</span>'
+      + '<div class="hp-slider-dots">' + dotsHTML + '</div>'
+      + '</div>';
+
+    _initPortfolioCarousel(wrap, total);
+  }
+
+  // ── Плашка крипто-интенсива ──────────────────────────────────────────────────
+  function renderCryptoEvent() {
+    var el = document.getElementById('hp-crypto-event');
+    if (!el) return;
+    var c = HOME_CFG.cryptoEvent;
+    el.innerHTML = '<div class="hp-slide-inner hp-slide-crypto">'
+      + '<div class="hp-crypto-bg-icon" aria-hidden="true">&#x20BF;</div>'
+      + '<div class="hp-slide-top">'
+      + '<span class="hp-slide-tag">' + c.tag + '</span>'
+      + '</div>'
+      + '<div class="hp-slide-title font-cond">' + c.title + '</div>'
+      + '<div class="hp-slide-sub">' + c.subtitle + '</div>'
+      + '<button class="hp-slide-btn hp-crypto-evt-btn"'
+      + (c.url ? ' data-url="' + c.url + '"' : '')
+      + (c.btnToast ? ' data-toast="' + c.btnToast + '"' : '')
+      + '>' + c.btnLabel + '</button>'
+      + '</div>';
+    el.querySelector('.hp-crypto-evt-btn').addEventListener('click', function (e) {
+      var btn = e.currentTarget;
+      if (btn.dataset.url) { openUrl(btn.dataset.url); return; }
+      if (btn.dataset.toast && window.showToast) showToast(btn.dataset.toast);
+    });
+  }
+
+  // ── Render: Портфели клуба (ссылка на GetCourse) ─────────────────────────────
   function renderPortfolios() {
     var el = document.getElementById('hp-portfolios');
     if (!el) return;
@@ -198,7 +523,7 @@
     el.querySelector('.hp-portfolios-card').addEventListener('click', function () { openUrl(c.url); });
   }
 
-  // ── Render: кнопка «Общение» ──────────────────────────────────────────────
+  // ── Render: кнопка «Общение» ──────────────────────────────────────────────────
   function renderChatsBtn() {
     var el = document.getElementById('hp-chats');
     if (!el) return;
@@ -211,7 +536,7 @@
     });
   }
 
-  // ── Render: «Сейчас в клубе» (карточка интенсива) ────────────────────────
+  // ── Render: «Сейчас в клубе» (макро-интенсив) ────────────────────────────────
   function renderNow() {
     var el = document.getElementById('hp-now');
     if (!el) return;
@@ -223,16 +548,15 @@
       + '<span class="hp-status ' + intSt.cls + '">' + intSt.label + '</span>'
       + '</div>'
       + '<div class="hp-intensiv-title">' + HOME_CFG.intensiv.title + '</div>'
-      + '<div class="hp-intensiv-period">3–10 августа 2026</div>'
+      + '<div class="hp-intensiv-period">3–10 августа 2026</div>'
       + '</div>';
     el.querySelector('.hp-intensiv-card').addEventListener('click', function () {
       openUrl(HOME_CFG.intensiv.url);
     });
   }
 
-  // ── Render: Расписание ────────────────────────────────────────────────────
-  var MONTH_SHORT = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
-  var DAY_SHORT   = ['вс','пн','вт','ср','чт','пт','сб'];
+  // ── Render: Расписание ────────────────────────────────────────────────────────
+  var DAY_SHORT = ['вс','пн','вт','ср','чт','пт','сб'];
 
   function renderCalendar() {
     var el = document.getElementById('hp-calendar');
@@ -246,7 +570,7 @@
         var d = new Date(ev.date + 'T00:00:00');
         html += '<div class="hp-cal-date-row">'
           + '<span class="hp-cal-date-num">' + d.getDate() + '</span>'
-          + '<span class="hp-cal-date-label">' + MONTH_SHORT[d.getMonth()] + ' · ' + DAY_SHORT[d.getDay()] + '</span>'
+          + '<span class="hp-cal-date-label">' + MONTH_SHORT[d.getMonth()] + ' · ' + DAY_SHORT[d.getDay()] + '</span>'
           + '</div>';
         lastDate = ev.date;
       }
@@ -259,7 +583,6 @@
         + '</div>';
     });
     html += '</div>';
-    // Link to intensiv for the whole section
     html += '<a class="hp-cal-link" data-url="' + HOME_CFG.intensiv.url + '">Открыть программу интенсива →</a>';
     el.innerHTML = html;
     el.querySelector('.hp-cal-link').addEventListener('click', function () {
@@ -267,12 +590,11 @@
     });
   }
 
-  // ── Render: Обучение ──────────────────────────────────────────────────────
+  // ── Render: Обучение ──────────────────────────────────────────────────────────
   function renderLearning() {
     var el = document.getElementById('hp-learning');
     if (!el) return;
 
-    // How-to accordion
     var acc = HOME_CFG.accordion;
     var howHtml = '<div class="hp-acc-wrap hp-how-acc">'
       + '<button class="hp-acc-btn" data-hp-acc="how-to">'
@@ -284,7 +606,6 @@
       + '</div>'
       + '</div>';
 
-    // Step cards
     var stepsHtml = HOME_CFG.steps.map(function (s) {
       var fav = isStepFav(s.id);
       return '<div class="hp-step-card">'
@@ -300,7 +621,6 @@
         + '</div>';
     }).join('');
 
-    // Archive accordions
     var archHtml = HOME_CFG.archives.map(function (a) {
       return '<div class="hp-acc-wrap hp-archive-item">'
         + '<button class="hp-acc-btn" data-hp-acc="' + a.id + '">'
@@ -316,9 +636,7 @@
     el.innerHTML = '<div class="hp-section-title">Обучение</div>'
       + howHtml + stepsHtml + archHtml;
 
-    // Delegated events
     el.addEventListener('click', function (e) {
-      // Accordion toggle
       var accBtn = e.target.closest('[data-hp-acc]');
       if (accBtn && el.contains(accBtn)) {
         var id   = accBtn.dataset.hpAcc;
@@ -331,147 +649,23 @@
         }
         return;
       }
-      // Fav toggle
       var favBtn = e.target.closest('.hp-step-fav');
       if (favBtn) {
         e.stopPropagation();
         toggleStepFav(favBtn.dataset.step, favBtn);
         return;
       }
-      // Step open button
       var openBtn = e.target.closest('.hp-step-open');
       if (openBtn) { openUrl(openBtn.dataset.url); return; }
-      // Archive link
       var arcLink = e.target.closest('.hp-archive-link');
       if (arcLink) { openUrl(arcLink.dataset.url); return; }
     });
   }
 
-  // ── Slider helpers ───────────────────────────────────────────────────────────
-  function _slideResultsHTML(cfg) {
-    var pCards = cfg.portfolios.map(function (p) {
-      var retStr = p.return !== null ? (p.return >= 0 ? '+' : '') + p.return.toFixed(1) + '%' : null;
-      var idxStr = p.indexReturn !== null ? (p.indexReturn >= 0 ? '+' : '') + p.indexReturn.toFixed(1) + '%' : null;
-      var diffVal = p.diff !== null ? p.diff
-        : (p.return !== null && p.indexReturn !== null ? +(p.return - p.indexReturn).toFixed(1) : null);
-      var diffStr = diffVal !== null ? (diffVal >= 0 ? '+' : '') + diffVal.toFixed(1) + ' п.п.' : null;
-      var ph = '<span class="hp-slide-ph">—</span>';
-      return '<div class="hp-rc-card">'
-        + '<div class="hp-rc-name">' + p.name + '</div>'
-        + '<div class="hp-rc-badge">' + p.status + '</div>'
-        + '<div class="hp-rc-metrics">'
-        + '<div class="hp-rc-row"><span class="hp-rc-lbl">Портфель</span>'
-        + '<span class="hp-rc-val font-num">' + (retStr || ph) + '</span></div>'
-        + '<div class="hp-rc-row"><span class="hp-rc-lbl">Индекс</span>'
-        + '<span class="hp-rc-val font-num">' + (idxStr || ph) + '</span></div>'
-        + '<div class="hp-rc-row hp-rc-diff"><span class="hp-rc-lbl">Разница</span>'
-        + '<span class="hp-rc-val font-num">' + (diffStr || ph) + '</span></div>'
-        + '</div></div>';
-    }).join('');
-
-    return '<div class="hp-slide-inner hp-slide-results">'
-      + '<div class="hp-slide-top">'
-      + '<span class="hp-slide-tag">' + cfg.tag + '</span>'
-      + (cfg.period ? '<span class="hp-slide-period">' + cfg.period + '</span>' : '')
-      + '</div>'
-      + '<div class="hp-slide-title font-cond">' + cfg.title + '</div>'
-      + '<div class="hp-slide-sub">' + cfg.subtitle + '</div>'
-      + '<div class="hp-rc-grid">' + pCards + '</div>'
-      + (cfg.comment ? '<p class="hp-slide-comment">' + cfg.comment + '</p>' : '')
-      + '</div>';
-  }
-
-  function _slideEventHTML(cfg) {
-    var btn = '<button class="hp-slide-btn"'
-      + (cfg.url ? ' data-url="' + cfg.url + '"' : '')
-      + (cfg.btnToast ? ' data-toast="' + cfg.btnToast + '"' : '')
-      + '>' + cfg.btnLabel + '</button>';
-    return '<div class="hp-slide-inner hp-slide-crypto">'
-      + '<div class="hp-crypto-bg-icon" aria-hidden="true">&#x20BF;</div>'
-      + '<div class="hp-slide-top">'
-      + '<span class="hp-slide-tag">' + cfg.tag + '</span>'
-      + '</div>'
-      + '<div class="hp-slide-title font-cond">' + cfg.title + '</div>'
-      + '<div class="hp-slide-sub">' + cfg.subtitle + '</div>'
-      + btn
-      + '</div>';
-  }
-
-  function _initSlider(wrap) {
-    var track = wrap.querySelector('.hp-slider');
-    var dots  = wrap.querySelectorAll('.hp-dot');
-    var total = HOME_CFG.slider.length;
-    var state = { cur: 0 };
-    var sX, sY, dragging = false;
-
-    function goTo(idx) {
-      if (idx < 0 || idx >= total) return;
-      state.cur = idx;
-      track.style.transition = 'transform .3s ease';
-      track.style.transform  = 'translateX(-' + (idx * 100) + '%)';
-      dots.forEach(function (d, i) { d.classList.toggle('active', i === idx); });
-    }
-
-    dots.forEach(function (d) {
-      d.addEventListener('click', function () { goTo(+d.dataset.idx); });
-    });
-
-    wrap.addEventListener('click', function (e) {
-      var btn = e.target.closest('.hp-slide-btn');
-      if (!btn) return;
-      if (btn.dataset.url) { openUrl(btn.dataset.url); return; }
-      if (btn.dataset.toast) { showToast(btn.dataset.toast); }
-    });
-
-    wrap.addEventListener('touchstart', function (e) {
-      sX = e.touches[0].clientX;
-      sY = e.touches[0].clientY;
-      dragging = true;
-      track.style.transition = 'none';
-    }, { passive: true });
-
-    wrap.addEventListener('touchmove', function (e) {
-      if (!dragging) return;
-      var dx = e.touches[0].clientX - sX;
-      var dy = e.touches[0].clientY - sY;
-      if (Math.abs(dx) > Math.abs(dy) + 5) {
-        e.preventDefault();
-        var pct = -(state.cur * 100) + (dx / wrap.offsetWidth * 100);
-        track.style.transform = 'translateX(' + pct + '%)';
-      }
-    }, { passive: false });
-
-    wrap.addEventListener('touchend', function (e) {
-      if (!dragging) return;
-      dragging = false;
-      var dx = e.changedTouches[0].clientX - sX;
-      if (Math.abs(dx) > 48) {
-        goTo(dx < 0 ? state.cur + 1 : state.cur - 1);
-      } else {
-        goTo(state.cur); // snap back
-      }
-    }, { passive: true });
-  }
-
-  function renderSlider() {
-    var wrap = document.getElementById('hp-slider-wrap');
-    if (!wrap) return;
-    var slidesHTML = HOME_CFG.slider.map(function (s) {
-      var inner = s.type === 'results' ? _slideResultsHTML(s) : _slideEventHTML(s);
-      return '<div class="hp-slide">' + inner + '</div>';
-    }).join('');
-    var dotsHTML = HOME_CFG.slider.map(function (_, i) {
-      return '<button class="hp-dot' + (i === 0 ? ' active' : '') + '" data-idx="' + i
-        + '" aria-label="Слайд ' + (i + 1) + '"></button>';
-    }).join('');
-    wrap.innerHTML = '<div class="hp-slider">' + slidesHTML + '</div>'
-      + '<div class="hp-slider-dots">' + dotsHTML + '</div>';
-    _initSlider(wrap);
-  }
-
   // ── Init ─────────────────────────────────────────────────────────────────────
   function initHome() {
-    renderSlider();
+    renderPortfolioCarousel();
+    renderCryptoEvent();
     renderPortfolios();
     renderChatsBtn();
     renderNow();
