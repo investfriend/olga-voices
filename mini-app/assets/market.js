@@ -216,7 +216,9 @@
   function _updateDemoBadges(page) {
     // Скрываем ДЕМО-бейдж у секций с успешными живыми данными
     var indOk = (S.ld.indStatus === 'ok' || S.ld.indStatus === 'stale');
-    var ldrOk = (S.ld.ldrStatus === 'ok' || S.ld.ldrStatus === 'stale');
+    // Лидеры: скрывать ДЕМО только если есть реальные данные (рынок открыт)
+    var ldrHasData = S.ld.leaders && (S.ld.leaders.gain.length > 0 || S.ld.leaders.loss.length > 0);
+    var ldrOk = (S.ld.ldrStatus === 'ok' || S.ld.ldrStatus === 'stale') && ldrHasData;
     ['indices', 'sectors', 'overview', 'bonds'].forEach(function (key) {
       var b = page.querySelector('[data-demo="' + key + '"]');
       if (b) b.style.display = indOk ? 'none' : '';
@@ -487,9 +489,11 @@
   function renderLeaders(page) {
     var wrap = page.querySelector('#mktLeaders');
     if (!wrap || S.tab !== 'ru') return;
-    var list = (S.ld.leaders && (S.ld.ldrStatus === 'ok' || S.ld.ldrStatus === 'stale'))
+    var liveList = (S.ld.leaders && (S.ld.ldrStatus === 'ok' || S.ld.ldrStatus === 'stale'))
       ? S.ld.leaders[S.leaderTab]
-      : D.ru.leaders[S.leaderTab];
+      : null;
+    // Fallback на demo, если рынок закрыт (пустой список) или данных нет
+    var list = (liveList && liveList.length) ? liveList : D.ru.leaders[S.leaderTab];
     var html = '';
     list.forEach(function (l) {
       var c = cls(l.change !== undefined ? l.change : l.pct);
