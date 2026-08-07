@@ -3,8 +3,6 @@ const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
   tg.expand();
-  tg.setHeaderColor('#0a1411');
-  tg.setBackgroundColor('#0a1411');
 }
 
 const user = tg?.initDataUnsafe?.user;
@@ -52,6 +50,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 // === Render: главная сетка категорий ===
 function renderCategories() {
   const grid = document.getElementById('cat-grid');
+  if (!grid) return;
   grid.innerHTML = DATA.categories.map(c => `
     <div class="cat-tile" onclick="openCategory('${c.id}')">
       <div class="cat-tile-bg" style="background: ${c.gradient};"></div>
@@ -64,6 +63,7 @@ function renderCategories() {
 
 function renderFilters() {
   const cont = document.getElementById('filters');
+  if (!cont) return;
   cont.innerHTML = DATA.filters.map(f => `
     <button class="filter-chip ${f === STATE.activeFilter ? 'active' : ''}" onclick="setFilter('${f}')">${f}</button>
   `).join('');
@@ -77,6 +77,7 @@ function setFilter(f) {
 
 function renderFilteredList() {
   const list = document.getElementById('filtered-list');
+  if (!list) return;
   let items = [];
   DATA.categories.forEach(c => {
     c.items.forEach(i => items.push({ ...i, _cat: c.id, _catTitle: c.title }));
@@ -376,8 +377,31 @@ function renderLearningCard() {
   `;
 }
 
+// === Theme ===
+var _SUN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="20" height="20"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg>';
+var _MOON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="20" height="20"><path d="M227.89,147.89A96,96,0,1,1,108.11,28.11,96.09,96.09,0,0,1,227.89,147.89Z" opacity="0.2"/><path d="M235.54,150.21a104.84,104.84,0,0,1-37,52.91A104,104,0,0,1,32,120,103.09,103.09,0,0,1,52.68,57.66a104.84,104.84,0,0,1,52.91-37,8,8,0,0,1,9.55,10.14,88.07,88.07,0,0,0,109.06,109.06,8,8,0,0,1,10.14,9.55Z"/></svg>';
+
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('hdrTheme');
+  if (btn) btn.innerHTML = t === 'light' ? _MOON : _SUN;
+  localStorage.setItem('iv_theme', t);
+  const col = t === 'light' ? '#F2F6F3' : '#101311';
+  if (tg) { try { tg.setHeaderColor(col); tg.setBackgroundColor(col); } catch(e) {} }
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  applyTheme(cur === 'light' ? 'dark' : 'light');
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('iv_theme') || 'light';
+  applyTheme(saved);
+  const btn = document.getElementById('hdrTheme');
+  if (btn) btn.addEventListener('click', toggleTheme);
+}
+
 // === Init ===
 setRefLinks();
-renderCategories();
-renderFilters();
-renderLearningCard();
+initTheme();
