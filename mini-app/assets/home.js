@@ -147,9 +147,9 @@
 
     // TODO: confirm final descriptions with content team
     steps: [
-      { id: 'step1', label: 'Ступень 1', sub: 'Финансовая грамотность',     desc: 'Активы и пассивы, финансовый резерв, налоговые вычеты, первые шаги на фондовом рынке.', url: 'https://investfriend.ru/teach/control/stream/view/id/935112977' },
-      { id: 'step2', label: 'Ступень 2', sub: 'Инвестиции',                 desc: 'Пассивный доход, портфель, облигации, акции, дивиденды и психология инвестора.',         url: 'https://investfriend.ru/teach/control/stream/view/id/935112984' },
-      { id: 'step3', label: 'Ступень 3', sub: 'Продвинутые инструменты',    desc: 'Зарубежный рынок, крипта, технический и фундаментальный анализ, фьючерсы.',             url: 'https://investfriend.ru/teach/control/stream/view/id/935131947' },
+      { id: 'step1', label: 'Ступень 1', sub: 'Подготовка к инвестициям',   desc: 'Для тех, кто начинает с финансовой основы: личный капитал, резерв, цели, долги, налоговые вычеты и устройство фондового рынка.' },
+      { id: 'step2', label: 'Ступень 2', sub: 'Пассивное инвестирование',    desc: 'Для тех, кто готов перейти к брокерскому счёту, первым покупкам и созданию собственного портфеля с учётом цели, срока и риска.' },
+      { id: 'step3', label: 'Ступень 3', sub: 'Самостоятельный анализ',      desc: 'Для тех, кто освоил базовые инструменты и хочет анализировать компании и рынок, изучать криптовалюту, технический анализ, фьючерсы и зарубежные активы.' },
     ],
 
     archives: [
@@ -159,7 +159,7 @@
 
     accordion: {
       title: 'Как пользоваться обучением',
-      body:  'Обучение разделено на три ступени — от основ до продвинутых инструментов. Начните с первой: финансовая грамотность, активы, первые инвестиции. После завершения переходите к следующей. Нажмите «Открыть» на любой ступени, чтобы попасть в неё. Звёздочку ★ используйте, чтобы отметить ступень как важную.',
+      body:  'Обучение разделено на три ступени — от основ до продвинутых инструментов. Начните с первой. Нажмите на ступень, чтобы увидеть все курсы и перейти к нужному. Из карточки курса можно открыть его в GetCourse. Звёздочку ★ используйте, чтобы отметить ступень как важную.',
     },
   };
 
@@ -606,14 +606,17 @@
       + '</div>'
       + '</div>';
 
+    var stepCat = window.COURSE_CATALOG && window.COURSE_CATALOG.stepCatalog;
     var stepsHtml = HOME_CFG.steps.map(function (s) {
       var fav = isStepFav(s.id);
+      var catEntry = stepCat && stepCat.filter(function(sc) { return sc.id === s.id; })[0];
+      var courseCount = catEntry ? catEntry.courses.length + ' курсов' : 'Курсы →';
       return '<div class="hp-step-card">'
-        + '<div class="hp-step-body" data-url="' + s.url + '">'
+        + '<div class="hp-step-body">'
         + '<div class="hp-step-label">' + s.label + '</div>'
         + '<div class="hp-step-sub">' + s.sub + '</div>'
         + '<div class="hp-step-desc">' + s.desc + '</div>'
-        + '<button class="hp-step-open" data-url="' + s.url + '">Открыть</button>'
+        + '<button class="hp-step-open" data-step-id="' + s.id + '">' + courseCount + ' →</button>'
         + '</div>'
         + '<button class="hp-step-fav ' + (fav ? 'active' : '') + '" data-step="' + s.id + '" aria-label="Избранное">'
         + (fav ? FAV_ACTIVE : FAV_EMPTY)
@@ -675,7 +678,10 @@
         return;
       }
       var openBtn = e.target.closest('.hp-step-open');
-      if (openBtn) { openUrl(openBtn.dataset.url); return; }
+      if (openBtn) {
+        if (typeof openStep === 'function') openStep(openBtn.dataset.stepId);
+        return;
+      }
       var arcLink = e.target.closest('.hp-archive-link');
       if (arcLink) { openUrl(arcLink.dataset.url); return; }
     });

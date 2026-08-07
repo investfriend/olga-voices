@@ -72,6 +72,59 @@ window.COURSE_CATALOG = (function () {
     347743216: { title: 'Обзоры рынка РФ',                    section: 'stupen-3', parent: 935131947 },
   };
 
+  // ── Каталог ступеней (иерархия для внутреннего навигатора) ───────────────
+  var STEP_CATALOG = [
+    {
+      id: 'step1', streamId: 935112977,
+      label: 'Ступень 1', sub: 'Подготовка к инвестициям',
+      desc: 'Для тех, кто начинает с финансовой основы: личный капитал, резерв, цели, долги, налоговые вычеты и устройство фондового рынка.',
+      courses: [
+        { streamId: 935120610 },
+        { streamId: 935120627 },
+        { streamId: 935120629, noLessons: true },
+        { streamId: 935120631 },
+        { streamId: 935120637 },
+        { streamId: 935120640 },
+        { streamId: 935120642 },
+      ],
+      materials: [],
+    },
+    {
+      id: 'step2', streamId: 935112984,
+      label: 'Ступень 2', sub: 'Пассивное инвестирование',
+      desc: 'Для тех, кто готов перейти к брокерскому счёту, первым покупкам и созданию собственного портфеля с учётом цели, срока и риска.',
+      courses: [
+        { streamId: 935131063 },
+        { streamId: 935131337 },
+        { streamId: 935131527 },
+        { streamId: 935131599 },
+        { streamId: 935131705 },
+        { streamId: 935132033 },
+        { streamId: 935132398 },
+      ],
+      materials: [
+        { lessonId: 348424558 },
+        { lessonId: 348739714 },
+      ],
+    },
+    {
+      id: 'step3', streamId: 935131947,
+      label: 'Ступень 3', sub: 'Самостоятельный анализ',
+      desc: 'Для тех, кто освоил базовые инструменты и хочет анализировать компании и рынок, изучать криптовалюту, технический анализ, фьючерсы и зарубежные активы.',
+      courses: [
+        { streamId: 935131949 },
+        { streamId: 935131950 },
+        { streamId: 935131951 },
+        { streamId: 935133068 },
+        { streamId: 935138997 },
+        { streamId: 935195068 },
+      ],
+      materials: [
+        { lessonId: 347743216 },
+      ],
+    },
+  ];
+
   // ── Публичный API ─────────────────────────────────────────────────────────
   return {
     streamUrl: streamUrl,
@@ -79,6 +132,7 @@ window.COURSE_CATALOG = (function () {
 
     streams: STREAMS,
     lessons: LESSONS,
+    stepCatalog: STEP_CATALOG,
 
     /** Возвращает канонический URL по типу и ID */
     url: function (type, id) {

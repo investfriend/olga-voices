@@ -2402,3 +2402,131 @@ html[data-theme="light"] .ch-badge--soon  { color: var(--warning); background: r
   -webkit-tap-highlight-color: transparent;
 }
 .fav-card-open:active { opacity: .85; }
+
+/* ── Learning navigator (step / course screens) ─── style.css v12 addition */
+.lrn-content {
+  padding: 16px 16px 80px;
+}
+.lrn-head {
+  margin-bottom: 24px;
+}
+.lrn-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.lrn-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+.lrn-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin: 0;
+}
+.lrn-section-hdr {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 22px 0 8px;
+}
+.lrn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lrn-row-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 14px 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .12s;
+}
+.lrn-row-btn:active { opacity: .72; }
+.lrn-row-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.35;
+}
+.lrn-row-arrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.lrn-ext-ic {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.lrn-lesson-num {
+  flex-shrink: 0;
+  width: 22px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+}
+.lrn-no-lessons {
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 4px 0;
+}
+.lrn-no-lessons p {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin: 0;
+  line-height: 1.55;
+}
+.lrn-gc-link {
+  display: block;
+  width: 100%;
+  margin-top: 24px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .12s;
+}
+.lrn-gc-link:active { opacity: .72; }
+
+html[data-theme="light"] .lrn-row-btn {
+  background: #fff;
+  border-color: #ccd4ce;
+}
+html[data-theme="light"] .lrn-row-title { color: #1a2b26; }
+html[data-theme="light"] .lrn-no-lessons {
+  background: #edf1ef;
+  border-color: #ccd4ce;
+}
+html[data-theme="light"] .lrn-no-lessons p { color: #4a6058; }
+html[data-theme="light"] .lrn-gc-link {
+  border-color: #ccd4ce;
+  color: #4a6058;
+}
