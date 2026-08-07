@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a1411">
 <title>ИнвестКлуб</title>
 <script>(function(){var t=localStorage.getItem('iv_theme')||'light';document.documentElement.setAttribute('data-theme',t);}());</script>
-<link rel="stylesheet" href="assets/style.css?v=8">
+<link rel="stylesheet" href="assets/style.css?v=9">
 <link rel="stylesheet" href="assets/market.css?v=1">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -94,26 +94,9 @@
     </ul>
   </section>
 
-  <!-- ЧАТЫ -->
+  <!-- ОБЩЕНИЕ -->
   <section class="page" data-page="chats">
-    <ul class="cards">
-      <li class="card" onclick="noLink()">
-        <div class="card-ic-circle">📊</div>
-        <div class="card-body">
-          <div class="card-t">ИнвестКлуб</div>
-          <div class="card-d">Основной канал</div>
-        </div>
-      </li>
-      <li class="card" onclick="noLink()">
-        <div class="card-ic-circle blue">💬</div>
-        <div class="card-body">
-          <div class="card-t">Чаты по нишам</div>
-        </div>
-        <div class="card-arr">›</div>
-      </li>
-    </ul>
-    <h3 class="section-title">Чаты по городам</h3>
-    <button class="add-chat-btn" onclick="noLink()">Добавить чат города</button>
+    <div id="ch-root"></div>
   </section>
 
   <!-- ИЗБРАННОЕ -->
@@ -254,7 +237,7 @@
   </button>
   <button class="nav-btn" data-target="chats">
     <div class="nav-ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M231.66,213.73a8,8,0,0,1-9.93,9.93L194,215.5A72.05,72.05,0,0,1,92.06,175.89h0c1.31.07,2.62.11,3.94.11a72,72,0,0,0,67.93-95.88h0A72,72,0,0,1,223.5,186Z" opacity="0.2"/><path d="M232.07,186.76a80,80,0,0,0-62.5-114.17A80,80,0,1,0,23.93,138.76l-7.27,24.71a16,16,0,0,0,19.87,19.87l24.71-7.27a80.39,80.39,0,0,0,25.18,7.35,80,80,0,0,0,108.34,40.65l24.71,7.27a16,16,0,0,0,19.87-19.86ZM62,159.5a8.28,8.28,0,0,0-2.26.32L32,168l8.17-27.76a8,8,0,0,0-.63-6,64,64,0,1,1,26.26,26.26A8,8,0,0,0,62,159.5Zm153.79,28.73L224,216l-27.76-8.17a8,8,0,0,0-6,.63,64.05,64.05,0,0,1-85.87-24.88A79.93,79.93,0,0,0,174.7,89.71a64,64,0,0,1,41.75,92.48A8,8,0,0,0,215.82,188.23Z"/></svg></div>
-    <div class="nav-l">Чаты</div>
+    <div class="nav-l">Общение</div>
   </button>
   <button class="nav-btn" data-target="favorites">
     <div class="nav-ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M192,48V224l-64-40L64,224V48a8,8,0,0,1,8-8H184A8,8,0,0,1,192,48Z" opacity="0.2"/><path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,177.57-51.77-32.35a8,8,0,0,0-8.48,0L72,209.57V48H184Z"/></svg></div>
@@ -270,6 +253,19 @@
   </button>
 </nav>
 
+<!-- Модальное окно GetCourse (глобальное, вне app) -->
+<div id="ch-modal" aria-hidden="true" aria-modal="true" role="dialog" aria-label="Вход через GetCourse">
+  <div class="ch-modal-sheet">
+    <div class="ch-modal-handle" aria-hidden="true"></div>
+    <h2 class="ch-modal-title">Вход через GetCourse</h2>
+    <p class="ch-modal-text">Этот раздел доступен участникам клуба. На следующем шаге войдите в GetCourse с почтой, указанной при регистрации.</p>
+    <div class="ch-modal-btns">
+      <button class="ch-modal-btn ch-modal-btn--primary" id="ch-modal-go">Перейти в GetCourse</button>
+      <button class="ch-modal-btn ch-modal-btn--ghost"   id="ch-modal-cancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
 <script src="assets/data.js?v=2"></script>
 <script src="assets/course-catalog.js?v=1"></script>
 <script src="assets/faq-data.js?v=3"></script>
@@ -280,5 +276,6 @@
 <script src="assets/market-data.js?v=2"></script>
 <script src="assets/lwcharts.js"></script>
 <script src="assets/market.js?v=4"></script>
+<script src="assets/chat.js?v=1"></script>
 </body>
 </html>
