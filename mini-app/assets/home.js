@@ -49,6 +49,54 @@
       title: 'Как пользоваться обучением',
       body:  'Обучение разделено на три ступени — от основ до продвинутых инструментов. Начните с первой: финансовая грамотность, активы, первые инвестиции. После завершения переходите к следующей. Нажмите «Открыть» на любой ступени, чтобы попасть в неё. Звёздочку ★ используйте, чтобы отметить ступень как важную.',
     },
+
+    // Слайдер: массив слайдов. Порядок = порядок показа.
+    slider: [
+      {
+        id:   'slider-results',
+        type: 'results',
+        tag:  'Результаты клуба',
+        title:   'Портфели выше рынка',
+        subtitle: 'Сравнение с индексом Мосбиржи',
+        isPlaceholder: true,
+        period:    null,        // строка: 'с начала 2025 года'
+        updatedAt: null,        // строка: '05.08.2026'
+        source:    null,
+        comment:   'По данным клуба оба портфеля опережают индекс Мосбиржи. Точные показатели появятся после подключения данных аналитика.',
+        portfolios: [
+          {
+            id: 'passive',
+            name: 'Пассивный портфель',
+            return: null,       // число: 18.4 → отобразится как '+18.4%'
+            indexReturn: null,  // число: 12.1
+            diff:   null,       // null = считается авто: return - indexReturn
+            status: 'Выше индекса',
+          },
+          {
+            id: 'invest',
+            name: 'Инвест. портфель',
+            return: null,
+            indexReturn: null,
+            diff:   null,
+            status: 'Выше индекса',
+          },
+        ],
+      },
+      {
+        id:   'slider-crypto',
+        type: 'event',
+        tag:  'Живой интенсив · Август',
+        title:    'Криптовалюты',
+        subtitle: 'Программа, даты и подробности появятся после согласования.',
+        fullTitle:   null,
+        description: null,
+        dates:       null,
+        status:      null,
+        url:         null,
+        btnLabel: 'Подробнее',
+        btnToast: 'Подробности о криптоинтенсиве появятся после согласования программы.',
+      },
+    ],
   };
 
   window.HOME_CFG = HOME_CFG;
@@ -299,8 +347,131 @@
     });
   }
 
+  // ── Slider helpers ───────────────────────────────────────────────────────────
+  function _slideResultsHTML(cfg) {
+    var pCards = cfg.portfolios.map(function (p) {
+      var retStr = p.return !== null ? (p.return >= 0 ? '+' : '') + p.return.toFixed(1) + '%' : null;
+      var idxStr = p.indexReturn !== null ? (p.indexReturn >= 0 ? '+' : '') + p.indexReturn.toFixed(1) + '%' : null;
+      var diffVal = p.diff !== null ? p.diff
+        : (p.return !== null && p.indexReturn !== null ? +(p.return - p.indexReturn).toFixed(1) : null);
+      var diffStr = diffVal !== null ? (diffVal >= 0 ? '+' : '') + diffVal.toFixed(1) + ' п.п.' : null;
+      var ph = '<span class="hp-slide-ph">—</span>';
+      return '<div class="hp-rc-card">'
+        + '<div class="hp-rc-name">' + p.name + '</div>'
+        + '<div class="hp-rc-badge">' + p.status + '</div>'
+        + '<div class="hp-rc-metrics">'
+        + '<div class="hp-rc-row"><span class="hp-rc-lbl">Портфель</span>'
+        + '<span class="hp-rc-val font-num">' + (retStr || ph) + '</span></div>'
+        + '<div class="hp-rc-row"><span class="hp-rc-lbl">Индекс</span>'
+        + '<span class="hp-rc-val font-num">' + (idxStr || ph) + '</span></div>'
+        + '<div class="hp-rc-row hp-rc-diff"><span class="hp-rc-lbl">Разница</span>'
+        + '<span class="hp-rc-val font-num">' + (diffStr || ph) + '</span></div>'
+        + '</div></div>';
+    }).join('');
+
+    return '<div class="hp-slide-inner hp-slide-results">'
+      + '<div class="hp-slide-top">'
+      + '<span class="hp-slide-tag">' + cfg.tag + '</span>'
+      + (cfg.period ? '<span class="hp-slide-period">' + cfg.period + '</span>' : '')
+      + '</div>'
+      + '<div class="hp-slide-title font-cond">' + cfg.title + '</div>'
+      + '<div class="hp-slide-sub">' + cfg.subtitle + '</div>'
+      + '<div class="hp-rc-grid">' + pCards + '</div>'
+      + (cfg.comment ? '<p class="hp-slide-comment">' + cfg.comment + '</p>' : '')
+      + '</div>';
+  }
+
+  function _slideEventHTML(cfg) {
+    var btn = '<button class="hp-slide-btn"'
+      + (cfg.url ? ' data-url="' + cfg.url + '"' : '')
+      + (cfg.btnToast ? ' data-toast="' + cfg.btnToast + '"' : '')
+      + '>' + cfg.btnLabel + '</button>';
+    return '<div class="hp-slide-inner hp-slide-crypto">'
+      + '<div class="hp-crypto-bg-icon" aria-hidden="true">&#x20BF;</div>'
+      + '<div class="hp-slide-top">'
+      + '<span class="hp-slide-tag">' + cfg.tag + '</span>'
+      + '</div>'
+      + '<div class="hp-slide-title font-cond">' + cfg.title + '</div>'
+      + '<div class="hp-slide-sub">' + cfg.subtitle + '</div>'
+      + btn
+      + '</div>';
+  }
+
+  function _initSlider(wrap) {
+    var track = wrap.querySelector('.hp-slider');
+    var dots  = wrap.querySelectorAll('.hp-dot');
+    var total = HOME_CFG.slider.length;
+    var state = { cur: 0 };
+    var sX, sY, dragging = false;
+
+    function goTo(idx) {
+      if (idx < 0 || idx >= total) return;
+      state.cur = idx;
+      track.style.transition = 'transform .3s ease';
+      track.style.transform  = 'translateX(-' + (idx * 100) + '%)';
+      dots.forEach(function (d, i) { d.classList.toggle('active', i === idx); });
+    }
+
+    dots.forEach(function (d) {
+      d.addEventListener('click', function () { goTo(+d.dataset.idx); });
+    });
+
+    wrap.addEventListener('click', function (e) {
+      var btn = e.target.closest('.hp-slide-btn');
+      if (!btn) return;
+      if (btn.dataset.url) { openUrl(btn.dataset.url); return; }
+      if (btn.dataset.toast) { showToast(btn.dataset.toast); }
+    });
+
+    wrap.addEventListener('touchstart', function (e) {
+      sX = e.touches[0].clientX;
+      sY = e.touches[0].clientY;
+      dragging = true;
+      track.style.transition = 'none';
+    }, { passive: true });
+
+    wrap.addEventListener('touchmove', function (e) {
+      if (!dragging) return;
+      var dx = e.touches[0].clientX - sX;
+      var dy = e.touches[0].clientY - sY;
+      if (Math.abs(dx) > Math.abs(dy) + 5) {
+        e.preventDefault();
+        var pct = -(state.cur * 100) + (dx / wrap.offsetWidth * 100);
+        track.style.transform = 'translateX(' + pct + '%)';
+      }
+    }, { passive: false });
+
+    wrap.addEventListener('touchend', function (e) {
+      if (!dragging) return;
+      dragging = false;
+      var dx = e.changedTouches[0].clientX - sX;
+      if (Math.abs(dx) > 48) {
+        goTo(dx < 0 ? state.cur + 1 : state.cur - 1);
+      } else {
+        goTo(state.cur); // snap back
+      }
+    }, { passive: true });
+  }
+
+  function renderSlider() {
+    var wrap = document.getElementById('hp-slider-wrap');
+    if (!wrap) return;
+    var slidesHTML = HOME_CFG.slider.map(function (s) {
+      var inner = s.type === 'results' ? _slideResultsHTML(s) : _slideEventHTML(s);
+      return '<div class="hp-slide">' + inner + '</div>';
+    }).join('');
+    var dotsHTML = HOME_CFG.slider.map(function (_, i) {
+      return '<button class="hp-dot' + (i === 0 ? ' active' : '') + '" data-idx="' + i
+        + '" aria-label="Слайд ' + (i + 1) + '"></button>';
+    }).join('');
+    wrap.innerHTML = '<div class="hp-slider">' + slidesHTML + '</div>'
+      + '<div class="hp-slider-dots">' + dotsHTML + '</div>';
+    _initSlider(wrap);
+  }
+
   // ── Init ─────────────────────────────────────────────────────────────────────
   function initHome() {
+    renderSlider();
     renderPortfolios();
     renderChatsBtn();
     renderNow();
