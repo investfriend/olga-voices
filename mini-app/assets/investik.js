@@ -4,8 +4,17 @@
 
   // ── Config & feature flag ─────────────────────────────────────────────────
   var CFG = window.INVESTIK_CFG || {};
-  var _enabled = !!(CFG.enabled ||
-    (window.location && window.location.search.indexOf('investik=1') >= 0));
+  var _paramFlag = (function () {
+    var s = (window.location && window.location.search) || '';
+    var h = (window.location && window.location.hash)   || '';
+    // Also check Telegram startParam passed via initDataUnsafe
+    var tg = window.Telegram && window.Telegram.WebApp;
+    var sp = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || '';
+    return s.indexOf('investik=1') >= 0 ||
+           h.indexOf('investik=1') >= 0 ||
+           sp.indexOf('investik=1') >= 0;
+  }());
+  var _enabled = !!(CFG.enabled || _paramFlag);
   if (!_enabled) return;
 
   // No server AI endpoint → demoMode (search project data only)
