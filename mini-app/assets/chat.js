@@ -66,6 +66,17 @@
         title: 'Помощь и вопросы',
         items: [
           {
+            id: 'lost',
+            title: 'Я потерялся, не знаю, с чего начать',
+            badge: 'Кабинет участника',
+            access: 'public',
+            icon: 'question',
+            featured: true,
+            desc: 'Личный кабинет — отправная точка: там все материалы клуба, расписание и доступные курсы.',
+            btn: 'Перейти в кабинет',
+            url: 'https://investfriend.ru/cms/system/contact',
+          },
+          {
             id: 'support',
             title: 'Поддержка',
             badge: 'Открытый доступ',
