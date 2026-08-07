@@ -13,12 +13,12 @@
       subtitle: 'Динамика портфелей относительно выбранных рыночных ориентиров',
       portfolios: [
         {
-          id: 'invest',
-          title: 'Инвестиционный портфель',
-          snowballPublicUrl:      null,
+          id: 'passive',
+          title: 'Пассивный портфель',
+          snowballPublicUrl:      'https://snowball-income.com/public/portfolios/rcnzdddwrtchfmzqsrke#growth',
           dataEndpoint:           null,
-          benchmarkCode:          'IMOEX',
-          benchmarkLabel:         'Индекс Мосбиржи',
+          benchmarkCode:          'RGBI',
+          benchmarkLabel:         'Индекс RGBI',
           defaultPeriod:          'С начала года',
           currency:               'RUB',
           portfolioReturn:        null,
@@ -31,9 +31,9 @@
           dataState:              'awaiting_source',
         },
         {
-          id: 'passive',
-          title: 'Пассивный портфель',
-          snowballPublicUrl:      null,
+          id: 'invest',
+          title: 'Инвестиционный портфель',
+          snowballPublicUrl:      'https://snowball-income.com/public/portfolios/cfboczzvxkxjfcbfyevh#growth',
           dataEndpoint:           null,
           benchmarkCode:          'IMOEX',
           benchmarkLabel:         'Индекс Мосбиржи',
@@ -50,8 +50,8 @@
         },
         {
           id: 'crypto',
-          title: 'Криптопортфель',
-          snowballPublicUrl:      null,
+          title: 'Криптовалютный портфель',
+          snowballPublicUrl:      'https://snowball-income.com/public/portfolios/kdeffzxwnplewitkepvp#growth',
           dataEndpoint:           null,
           benchmarkCode:          'BTC',
           benchmarkLabel:         'Bitcoin',
@@ -69,7 +69,7 @@
         {
           id: 'foreign',
           title: 'Зарубежный портфель',
-          snowballPublicUrl:      null,
+          snowballPublicUrl:      'https://snowball-income.com/public/portfolios/vdpfsqtldzcuccihgvmy#growth',
           dataEndpoint:           null,
           benchmarkCode:          'SPX',
           benchmarkLabel:         'S&P 500',
@@ -87,7 +87,7 @@
         {
           id: 'highrisk',
           title: 'Портфель высокого риска',
-          snowballPublicUrl:      null,
+          snowballPublicUrl:      'https://snowball-income.com/public/portfolios/opkiaazasggytxmhskez#growth',
           dataEndpoint:           null,
           benchmarkCode:          'IMOEX',
           benchmarkLabel:         'Индекс Мосбиржи',
@@ -383,6 +383,13 @@
       // Легенда
       + legHTML
 
+      // Кнопка Snowball
+      + (p.snowballPublicUrl
+        ? '<button class="hp-pcc-sb-btn" data-url="' + p.snowballPublicUrl + '">'
+          + 'Смотреть на Snowball →'
+          + '</button>'
+        : '')
+
       // Футер
       + '<div class="hp-pcc-footer">'
       + '<span class="hp-pcc-source">Данные Snowball Income</span>'
@@ -479,6 +486,11 @@
       + '</div>';
 
     _initPortfolioCarousel(wrap, total);
+
+    wrap.addEventListener('click', function (e) {
+      var btn = e.target.closest('.hp-pcc-sb-btn');
+      if (btn && btn.dataset.url) { openUrl(btn.dataset.url); }
+    });
   }
 
   // ── Плашка крипто-интенсива ──────────────────────────────────────────────────

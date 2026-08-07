@@ -2530,3 +2530,23 @@ html[data-theme="light"] .lrn-gc-link {
   border-color: #ccd4ce;
   color: #4a6058;
 }
+
+/* ── Snowball link button (portfolio carousel) ── style.css v12 addition */
+.hp-pcc-sb-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  background: var(--accent);
+  color: var(--btn-text, #fff);
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .12s;
+}
+.hp-pcc-sb-btn:active { opacity: .82; }
