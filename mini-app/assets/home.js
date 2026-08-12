@@ -10,7 +10,7 @@
     // ── Карусель портфелей (верхний блок главной) ──────────────────────────
     portfolioCarousel: {
       title:    'Портфели клуба',
-      subtitle: 'Динамика портфелей относительно выбранных рыночных ориентиров',
+      subtitle: 'Динамика портфелей относительно выбранных рыночных бенчмарков',
       portfolios: [
         {
           id: 'passive',
@@ -301,9 +301,9 @@
     if (p.dataState === 'stale') {
       return '<span class="hp-pcc-badge hp-pcc-badge--stale">Данные не обновлены</span>';
     }
-    if (p.differencePp > 0)  return '<span class="hp-pcc-badge hp-pcc-badge--ahead">Опережает ориентир</span>';
-    if (p.differencePp === 0) return '<span class="hp-pcc-badge hp-pcc-badge--even">На уровне ориентира</span>';
-    return '<span class="hp-pcc-badge hp-pcc-badge--behind">Отстаёт от ориентира</span>';
+    if (p.differencePp > 0)  return '<span class="hp-pcc-badge hp-pcc-badge--ahead">Опережает бенчмарк</span>';
+    if (p.differencePp === 0) return '<span class="hp-pcc-badge hp-pcc-badge--even">На уровне бенчмарка</span>';
+    return '<span class="hp-pcc-badge hp-pcc-badge--behind">Отстаёт от бенчмарка</span>';
   }
 
   function _fmtPct(v) {
