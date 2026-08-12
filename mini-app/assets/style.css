@@ -1913,6 +1913,7 @@ button, input, textarea, select { font-family: inherit; }
 .hp-pcc-badge--ahead   { color: #27C98A; background: rgba(39,201,138,.12); border-color: rgba(39,201,138,.25); }
 .hp-pcc-badge--even    { color: rgba(243,241,234,.65); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); }
 .hp-pcc-badge--behind  { color: #E86C5D; background: rgba(232,108,93,.1); border-color: rgba(232,108,93,.22); }
+.hp-pcc-badge--stale   { color: #F5A623; background: rgba(245,166,35,.1); border-color: rgba(245,166,35,.25); }
 
 /* График */
 .hp-pcc-chart { margin-bottom: 6px; }

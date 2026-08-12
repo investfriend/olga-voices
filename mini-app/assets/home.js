@@ -17,8 +17,8 @@
           title: 'Пассивный портфель',
           snowballPublicUrl:      'https://snowball-income.com/public/portfolios/rcnzdddwrtchfmzqsrke#growth',
           dataEndpoint:           null,
-          benchmarkCode:          'RGBI',
-          benchmarkLabel:         'Индекс RGBI',
+          benchmarkCode:          'RGBITR',
+          benchmarkLabel:         'RGBITR',
           defaultPeriod:          'С начала года',
           currency:               'RUB',
           portfolioReturn:        null,
@@ -298,6 +298,9 @@
     if (p.dataState === 'awaiting_source' || p.differencePp === null) {
       return '<span class="hp-pcc-badge hp-pcc-badge--waiting">Подключается</span>';
     }
+    if (p.dataState === 'stale') {
+      return '<span class="hp-pcc-badge hp-pcc-badge--stale">Данные не обновлены</span>';
+    }
     if (p.differencePp > 0)  return '<span class="hp-pcc-badge hp-pcc-badge--ahead">Опережает ориентир</span>';
     if (p.differencePp === 0) return '<span class="hp-pcc-badge hp-pcc-badge--even">На уровне ориентира</span>';
     return '<span class="hp-pcc-badge hp-pcc-badge--behind">Отстаёт от ориентира</span>';
@@ -341,9 +344,21 @@
           + '</span>';
       }).join('') + '</div>';
 
-    var updStr = p.lastUpdatedAt
-      ? 'Обновлено ' + p.lastUpdatedAt
-      : 'Источник подключается';
+    var _MONTHS_RU = ['января','февраля','марта','апреля','мая','июня',
+                      'июля','августа','сентября','октября','ноября','декабря'];
+    var updStr = 'Источник подключается';
+    if (p.lastUpdatedAt) {
+      var _dt = new Date(p.lastUpdatedAt);
+      if (!isNaN(_dt)) {
+        var _msk = new Date(_dt.getTime() + 3 * 3600000);
+        updStr = 'Обновлено ' + _msk.getUTCDate() + ' ' + _MONTHS_RU[_msk.getUTCMonth()]
+          + ' ' + _msk.getUTCFullYear() + ', '
+          + String(_msk.getUTCHours()).padStart(2, '0') + ':'
+          + String(_msk.getUTCMinutes()).padStart(2, '0') + ' МСК';
+      } else {
+        updStr = 'Обновлено ' + p.lastUpdatedAt;
+      }
+    }
 
     return '<div class="hp-pcslide" role="group" aria-label="' + (idx + 1) + ' из ' + total + ': ' + p.title + '">'
       + '<div class="hp-pccard">'
@@ -392,7 +407,7 @@
 
       // Футер
       + '<div class="hp-pcc-footer">'
-      + '<span class="hp-pcc-source">Данные Snowball Income</span>'
+      + '<span class="hp-pcc-source">' + (p.source || 'Snowball Income') + '</span>'
       + '<span class="hp-pcc-updated">' + updStr + '</span>'
       + '</div>'
       + '<div class="hp-pcc-warning">Данные могут отображаться с задержкой до 15 минут</div>'
@@ -699,6 +714,31 @@
     });
   }
 
+  // ── Загрузка данных всех портфелей из portfolios.json ───────────────────────
+  function loadAllPortfolioData() {
+    fetch('data/portfolios.json')
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (data) {
+        if (!data) return;
+        var changed = false;
+        HOME_CFG.portfolioCarousel.portfolios.forEach(function (cfg) {
+          var d = data[cfg.id];
+          if (!d) return;
+          cfg.portfolioReturn = d.portfolioReturn;
+          cfg.benchmarkReturn = d.benchmarkReturn;
+          cfg.differencePp    = d.differencePp;
+          cfg.chartSeries     = d.chartSeries;
+          cfg.lastUpdatedAt   = d.lastUpdatedAt;
+          cfg.defaultPeriod   = d.defaultPeriod;
+          cfg.source          = d.source || 'Snowball Income';
+          cfg.dataState       = d._stale ? 'stale' : 'connected';
+          changed = true;
+        });
+        if (changed) renderPortfolioCarousel();
+      })
+      .catch(function () { /* оставляем карточки в состоянии «Подключается» */ });
+  }
+
   // ── Init ─────────────────────────────────────────────────────────────────────
   function initHome() {
     renderPortfolioCarousel();
@@ -708,6 +748,7 @@
     renderNow();
     renderCalendar();
     renderLearning();
+    loadAllPortfolioData(); // async; перерисовывает карусель при успехе
   }
 
   if (document.readyState === 'loading') {
