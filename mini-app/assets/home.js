@@ -441,24 +441,26 @@
       return step > 0 ? Math.round(wrap.scrollLeft / step) : 0;
     }
 
-    // scrollend fires once after scroll fully settles (Chrome 114+, Firefox 109+, Safari 17+)
-    var useScrollEnd = 'onscrollend' in window;
-    if (useScrollEnd) {
-      wrap.addEventListener('scrollend', function () { updateUI(getIndex()); }, { passive: true });
+    function scrollBehavior() {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
     }
 
-    // Debounced scroll fallback for older WebViews
-    var _st;
-    wrap.addEventListener('scroll', function () {
-      if (useScrollEnd) return;
-      clearTimeout(_st);
-      _st = setTimeout(function () { updateUI(getIndex()); }, 120);
-    }, { passive: true });
+    // scrollend fires once after scroll fully settles (Chrome 114+, Firefox 109+, Safari 17+)
+    if ('onscrollend' in window) {
+      wrap.addEventListener('scrollend', function () { updateUI(getIndex()); }, { passive: true });
+    } else {
+      // Debounced fallback for older WebViews — only registered when scrollend is absent
+      var _st;
+      wrap.addEventListener('scroll', function () {
+        clearTimeout(_st);
+        _st = setTimeout(function () { updateUI(getIndex()); }, 120);
+      }, { passive: true });
+    }
 
     dots.forEach(function (d) {
       d.addEventListener('click', function () {
         var step = slideStep();
-        if (step > 0) wrap.scrollTo({ left: +d.dataset.idx * step, behavior: 'smooth' });
+        if (step > 0) wrap.scrollTo({ left: +d.dataset.idx * step, behavior: scrollBehavior() });
       });
     });
 
