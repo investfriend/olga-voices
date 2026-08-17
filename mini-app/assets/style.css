@@ -1624,10 +1624,15 @@ button, input, textarea, select { font-family: inherit; }
 /* === СЛАЙДЕР ГЛАВНОЙ === */
 #hp-slider-wrap {
   margin: 0 -16px 0;
-  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
   position: relative;
-  touch-action: pan-y;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
+#hp-slider-wrap::-webkit-scrollbar { display: none; }
 .hp-slider {
   display: flex;
   will-change: transform;
@@ -1830,8 +1835,6 @@ button, input, textarea, select { font-family: inherit; }
 /* Трек и слайды */
 .hp-pctrack {
   display: flex;
-  will-change: transform;
-  transition: transform .3s ease;
 }
 .hp-pcslide {
   /* 100vw - 52px: справа остаётся 52px = 10px gap + 42px peek следующей карточки */
@@ -1839,6 +1842,7 @@ button, input, textarea, select { font-family: inherit; }
   padding-left: 16px;    /* выравнивание по сетке страницы */
   margin-right: 10px;    /* зазор между слайдами */
   box-sizing: border-box;
+  scroll-snap-align: start;
 }
 
 /* Карточка портфеля */
@@ -1990,6 +1994,10 @@ button, input, textarea, select { font-family: inherit; }
   font-variant-numeric: tabular-nums;
   min-width: 32px;
   text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #hp-slider-wrap { scroll-behavior: auto; }
 }
 
 /* Плашка крипто-интенсива под каруселью */

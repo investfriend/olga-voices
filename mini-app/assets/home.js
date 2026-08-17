@@ -420,60 +420,49 @@
   }
 
   function _initPortfolioCarousel(wrap, total) {
-    var track = wrap.querySelector('.hp-pctrack');
-    var dots  = wrap.querySelectorAll('.hp-dot');
+    var track   = wrap.querySelector('.hp-pctrack');
+    var dots    = wrap.querySelectorAll('.hp-dot');
     var counter = wrap.querySelector('.hp-pc-counter');
-    var cur = 0;
-    var sX, sY, dragging = false;
+    var cur     = 0;
 
-    function stepPx() {
-      var slide = track && track.querySelector('.hp-pcslide');
-      if (!slide) return 300;
-      return slide.offsetWidth + 10; // 10 = margin-right
+    function slideStep() {
+      var s = track && track.querySelector('.hp-pcslide');
+      return s ? s.offsetWidth + 10 : 0; // offsetWidth + margin-right
     }
 
-    function updateUI() {
+    function updateUI(idx) {
+      cur = Math.max(0, Math.min(total - 1, idx));
       dots.forEach(function (d, i) { d.classList.toggle('active', i === cur); });
       if (counter) counter.textContent = (cur + 1) + ' из ' + total;
     }
 
-    function goTo(idx) {
-      if (idx < 0 || idx >= total) return;
-      cur = idx;
-      track.style.transition = 'transform .3s ease';
-      track.style.transform  = 'translateX(-' + (stepPx() * cur) + 'px)';
-      updateUI();
+    function getIndex() {
+      var step = slideStep();
+      return step > 0 ? Math.round(wrap.scrollLeft / step) : 0;
     }
 
-    updateUI();
+    // scrollend fires once after scroll fully settles (Chrome 114+, Firefox 109+, Safari 17+)
+    var useScrollEnd = 'onscrollend' in window;
+    if (useScrollEnd) {
+      wrap.addEventListener('scrollend', function () { updateUI(getIndex()); }, { passive: true });
+    }
+
+    // Debounced scroll fallback for older WebViews
+    var _st;
+    wrap.addEventListener('scroll', function () {
+      if (useScrollEnd) return;
+      clearTimeout(_st);
+      _st = setTimeout(function () { updateUI(getIndex()); }, 120);
+    }, { passive: true });
 
     dots.forEach(function (d) {
-      d.addEventListener('click', function () { goTo(+d.dataset.idx); });
+      d.addEventListener('click', function () {
+        var step = slideStep();
+        if (step > 0) wrap.scrollTo({ left: +d.dataset.idx * step, behavior: 'smooth' });
+      });
     });
 
-    wrap.addEventListener('touchstart', function (e) {
-      sX = e.touches[0].clientX;
-      sY = e.touches[0].clientY;
-      dragging = true;
-      if (track) track.style.transition = 'none';
-    }, { passive: true });
-
-    wrap.addEventListener('touchmove', function (e) {
-      if (!dragging) return;
-      var dx = e.touches[0].clientX - sX;
-      var dy = e.touches[0].clientY - sY;
-      if (Math.abs(dx) > Math.abs(dy) + 5) {
-        e.preventDefault();
-        if (track) track.style.transform = 'translateX(' + (-cur * stepPx() + dx) + 'px)';
-      }
-    }, { passive: false });
-
-    wrap.addEventListener('touchend', function (e) {
-      if (!dragging) return;
-      dragging = false;
-      var dx = e.changedTouches[0].clientX - sX;
-      goTo(Math.abs(dx) > 44 ? (dx < 0 ? cur + 1 : cur - 1) : cur);
-    }, { passive: true });
+    updateUI(0);
   }
 
   function renderPortfolioCarousel() {
