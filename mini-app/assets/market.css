@@ -51,10 +51,24 @@
   cursor: pointer;
   transition: all .18s;
 }
-.mkt-tab-btn.active {
+.mkt-tab-btn[data-mkt-tab="ru"].active {
   background: var(--accent);
   border-color: var(--accent);
   color: #0a1a12;
+}
+.mkt-tab-btn[data-mkt-tab="us"].active {
+  background: #1a6fc4;
+  border-color: #1a6fc4;
+  color: #fff;
+}
+
+/* Market title below tabs */
+.mkt-page-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin: 0 0 10px;
+  letter-spacing: 0.2px;
 }
 
 /* ── Статусная строка (v4) ───────────────────────────────────────────────── */

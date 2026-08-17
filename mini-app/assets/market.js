@@ -18,6 +18,7 @@
     selected:   'IMOEX',
     indexGroup: 'main',
     leaderTab:  'gain',
+    fetchSeq:   0,
     tvInited:   {},
     // Live-данные
     ld: {
@@ -200,7 +201,7 @@
     var html = '';
 
     if (st === 'idle' || st === 'loading') {
-      html = '<span class="mkt-status-loading"><span class="mkt-status-spin"></span>Запрашиваю данные MOEX ISS…</span>';
+      html = '<span class="mkt-status-loading"><span class="mkt-status-spin"></span>Загружаем данные…</span>';
     } else if (st === 'ok') {
       var upd  = S.ld.updateTime ? _timeHM(S.ld.updateTime) : '—';
       var got  = S.ld.fetchTs ? _nowHM() : '—';
@@ -213,6 +214,12 @@
            + ' <button class="mkt-status-retry" id="mktStatusRetry">↺ Повторить</button>';
     }
     el.innerHTML = html;
+  }
+
+  function _renderStatusUS(page) {
+    var el = page && page.querySelector('#mktDataStatus');
+    if (!el) return;
+    el.innerHTML = '<span class="mkt-status-ok">TradingView · данные с задержкой 15–30 мин</span>';
   }
 
   function _updateDemoBadges(page) {
@@ -685,11 +692,13 @@
   function fetchRussianData(page) {
     if (!MA || !MA.isEnabled()) { _renderStatus(page); return; }
 
+    var seq = ++S.fetchSeq;
     S.ld.indStatus = 'loading';
     S.ld.ldrStatus = 'loading';
     _renderStatus(page);
 
     Promise.all([MA.getIndices(), MA.getLeaders()]).then(function (results) {
+      if (S.fetchSeq !== seq) return; // Ответ устарел — пользователь переключил рынок
       var indRes = results[0];
       var ldrRes = results[1];
 
@@ -727,6 +736,7 @@
         renderChart(page);
       }
     }).catch(function (err) {
+      if (S.fetchSeq !== seq) return;
       S.ld.indStatus = 'error';
       S.ld.ldrStatus = 'error';
       S.ld.error = err.message;
@@ -745,18 +755,19 @@
     return ''
       // Статус-строка (динамическая)
       + '<div class="mkt-status-bar"><span id="mktDataStatus" class="mkt-status-loading">'
-      + '<span class="mkt-status-spin"></span>Запрашиваю данные MOEX ISS…</span></div>'
+      + '<span class="mkt-status-spin"></span>Загружаем данные…</span></div>'
 
       // Вкладки Россия / США
-      + '<div class="mkt-header">'
-      + '<div class="mkt-tabs">'
-      + '<button class="mkt-tab-btn active" data-mkt-tab="ru">🇷🇺 Россия</button>'
-      + '<button class="mkt-tab-btn" data-mkt-tab="us">🇺🇸 США</button>'
+      + '<div class="mkt-header" id="mktHeader">'
+      + '<div class="mkt-tabs" role="tablist">'
+      + '<button class="mkt-tab-btn active" role="tab" aria-selected="true" data-mkt-tab="ru">🇷🇺 Россия</button>'
+      + '<button class="mkt-tab-btn" role="tab" aria-selected="false" data-mkt-tab="us">🇺🇸 США</button>'
       + '</div>'
-      + '<button class="mkt-refresh-btn" id="mktRefresh">'
+      + '<button class="mkt-refresh-btn" id="mktRefresh" aria-label="Обновить данные">'
       + '<svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,48V96a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h30.69L182.06,72.4a80,80,0,1,0,4.09,114.67,8,8,0,1,1,11.41,11.2A96,96,0,1,1,192,54.67l9.4,9.4V48a8,8,0,0,1,16,0Z"/></svg>'
       + 'Обновить</button>'
       + '</div>'
+      + '<div id="mktPageTitle" class="mkt-page-title">Рынок России</div>'
 
       // Быстрый обзор
       + '<div class="mkt-overview-scroll" id="mkt-anchor-overview"><div class="mkt-overview-track" id="mktOverviewTrack"></div></div>'
@@ -826,26 +837,49 @@
 
   // ── Переключение вкладок ────────────────────────────────────────────────────
   function switchTab(page, tab) {
+    if (S.tab === tab) return;
     S.tab = tab;
     S.selected = tab === 'ru' ? 'IMOEX' : 'SP500';
 
+    // Обновить активную вкладку + aria-selected
     page.querySelectorAll('.mkt-tab-btn').forEach(function (b) {
-      b.classList.toggle('active', b.dataset.mktTab === tab);
+      var isActive = b.dataset.mktTab === tab;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
+
+    // Заголовок рынка
+    var titleEl = page.querySelector('#mktPageTitle');
+    if (titleEl) titleEl.textContent = tab === 'ru' ? 'Рынок России' : 'Рынок США';
+
+    // CSS-маркер для синего акцента USA
+    var hdr = page.querySelector('#mktHeader');
+    if (hdr) hdr.classList.toggle('mkt-header--us', tab === 'us');
+
+    // Показ/скрытие секций
     page.querySelectorAll('.mkt-ru-only').forEach(function (el) { el.style.display = tab === 'ru' ? '' : 'none'; });
     page.querySelectorAll('.mkt-us-only').forEach(function (el) { el.style.display = tab === 'us' ? '' : 'none'; });
 
     if (tab === 'us') {
+      _renderStatusUS(page);
       var usContent = page.querySelector('#mktUSContent');
       if (usContent && !usContent._built) { usContent._built = true; usContent.innerHTML = buildUSHTML(); }
       initUSSection(page);
     } else {
+      // Рендерим текущие данные немедленно (demo или live)
       renderOverview(page, null, 'mktOverviewTrack');
       renderChart(page);
       renderIndices(page);
       renderSectors(page);
       renderLeaders(page);
       renderBonds(page);
+      // Авто-загрузка: если данных нет или была ошибка — запускаем фетч
+      if (S.ld.indStatus === 'idle' || S.ld.indStatus === 'error') {
+        MA && MA.clearCache && MA.clearCache();
+        fetchRussianData(page);
+      } else {
+        _renderStatus(page);
+      }
     }
   }
 
