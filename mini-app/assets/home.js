@@ -69,24 +69,6 @@
           dataState:              'awaiting_source',
         },
         {
-          id: 'foreign',
-          title: 'Зарубежный портфель',
-          snowballPublicUrl:      'https://snowball-income.com/public/portfolios/vdpfsqtldzcuccihgvmy#growth',
-          dataEndpoint:           null,
-          benchmarkCode:          'SPX',
-          benchmarkLabel:         'S&P 500',
-          defaultPeriod:          'С начала года',
-          currency:               'USD',
-          portfolioReturn:        null,
-          benchmarkReturn:        null,
-          differencePp:           null,
-          status:                 null,
-          chartSeries:            null,
-          lastUpdatedAt:          null,
-          updateIntervalMinutes:  15,
-          dataState:              'awaiting_source',
-        },
-        {
           id: 'highrisk',
           title: 'Портфель высокого риска',
           snowballPublicUrl:      'https://snowball-income.com/public/portfolios/opkiaazasggytxmhskez#growth',
@@ -109,12 +91,13 @@
 
     // ── Плашка интенсива по крипте (сразу под каруселью) ───────────────────
     cryptoEvent: {
-      tag:      'Живой интенсив · Август',
-      title:    'Криптовалюты',
-      subtitle: 'Программа, даты и подробности появятся после согласования.',
-      url:      null,
-      btnLabel: 'Подробнее',
-      btnToast: 'Подробности о криптоинтенсиве появятся после согласования программы.',
+      tag:       'ЖИВОЙ ИНТЕНСИВ · СЕНТЯБРЬ',
+      title:     'Криптовалюты',
+      subtitle:  'Пять дней, от азов к практике',
+      date:      'Старт 7 сентября 2026 года в 11:00 МСК',
+      targetUtc: '2026-09-07T08:00:00Z',   // 11:00 МСК = 08:00 UTC
+      url:       'https://investfriend.ru/pl/teach/control/lesson/view?id=349173658&editMode=0',
+      btnLabel:  'Открыть анонс',
     },
 
     // ── Карточка-ссылка «Портфели клуба» ──────────────────────────────────
@@ -502,27 +485,75 @@
     });
   }
 
+  // ── Таймер обратного отсчёта ───────────────────────────────────────────────
+  var _cryptoTimerIv = null;
+
+  function _pluralRu(n, one, few, many) {
+    var mod10 = n % 10, mod100 = n % 100;
+    if (mod100 >= 11 && mod100 <= 19) return many;
+    if (mod10 === 1) return one;
+    if (mod10 >= 2 && mod10 <= 4) return few;
+    return many;
+  }
+
+  function _tickCountdown(el, targetMs) {
+    var diff = targetMs - Date.now();
+    if (diff <= 0) {
+      el.innerHTML = '<div class="hp-countdown-done">Интенсив начался</div>';
+      return false; // stop interval
+    }
+    var totalSec = Math.floor(diff / 1000);
+    var days    = Math.floor(totalSec / 86400);
+    var hours   = Math.floor((totalSec % 86400) / 3600);
+    var minutes = Math.floor((totalSec % 3600) / 60);
+    var seconds = totalSec % 60;
+    function pad(v) { return String(v).padStart(2, '0'); }
+    el.innerHTML = '<div class="hp-countdown">'
+      + '<div class="hp-countdown-unit"><span class="hp-countdown-num">' + days + '</span><span class="hp-countdown-lbl">' + _pluralRu(days, 'день', 'дня', 'дней') + '</span></div>'
+      + '<div class="hp-countdown-unit"><span class="hp-countdown-num">' + pad(hours) + '</span><span class="hp-countdown-lbl">' + _pluralRu(hours, 'час', 'часа', 'часов') + '</span></div>'
+      + '<div class="hp-countdown-unit"><span class="hp-countdown-num">' + pad(minutes) + '</span><span class="hp-countdown-lbl">' + _pluralRu(minutes, 'минута', 'минуты', 'минут') + '</span></div>'
+      + '<div class="hp-countdown-unit"><span class="hp-countdown-num">' + pad(seconds) + '</span><span class="hp-countdown-lbl">' + _pluralRu(seconds, 'секунда', 'секунды', 'секунд') + '</span></div>'
+      + '</div>';
+    return true; // continue
+  }
+
   // ── Плашка крипто-интенсива ──────────────────────────────────────────────────
   function renderCryptoEvent() {
     var el = document.getElementById('hp-crypto-event');
     if (!el) return;
+
+    if (_cryptoTimerIv) { clearInterval(_cryptoTimerIv); _cryptoTimerIv = null; }
+
     var c = HOME_CFG.cryptoEvent;
+    var targetMs = new Date(c.targetUtc).getTime();
+
     el.innerHTML = '<div class="hp-slide-inner hp-slide-crypto">'
       + '<div class="hp-crypto-bg-icon" aria-hidden="true">&#x20BF;</div>'
-      + '<div class="hp-slide-top">'
-      + '<span class="hp-slide-tag">' + c.tag + '</span>'
-      + '</div>'
+      + '<div class="hp-slide-top"><span class="hp-slide-tag">' + c.tag + '</span></div>'
       + '<div class="hp-slide-title font-cond">' + c.title + '</div>'
       + '<div class="hp-slide-sub">' + c.subtitle + '</div>'
-      + '<button class="hp-slide-btn hp-crypto-evt-btn"'
-      + (c.url ? ' data-url="' + c.url + '"' : '')
-      + (c.btnToast ? ' data-toast="' + c.btnToast + '"' : '')
-      + '>' + c.btnLabel + '</button>'
+      + '<div class="hp-slide-date">' + c.date + '</div>'
+      + '<div class="hp-countdown-wrap" role="timer" aria-live="off"></div>'
+      + '<button class="hp-slide-btn hp-crypto-evt-btn" aria-label="' + c.btnLabel + ' — откроется в браузере">'
+      + c.btnLabel + '&nbsp;' + _EXT_IC
+      + '</button>'
       + '</div>';
-    el.querySelector('.hp-crypto-evt-btn').addEventListener('click', function (e) {
-      var btn = e.currentTarget;
-      if (btn.dataset.url) { openUrl(btn.dataset.url); return; }
-      if (btn.dataset.toast && window.showToast) showToast(btn.dataset.toast);
+
+    var timerEl = el.querySelector('.hp-countdown-wrap');
+
+    function tick() {
+      if (!_tickCountdown(timerEl, targetMs)) {
+        clearInterval(_cryptoTimerIv);
+        _cryptoTimerIv = null;
+      }
+    }
+    tick();
+    if (Date.now() < targetMs) {
+      _cryptoTimerIv = setInterval(tick, 1000);
+    }
+
+    el.querySelector('.hp-crypto-evt-btn').addEventListener('click', function () {
+      openUrl(c.url);
     });
   }
 
@@ -739,8 +770,6 @@
     renderCryptoEvent();
     renderPortfolios();
     renderChatsBtn();
-    renderNow();
-    renderCalendar();
     renderLearning();
     loadAllPortfolioData(); // async; перерисовывает карусель при успехе
   }

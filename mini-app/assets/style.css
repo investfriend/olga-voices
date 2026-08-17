@@ -1791,6 +1791,69 @@ button, input, textarea, select { font-family: inherit; }
 }
 .hp-slide-btn:active { opacity: .85; }
 
+/* Дата старта */
+.hp-slide-date {
+  font-size: 12px;
+  color: rgba(243,241,234,.52);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+html[data-theme="light"] .hp-slide-date { color: rgba(20,40,30,.52); }
+
+/* Таймер обратного отсчёта */
+.hp-countdown-wrap { margin: 4px 0 12px; }
+.hp-countdown {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+}
+.hp-countdown-unit {
+  background: rgba(39,201,138,.08);
+  border: 1px solid rgba(39,201,138,.18);
+  border-radius: 6px;
+  padding: 7px 2px 6px;
+  text-align: center;
+}
+.hp-countdown-num {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #27C98A;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.hp-countdown-lbl {
+  display: block;
+  font-size: 9px;
+  color: rgba(243,241,234,.42);
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-countdown-done {
+  font-size: 13px;
+  font-weight: 600;
+  color: #27C98A;
+  padding: 8px 12px;
+  background: rgba(39,201,138,.1);
+  border: 1px solid rgba(39,201,138,.25);
+  border-radius: 6px;
+  text-align: center;
+}
+html[data-theme="light"] .hp-countdown-unit {
+  background: rgba(21,150,102,.07);
+  border-color: rgba(21,150,102,.20);
+}
+html[data-theme="light"] .hp-countdown-num { color: #159664; }
+html[data-theme="light"] .hp-countdown-lbl { color: rgba(20,40,30,.45); }
+html[data-theme="light"] .hp-countdown-done {
+  color: #159664;
+  background: rgba(21,150,102,.08);
+  border-color: rgba(21,150,102,.22);
+}
+
 /* Точки-индикаторы */
 .hp-slider-dots {
   display: flex;
