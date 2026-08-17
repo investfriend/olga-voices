@@ -9,6 +9,22 @@ const user = tg?.initDataUnsafe?.user;
 const USER_ID = user?.id || 'demo';
 const BOT_USERNAME = 'investic_app_bot';
 
+// === Unified external link handler ===
+// Use synchronously inside click handlers — no setTimeout/Promise wrappers.
+function openExternal(url) {
+  var tgApp = window.Telegram && window.Telegram.WebApp;
+  if (tgApp) {
+    if (/^https?:\/\/t\.me\//.test(url)) {
+      tgApp.openTelegramLink(url);
+    } else {
+      tgApp.openLink(url, { try_instant_view: false });
+    }
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
+window.openExternal = openExternal;
+
 // === Состояние ===
 const STATE = {
   page: 'home',

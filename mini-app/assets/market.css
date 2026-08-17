@@ -562,6 +562,7 @@
   font-size: 13px;
   cursor: pointer;
 }
+.mkt-tv-ext-btn svg { pointer-events: none; }
 
 /* Карточка США с пометкой ДЕМО */
 .mkt-ticker-demo { position: relative; }

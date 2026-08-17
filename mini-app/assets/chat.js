@@ -254,7 +254,7 @@
     if (!item) return;
 
     if (item.access === 'public') {
-      openUrl(item.url);
+      openExternal(item.url);
     } else if (item.access === 'getcourse_protected') {
       // Для Telegram используем connectionLessonUrl пока directUrl не задан
       var target = item.url || (item.directUrl || item.connectionLessonUrl);
@@ -290,7 +290,7 @@
     goBtn && goBtn.addEventListener('click', function () {
       var url = _pendingUrl;
       _hideModal();
-      if (url) openUrl(url);
+      if (url) openExternal(url);
     });
     cancelBtn && cancelBtn.addEventListener('click', _hideModal);
     overlay.addEventListener('click', function (e) {

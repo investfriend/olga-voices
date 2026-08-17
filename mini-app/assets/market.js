@@ -909,9 +909,7 @@
 
       // TV открыть внешнюю ссылку
       if (t.dataset.tvOpen) {
-        var tg = window.Telegram && window.Telegram.WebApp;
-        if (tg) tg.openLink(t.dataset.tvOpen);
-        else window.open(t.dataset.tvOpen, '_blank', 'noopener,noreferrer');
+        openExternal(t.dataset.tvOpen);
         return;
       }
 

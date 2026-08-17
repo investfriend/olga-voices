@@ -1410,7 +1410,7 @@ button, input, textarea, select { font-family: inherit; }
 .hp-portfolios-body { flex: 1; min-width: 0; }
 .hp-portfolios-title { font-size: 16px; font-weight: 700; color: #071A13; margin-bottom: 3px; }
 .hp-portfolios-desc  { font-size: 13px; color: rgba(7,26,19,.72); }
-.hp-portfolios-arr   { color: rgba(7,26,19,.55); flex-shrink: 0; display: flex; }
+.hp-portfolios-arr   { color: rgba(7,26,19,.55); flex-shrink: 0; display: flex; pointer-events: none; }
 
 /* Кнопка Общения */
 .hp-chats-btn {
@@ -2135,6 +2135,7 @@ html[data-theme="light"] .ch-badge--soon  { color: var(--warning); background: r
   -webkit-tap-highlight-color: transparent;
 }
 .ch-btn:active { opacity: .85; }
+.ch-btn svg { pointer-events: none; }
 .ch-btn--disabled {
   background: var(--bg-card-2);
   color: var(--text-muted);
@@ -2551,3 +2552,4 @@ html[data-theme="light"] .lrn-gc-link {
   transition: opacity .12s;
 }
 .hp-pcc-sb-btn:active { opacity: .82; }
+.hp-pcc-sb-btn svg, .hp-cal-link svg, .hp-archive-link svg { pointer-events: none; }

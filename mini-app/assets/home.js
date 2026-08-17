@@ -207,8 +207,9 @@
 
   // ── Utilities ────────────────────────────────────────────────────────────────
   function openUrl(url) {
+    if (window.openExternal) { openExternal(url); return; }
     var tg = window.Telegram && window.Telegram.WebApp;
-    if (tg && tg.openLink) tg.openLink(url);
+    if (tg && tg.openLink) tg.openLink(url, { try_instant_view: false });
     else window.open(url, '_blank', 'noopener,noreferrer');
   }
 
