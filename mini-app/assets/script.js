@@ -25,7 +25,7 @@ function setPage(name, push = true) {
   const target = document.querySelector(`[data-page="${name}"]`);
   if (target) target.classList.add('active');
 
-  const mainPages = ['home', 'about', 'chats', 'favorites', 'ambassador', 'faq'];
+  const mainPages = ['home', 'about', 'chats', 'favorites', 'ambassador', 'faq', 'market'];
   if (mainPages.includes(name)) {
     document.querySelectorAll('.nav-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.target === name);

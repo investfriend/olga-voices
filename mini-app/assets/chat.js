@@ -31,9 +31,10 @@
             badge: 'Для участников клуба',
             access: 'getcourse_protected',
             icon: 'chat',
+            external: true,
             desc: 'Основная площадка общения клуба. Здесь публикуются анонсы, обсуждения, инвестиционные идеи, комментарии аналитиков и сообщения участников.',
             note: 'Сейчас подключение выполняется через специальный урок и Telegram-бота, который управляет доступом участника.',
-            btn: 'Подключить Telegram',
+            btn: 'Открыть Telegram',
             connectionLessonUrl: 'https://investfriend.ru/pl/teach/control/lesson/view?id=346013705&editMode=0',
             directUrl: null,
           },
@@ -45,6 +46,7 @@
             icon: 'chat',
             desc: 'Официальный канал инвестклуба «Финансовой свободы». Здесь дублируются ключевые анонсы и важные сообщения клуба: эфиры и мероприятия, обновления и новости, важные напоминания.',
             note: 'Подойдёт тем, кто хочет следить за основными событиями клуба в MAX.',
+            external: true,
             btn: 'Открыть MAX',
             url: 'https://max.ru/sabitovaolga',
           },
@@ -56,7 +58,8 @@
             icon: 'users',
             desc: 'Общение с участниками клуба внутри учебной платформы.',
             note: 'После перехода нажмите синюю кнопку «Вступить в чат». После вступления откроются общий чат и дополнительные чаты, которые дублируют ветки Telegram.',
-            btn: 'Открыть чат',
+            external: true,
+            btn: 'Открыть чат на GetCourse',
             url: 'https://investfriend.ru/chtm/app/getcourse/chat/VebyXBF5Hp9BCoOtm2UL3',
           },
         ],
@@ -83,6 +86,7 @@
             access: 'public',
             icon: 'question',
             desc: 'Помощь по доступу, оплате, работе платформы и другим организационным вопросам.',
+            external: true,
             btn: 'Написать в поддержку',
             url: 'https://investfriend.ru/cms/system/contact',
           },
@@ -94,7 +98,8 @@
             icon: 'question',
             desc: 'Форма для гарантированной фиксации вопроса аналитикам.',
             note: 'Используйте форму, если вопрос требует ответа или разбора со стороны аналитической команды клуба.',
-            btn: 'Задать вопрос',
+            external: true,
+            btn: 'Задать вопрос аналитикам',
             url: 'https://investfriend.ru/club-questions',
           },
           {
@@ -123,7 +128,7 @@
             icon: 'chart',
             external: true,
             desc: 'Графики, котировки и инструменты технического анализа.',
-            btn: 'Открыть',
+            btn: 'Открыть TradingView',
             url: 'https://ru.tradingview.com/',
           },
           {
@@ -134,7 +139,7 @@
             icon: 'chart',
             external: true,
             desc: 'Учёт активов, дивидендов и структуры инвестиционного портфеля.',
-            btn: 'Открыть',
+            btn: 'Открыть Snowball',
             url: 'https://snowball-income.com/',
           },
           {
@@ -145,7 +150,7 @@
             icon: 'chart',
             external: true,
             desc: 'Ключевая ставка, инфляция, курсы валют, решения и статистика регулятора.',
-            btn: 'Открыть',
+            btn: 'Открыть сайт Банка России',
             url: 'https://www.cbr.ru/',
           },
           {
@@ -191,9 +196,9 @@
     var btnIcon = item.external ? _IC.ext : _IC.arrow;
     var btn = '<button class="ch-btn' + (isSoon ? ' ch-btn--disabled' : '') + '"'
       + (isSoon ? ' disabled aria-disabled="true"' : ' data-action="' + item.id + '"')
+      + (item.external && !isSoon ? ' aria-label="' + item.btn + '"' : '')
       + '>'
-      + (isSoon ? '' : btnIcon)
-      + item.btn
+      + (isSoon ? '' : (item.external ? item.btn + '&nbsp;' + btnIcon : btnIcon + item.btn))
       + '</button>';
 
     var starBtn = '';

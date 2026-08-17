@@ -9,6 +9,8 @@
   var D  = window.MARKET_DATA;   // demo-данные (fallback)
   var MA = window.MOEXAdapter;   // MOEX ISS adapter
 
+  var _EXT_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="14" height="14" aria-hidden="true"><path d="M224,104a8,8,0,0,1-16,0V79.32l-82.34,82.34a8,8,0,0,1-11.32-11.32L196.68,68H172a8,8,0,0,1,0-16h44a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/></svg>';
+
   // ── Состояние ─────────────────────────────────────────────────────────────
   var S = {
     tab:        'ru',
@@ -655,7 +657,7 @@
       + '<div class="mkt-tv-loading" id="tvChartLoading"><div class="mkt-tv-spinner"></div>Загрузка TradingView...</div>'
       + '<div class="mkt-tv-error" id="tvChartError" style="display:none">' + tvErrBody
       + '<button class="mkt-tv-retry-btn" data-tv-retry="chart">↺ Повторить</button>'
-      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/chart/?symbol=SP:SPX">Открыть во внешнем окне ↗</button>'
+      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/chart/?symbol=SP:SPX" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
       + '</div></div>'
       + '<div id="tvChartInner" style="height:380px;background:var(--bg-card);border-radius:8px"></div>'
       + '</div>'
@@ -664,7 +666,7 @@
       + '<div class="mkt-tv-loading" id="tvOverviewLoading"><div class="mkt-tv-spinner"></div>Загрузка виджета...</div>'
       + '<div class="mkt-tv-error" id="tvOverviewError" style="display:none">' + tvErrBody
       + '<button class="mkt-tv-retry-btn" data-tv-retry="overview">↺ Повторить</button>'
-      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/markets/">TradingView.com ↗</button>'
+      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/markets/" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
       + '</div></div>'
       + '<div id="tvOverviewContainer" class="tradingview-widget-container" style="min-height:200px"></div>'
       + '</div>'
@@ -673,7 +675,7 @@
       + '<div class="mkt-tv-loading" id="tvHeatmapLoading"><div class="mkt-tv-spinner"></div>Загрузка виджета...</div>'
       + '<div class="mkt-tv-error" id="tvHeatmapError" style="display:none">' + tvErrBody
       + '<button class="mkt-tv-retry-btn" data-tv-retry="heatmap">↺ Повторить</button>'
-      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/heatmap/stock/">TradingView.com ↗</button>'
+      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/heatmap/stock/" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
       + '</div></div>'
       + '<div id="tvHeatmapContainer" class="tradingview-widget-container" style="min-height:200px"></div>'
       + '</div>';
