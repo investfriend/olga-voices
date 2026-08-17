@@ -21,9 +21,7 @@
   var _DEMO = true;
 
   var _greeting = CFG.greeting ||
-    'Привет! Я Инвестик, помощник по материалам клуба. ' +
-    'Могу объяснить инвестиционный термин или помочь найти нужный урок. ' +
-    'Нажмите на меня и задайте вопрос.';
+    'Я помогу найти материал или объяснить термин. Нажмите на меня.';
 
   var _disclaimer =
     'График у меня на голове, но индивидуальных инвестиционных рекомендаций я не даю.';
@@ -48,8 +46,8 @@
     'Попробуйте уточнить вопрос или обратиться к менеджеру.';
 
   var _NAV_H = 70; // навигация + safe area
-  var LS_POS  = 'iv_investik_pos';
-  var SS_GREET = 'iv_investik_greet';
+  var LS_POS   = 'iv_investik_pos';
+  var LS_SEEN  = 'investikIntroSeenV1';
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   function _esc(s) {
@@ -258,6 +256,11 @@
     _wrapEl.style.top  = t + 'px';
     _wrapEl.style.right = side === 'right' ? '12px' : 'auto';
     _wrapEl.style.left  = side === 'left'  ? '12px' : 'auto';
+    // Keep bubble on-screen whichever side character is on
+    if (_greetEl) {
+      _greetEl.style.right = side === 'right' ? '0' : 'auto';
+      _greetEl.style.left  = side === 'left'  ? '0' : 'auto';
+    }
   }
 
   function _savePos(side, top) {
@@ -353,9 +356,12 @@
       if (btn) _submitMsg(btn.getAttribute('data-q'));
     });
 
-    // Show greeting once per session
-    if (!sessionStorage.getItem(SS_GREET)) {
-      setTimeout(function () { _greetEl.classList.add('ivk-bubble--show'); }, 700);
+    // Show greeting once per device (localStorage)
+    if (!localStorage.getItem(LS_SEEN)) {
+      setTimeout(function () {
+        _greetEl.classList.add('ivk-bubble--show');
+        setTimeout(_hideGreeting, 6000);
+      }, 700);
     } else {
       _greetEl.style.display = 'none';
     }
@@ -364,7 +370,7 @@
   function _hideGreeting() {
     _greetEl.classList.remove('ivk-bubble--show');
     setTimeout(function () { _greetEl.style.display = 'none'; }, 280);
-    try { sessionStorage.setItem(SS_GREET, '1'); } catch (e) {}
+    try { localStorage.setItem(LS_SEEN, '1'); } catch (e) {}
   }
 
   // ── Dialog ────────────────────────────────────────────────────────────────

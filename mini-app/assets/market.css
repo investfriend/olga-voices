@@ -430,10 +430,10 @@
   border-bottom: 1px solid var(--border);
 }
 .mkt-leader-row:last-child { border-bottom: none; }
-.mkt-leader-ticker { font-size: 13px; font-weight: 700; color: var(--text); width: 48px; flex-shrink: 0; }
+.mkt-leader-ticker { font-size: 13px; font-weight: 700; color: var(--text); width: 48px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mkt-leader-name   { flex: 1; font-size: 12px; color: var(--text-dim); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mkt-leader-price  { font-size: 13px; font-weight: 600; color: var(--text); text-align: right; }
-.mkt-leader-chg    { font-size: 12px; font-weight: 600; text-align: right; min-width: 50px; display: flex; align-items: center; justify-content: flex-end; gap: 3px; }
+.mkt-leader-price  { font-size: 13px; font-weight: 600; color: var(--text); text-align: right; flex-shrink: 0; white-space: nowrap; }
+.mkt-leader-chg    { font-size: 12px; font-weight: 600; text-align: right; min-width: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; gap: 3px; }
 
 /* ── Облигации ──────────────────────────────────────────────────────────── */
 .mkt-bond-cards { display: flex; gap: 8px; margin-bottom: 12px; }
