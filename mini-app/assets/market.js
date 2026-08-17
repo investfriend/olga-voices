@@ -471,7 +471,7 @@
     } else {
       var html = '';
       liveList.forEach(function (l) {
-        var c = cls(l.change !== undefined ? l.change : l.pct);
+        var c = cls(l.pct);
         html += '<div class="mkt-leader-row">'
           + '<div class="mkt-leader-ticker">' + l.ticker + '</div>'
           + '<div class="mkt-leader-name">' + l.name + '</div>'

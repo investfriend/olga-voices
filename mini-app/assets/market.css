@@ -434,7 +434,8 @@
   cursor: pointer;
   transition: all .15s;
 }
-.mkt-leader-tab-btn.active { background: var(--bg-card-2); color: var(--text); border-color: var(--accent); }
+.mkt-leader-tab-btn[data-mkt-leader="gain"].active { background: var(--bg-card-2); color: var(--mkt-up);   border-color: var(--mkt-up); }
+.mkt-leader-tab-btn[data-mkt-leader="loss"].active { background: var(--bg-card-2); color: var(--mkt-down); border-color: var(--mkt-down); }
 
 .mkt-leader-row {
   display: flex;
