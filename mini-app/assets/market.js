@@ -1,12 +1,11 @@
-// assets/market.js v4 — live MOEX ISS + Lightweight Charts
+// assets/market.js v8 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
-// Fallback при недоступности MOEX: demo-данные из market-data.js
 
 (function () {
   'use strict';
 
-  var D  = window.MARKET_DATA;   // demo-данные (fallback)
+  var D  = window.MARKET_DATA;   // конфиг имён и текстов (котировки не используются)
   var MA = window.MOEXAdapter;   // MOEX ISS adapter
 
   var _EXT_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="14" height="14" aria-hidden="true"><path d="M224,104a8,8,0,0,1-16,0V79.32l-82.34,82.34a8,8,0,0,1-11.32-11.32L196.68,68H172a8,8,0,0,1,0-16h44a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/></svg>';
@@ -20,21 +19,53 @@
     leaderTab:  'gain',
     fetchSeq:   0,
     tvInited:   {},
-    // Live-данные
     ld: {
-      indexMap:   null,   // { SECID: { value, pct, change, updateTime } }
-      leaders:    null,   // { gain:[...5], loss:[...5] }
-      fetchTs:    null,   // Date.now() последнего успешного получения индексов
-      updateTime: null,   // MOEX UPDATETIME поля ("2026-08-07 18:40:00")
+      indexMap:   null,
+      leaders:    null,
+      fetchTs:    null,
+      updateTime: null,
+      cacheTs:    null,   // timestamp записи в localStorage (для stale-баннера)
       staleMin:   null,
       error:      null,
-      indStatus:  'idle', // idle|loading|ok|error|stale
+      indStatus:  'idle',
       ldrStatus:  'idle',
       chrStatus:  'idle',
-      lwChart:    null,   // LW Charts instance
+      lwChart:    null,
       lwSeries:   null,
     },
   };
+
+  // ── LocalStorage кэш ──────────────────────────────────────────────────────
+  var _LS_KEY = 'mkt_indices_v1';
+
+  function _fmtCacheDate(ts) {
+    var d = new Date(ts);
+    var dd = String(d.getDate()).padStart(2, '0');
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var hh = String(d.getHours()).padStart(2, '0');
+    var mn = String(d.getMinutes()).padStart(2, '0');
+    return dd + '.' + mm + '.' + d.getFullYear() + ', ' + hh + ':' + mn;
+  }
+
+  function _saveToLS(indexMap, quoteTs, fetchTs) {
+    try {
+      localStorage.setItem(_LS_KEY, JSON.stringify({
+        schema: 1, source: 'moex',
+        fetchTs: fetchTs, quoteTs: quoteTs || null,
+        data: indexMap,
+      }));
+    } catch(e) {}
+  }
+
+  function _loadFromLS() {
+    try {
+      var raw = localStorage.getItem(_LS_KEY);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      if (!obj || obj.schema !== 1 || obj.source !== 'moex' || !obj.data) return null;
+      return obj;
+    } catch(e) { return null; }
+  }
 
   // ── Форматирование ─────────────────────────────────────────────────────────
   function fNum(v, unit) {
@@ -61,7 +92,6 @@
   function icon(v) { return v > 0 ? SVG_UP : v < 0 ? SVG_DOWN : ''; }
 
   function _timeHM(str) {
-    // "2026-08-07 18:40:00" → "18:40"
     if (!str || str.length < 16) return str || '';
     return str.substring(11, 16);
   }
@@ -77,7 +107,6 @@
     var rows = MA.parseIss(res.data, 'marketdata');
     var map  = {};
     rows.forEach(function (r) {
-      // CURRENTVALUE === null → индекс не торгуется сейчас
       if (r.CURRENTVALUE === null || r.CURRENTVALUE === undefined) return;
       map[r.SECID] = {
         value:      r.CURRENTVALUE,
@@ -94,36 +123,25 @@
     if (!res || !res.data) return null;
     var secs  = MA.parseIss(res.data, 'securities');
     var mdata = MA.parseIss(res.data, 'marketdata');
-
     var nameMap = {};
     secs.forEach(function (r) { nameMap[r.SECID] = r.SHORTNAME; });
-
     var items = mdata
       .filter(function (r) { return r.LAST && r.LASTTOPREVPRICE !== null && r.LASTTOPREVPRICE !== undefined; })
       .map(function (r) {
         return { ticker: r.SECID, name: nameMap[r.SECID] || r.SECID, price: r.LAST, pct: r.LASTTOPREVPRICE, change: 0 };
       });
-
-    var byAsc = items.slice().sort(function (a, b) { return a.pct - b.pct; });
+    var byAsc  = items.slice().sort(function (a, b) { return a.pct - b.pct; });
     var byDesc = items.slice().sort(function (a, b) { return b.pct - a.pct; });
-
     return {
       gain: byDesc.filter(function (r) { return r.pct > 0; }).slice(0, 5),
       loss: byAsc.filter(function (r) { return r.pct < 0; }).slice(0, 5),
     };
   }
 
-  // Конвертировать время начала свечи ISS (московское) в значение для LW Charts
-  // Дневные свечи: date-string "YYYY-MM-DD"
-  // Внутридневные (10мин, 1ч): Unix timestamp UTC (секунды)
   function _issBeginToLwTime(begin, isIntraday) {
     if (!begin) return null;
-    if (!isIntraday) {
-      // "2026-08-07 00:00:00" → "2026-08-07"
-      return begin.substring(0, 10);
-    }
-    // Московское время UTC+3: "2026-08-07 10:30:00" → UTC unix sec
-    var s = begin.replace(' ', 'T') + '+03:00';
+    if (!isIntraday) return begin.substring(0, 10);
+    var s  = begin.replace(' ', 'T') + '+03:00';
     var ms = new Date(s).getTime();
     if (isNaN(ms)) return null;
     return Math.floor(ms / 1000);
@@ -133,7 +151,6 @@
     if (!res || !res.data) return null;
     var rows = MA.parseIss(res.data, 'candles');
     if (!rows.length) return [];
-
     var isIntraday = (period === '1d' || period === '1w');
     var result = [];
     rows.forEach(function (r) {
@@ -142,7 +159,6 @@
       if (t === null) return;
       result.push({ time: t, open: r.open, high: r.high, low: r.low, close: r.close, value: r.close });
     });
-    // Убедиться в сортировке по времени (ISS обычно отдаёт по возрастанию)
     result.sort(function (a, b) {
       if (typeof a.time === 'number') return a.time - b.time;
       return a.time < b.time ? -1 : a.time > b.time ? 1 : 0;
@@ -150,90 +166,69 @@
     return result;
   }
 
-  // ── Слияние live + demo ────────────────────────────────────────────────────
-  // Используем demo-список как шаблон (имена, единицы), live заменяет числа
+  // ── Слияние: только реальные данные MOEX (демо-значения не используются) ──
 
-  function _mergedOverview(demoList) {
+  function _mergedOverview(cfgList) {
     var map = S.ld.indexMap;
-    if (!map) return demoList;
-    return demoList.map(function (item) {
+    if (!map) return [];
+    return cfgList.filter(function (item) { return !!map[item.ticker]; }).map(function (item) {
       var live = map[item.ticker];
-      if (!live) return item;
       return {
         ticker: item.ticker,
         name:   item.name,
         value:  live.value,
-        change: live.change !== null && live.change !== undefined ? live.change : item.change,
+        change: live.change !== null && live.change !== undefined ? live.change : 0,
         pct:    live.pct,
         unit:   item.unit,
-        time:   _timeHM(live.updateTime) || item.time,
+        time:   _timeHM(live.updateTime) || '',
         live:   true,
       };
     });
   }
 
-  function _mergedIndicesGroup(demoGroup) {
+  function _mergedIndicesGroup(cfgGroup) {
     var map = S.ld.indexMap;
-    if (!map) return demoGroup;
-    return demoGroup.map(function (item) {
+    if (!map) return [];
+    return cfgGroup.filter(function (item) { return !!map[item.ticker]; }).map(function (item) {
       var live = map[item.ticker];
-      if (!live) return item;
       return { ticker: item.ticker, name: item.name, value: live.value, change: live.change, pct: live.pct, live: true };
     });
   }
 
-  function _mergedSectors(demoSectors) {
+  function _mergedSectors(cfgSectors) {
     var map = S.ld.indexMap;
-    if (!map) return demoSectors;
-    return demoSectors.map(function (item) {
+    if (!map) return [];
+    return cfgSectors.filter(function (item) { return !!map[item.ticker]; }).map(function (item) {
       var live = map[item.ticker];
-      if (!live) return item;
       return { ticker: item.ticker, name: item.name, value: live.value, change: live.change, pct: live.pct, weight: item.weight, live: true };
     });
   }
 
-  // ── Статусная строка ──────────────────────────────────────────────────────
+  // ── Статусная строка (внутри mktRuPanel) ──────────────────────────────────
 
   function _renderStatus(page) {
     var el = page && page.querySelector('#mktDataStatus');
     if (!el) return;
     var st = S.ld.indStatus;
     var html = '';
-
     if (st === 'idle' || st === 'loading') {
       html = '<span class="mkt-status-loading"><span class="mkt-status-spin"></span>Загружаем данные…</span>';
     } else if (st === 'ok') {
-      var upd  = S.ld.updateTime ? _timeHM(S.ld.updateTime) : '—';
-      var got  = S.ld.fetchTs ? _nowHM() : '—';
+      var upd = S.ld.updateTime ? _timeHM(S.ld.updateTime) : '—';
+      var got = S.ld.fetchTs ? _nowHM() : '—';
       html = '<span class="mkt-status-ok">МосБиржа · данные ≥15 мин · котировки: ' + upd + ' · обновлено: ' + got + '</span>';
     } else if (st === 'stale') {
-      var ago = S.ld.staleMin !== null ? (S.ld.staleMin + ' мин назад') : 'давно';
-      html = '<span class="mkt-status-stale">⚠ Устаревшие данные · последнее обновление ' + ago + '</span>';
+      var cacheStr = S.ld.cacheTs ? _fmtCacheDate(S.ld.cacheTs) : '';
+      var msg = cacheStr
+        ? 'Последние сохраненные данные МосБиржи на ' + cacheStr + '. Данные могут быть устаревшими'
+        : 'Данные могут быть устаревшими';
+      html = '<span class="mkt-status-stale">⚠ ' + msg + '</span>'
+           + ' <button class="mkt-status-retry" id="mktStatusRetry">↺ Обновить</button>';
     } else if (st === 'error') {
-      html = '<span class="mkt-status-error">⚠ Нет связи с MOEX ISS · показаны демо-данные</span>'
+      html = '<span class="mkt-status-error">Не удалось получить данные МосБиржи</span>'
            + ' <button class="mkt-status-retry" id="mktStatusRetry">↺ Повторить</button>';
     }
     el.innerHTML = html;
-  }
-
-  function _renderStatusUS(page) {
-    var el = page && page.querySelector('#mktDataStatus');
-    if (!el) return;
-    el.innerHTML = '<span class="mkt-status-ok">TradingView · данные с задержкой 15–30 мин</span>';
-  }
-
-  function _updateDemoBadges(page) {
-    // Скрываем ДЕМО-бейдж у секций с успешными живыми данными
-    var indOk = (S.ld.indStatus === 'ok' || S.ld.indStatus === 'stale');
-    // Лидеры: скрывать ДЕМО только если есть реальные данные (рынок открыт)
-    var ldrHasData = S.ld.leaders && (S.ld.leaders.gain.length > 0 || S.ld.leaders.loss.length > 0);
-    var ldrOk = (S.ld.ldrStatus === 'ok' || S.ld.ldrStatus === 'stale') && ldrHasData;
-    ['indices', 'sectors', 'overview', 'bonds'].forEach(function (key) {
-      var b = page.querySelector('[data-demo="' + key + '"]');
-      if (b) b.style.display = indOk ? 'none' : '';
-    });
-    var lb = page.querySelector('[data-demo="leaders"]');
-    if (lb) lb.style.display = ldrOk ? 'none' : '';
   }
 
   // ── Карточки быстрого обзора ───────────────────────────────────────────────
@@ -281,18 +276,10 @@
     var LW = _getLwCharts();
     var container = page.querySelector('#mktLwChartContainer');
     if (!container) return;
-
     _clearChartError(page);
-
-    // Уничтожить предыдущий граф
     if (S.ld.lwChart) { try { S.ld.lwChart.remove(); } catch(e) {} S.ld.lwChart = null; S.ld.lwSeries = null; }
-
-    // Fallback: SVG если нет LW Charts
     if (!LW) { _renderFallbackSvg(container, candles); return; }
-
-    if (!candles || !candles.length) {
-      _setChartError(page, 'Нет данных за выбранный период'); return;
-    }
+    if (!candles || !candles.length) { _setChartError(page, 'Нет данных за выбранный период'); return; }
 
     var isIntraday = (period === '1d' || period === '1w');
     var first = candles[0], last = candles[candles.length - 1];
@@ -308,13 +295,8 @@
       grid:    { vertLines: { color: 'rgba(255,255,255,0.04)' }, horzLines: { color: 'rgba(255,255,255,0.04)' } },
       crosshair: { mode: 1 },
       timeScale: {
-        borderColor:    'rgba(255,255,255,0.08)',
-        timeVisible:    isIntraday,
-        secondsVisible: false,
-        rightOffset:    2,
-        fixLeftEdge:    true,
-        fixRightEdge:   true,
-        lockVisibleTimeRangeOnResize: true,
+        borderColor: 'rgba(255,255,255,0.08)', timeVisible: isIntraday, secondsVisible: false,
+        rightOffset: 2, fixLeftEdge: true, fixRightEdge: true, lockVisibleTimeRangeOnResize: true,
       },
       rightPriceScale: { borderColor: 'rgba(255,255,255,0.08)', scaleMargins: { top: 0.1, bottom: 0.1 } },
       handleScroll: { mouseWheel: false, pressedMouseMove: false, horzTouchDrag: false, vertTouchDrag: false },
@@ -322,34 +304,21 @@
     });
 
     var series = chart.addAreaSeries({
-      lineColor:             lineColor,
-      topColor:              topColor,
-      bottomColor:           bottomColor,
-      lineWidth:             1.5,
-      priceLineVisible:      false,
-      lastValueVisible:      true,
-      crosshairMarkerVisible: true,
+      lineColor: lineColor, topColor: topColor, bottomColor: bottomColor,
+      lineWidth: 1.5, priceLineVisible: false, lastValueVisible: true, crosshairMarkerVisible: true,
     });
-
     series.setData(candles.map(function (c) { return { time: c.time, value: c.close }; }));
     chart.timeScale().fitContent();
+    S.ld.lwChart = chart; S.ld.lwSeries = series;
 
-    S.ld.lwChart  = chart;
-    S.ld.lwSeries = series;
-
-    // Адаптивный ресайз
     if (window.ResizeObserver) {
       var ro = new ResizeObserver(function () {
-        if (S.ld.lwChart) {
-          var w = container.offsetWidth;
-          if (w > 0) S.ld.lwChart.applyOptions({ width: w });
-        }
+        if (S.ld.lwChart) { var w = container.offsetWidth; if (w > 0) S.ld.lwChart.applyOptions({ width: w }); }
       });
       ro.observe(container);
     }
   }
 
-  // SVG fallback (упрощённый линейный график из данных candles)
   function _renderFallbackSvg(container, candles) {
     if (!candles || !candles.length) { container.innerHTML = '<div class="mkt-chart-empty">Нет данных</div>'; return; }
     var pts = candles.map(function (c) { return c.close; });
@@ -357,54 +326,46 @@
     var min = pts[0], max = pts[0];
     for (var k = 1; k < pts.length; k++) { if (pts[k] < min) min = pts[k]; if (pts[k] > max) max = pts[k]; }
     var range = (max - min) || 1;
-    var n = pts.length;
-    var xs = [], ys = [];
+    var n = pts.length, xs = [], ys = [];
     for (var i = 0; i < n; i++) {
       xs.push((i / (n - 1)) * W);
       ys.push(H - PY - ((pts[i] - min) / range) * (H - PY * 2));
     }
     var polyPts = xs.map(function (x, j) { return x.toFixed(1) + ',' + ys[j].toFixed(1); }).join(' ');
-    var isUp = pts[n-1] >= pts[0];
-    var color = isUp ? 'var(--mkt-up)' : 'var(--mkt-down)';
+    var color = pts[n-1] >= pts[0] ? 'var(--mkt-up)' : 'var(--mkt-down)';
     container.innerHTML = '<svg class="mkt-chart-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">'
       + '<polyline points="' + polyPts + '" fill="none" stroke="' + color + '" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>'
       + '</svg>';
   }
 
-  // Основная функция обновления: заголовок + запрос свечей
   function renderChart(page) {
     var ticker = S.selected;
     var list   = _mergedOverview(D.ru.overview);
     var data   = list.find(function (i) { return i.ticker === ticker; }) || list[0];
-    var c      = cls(data.change);
 
     var el = page.querySelector('#mktChartTicker');
-    if (el) el.textContent = data.name + ' · ' + ticker;
+    if (el) el.textContent = data ? (data.name + ' · ' + ticker) : ticker;
     el = page.querySelector('#mktChartVal');
-    if (el) el.textContent = fNum(data.value, data.unit) + ' ' + data.unit;
+    if (el) el.textContent = data ? (fNum(data.value, data.unit) + ' ' + (data.unit || '')) : '—';
     el = page.querySelector('#mktChartChg');
-    if (el) el.innerHTML = '<span class="' + c + '">' + icon(data.change) + fChg(data.change, data.unit) + ' (' + fPct(data.pct) + ')</span>';
+    if (el) el.innerHTML = data
+      ? '<span class="' + cls(data.change) + '">' + icon(data.change) + fChg(data.change, data.unit) + ' (' + fPct(data.pct) + ')</span>'
+      : '';
 
     page.querySelectorAll('.mkt-period-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.mktPeriod === S.period);
     });
-
-    // Запросить свечи и отрисовать
     _fetchAndRenderChart(page, ticker, S.period);
   }
 
   function _fetchAndRenderChart(page, ticker, period) {
     if (!MA || !MA.isEnabled()) {
-      // LW Charts с demo-данными (статический массив)
-      var demoCandles = (D.charts && D.charts[ticker]) ? D.charts[ticker].map(function (v, i) {
-        return { time: '2026-' + String(Math.floor(i / 4) + 1).padStart(2,'0') + '-' + String((i % 28) + 1).padStart(2,'0'), close: v, value: v };
-      }) : null;
-      _renderLwChart(page, demoCandles, period);
+      _setChartLoading(page, false);
+      _setChartError(page, 'Источник данных недоступен');
       return;
     }
     S.ld.chrStatus = 'loading';
     _setChartLoading(page, true);
-
     MA.getCandles(ticker, period).then(function (res) {
       _setChartLoading(page, false);
       var candles = _parseCandlesResponse(res, period);
@@ -426,32 +387,36 @@
   function renderIndices(page) {
     var wrap = page.querySelector('#mktIndices');
     if (!wrap || S.tab !== 'ru') return;
-
     var raw  = D.ru.indices[S.indexGroup] || [];
     var list = _mergedIndicesGroup(raw);
-    var html = '';
-    list.forEach(function (idx) {
-      var sel = idx.ticker === S.selected ? ' selected' : '';
-      var c   = cls(idx.change);
-      html += '<div class="mkt-index-row' + sel + '" data-mkt-sel="' + idx.ticker + '">'
-        + '<div class="mkt-index-name"><div class="mkt-index-ticker">' + idx.ticker + '</div><div class="mkt-index-label">' + idx.name + '</div></div>'
-        + '<div class="mkt-index-val">' + fNum(idx.value) + '</div>'
-        + '<div class="mkt-index-chg ' + c + '">' + icon(idx.change) + fPct(idx.pct) + '</div>'
-        + '</div>';
-    });
-    wrap.innerHTML = html;
-
+    if (!list.length) {
+      wrap.innerHTML = '<div class="mkt-no-data">Нет данных</div>';
+    } else {
+      var html = '';
+      list.forEach(function (idx) {
+        var sel = idx.ticker === S.selected ? ' selected' : '';
+        var c   = cls(idx.change);
+        html += '<div class="mkt-index-row' + sel + '" data-mkt-sel="' + idx.ticker + '">'
+          + '<div class="mkt-index-name"><div class="mkt-index-ticker">' + idx.ticker + '</div><div class="mkt-index-label">' + idx.name + '</div></div>'
+          + '<div class="mkt-index-val">' + fNum(idx.value) + '</div>'
+          + '<div class="mkt-index-chg ' + c + '">' + icon(idx.change) + fPct(idx.pct) + '</div>'
+          + '</div>';
+      });
+      wrap.innerHTML = html;
+    }
     page.querySelectorAll('.mkt-group-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.mktGroup === S.indexGroup);
     });
   }
 
-  // ── Отрасли: столбики ──────────────────────────────────────────────────────
+  // ── Отрасли ────────────────────────────────────────────────────────────────
   function renderSectors(page) {
     var wrap = page.querySelector('#mktSectorBars');
     if (!wrap || S.tab !== 'ru') return;
     var raw  = D.ru.indices.sector;
-    var list = _mergedSectors(raw).slice().sort(function (a, b) { return b.pct - a.pct; });
+    var list = _mergedSectors(raw);
+    if (!list.length) { wrap.innerHTML = '<div class="mkt-no-data">Нет данных</div>'; return; }
+    list = list.slice().sort(function (a, b) { return b.pct - a.pct; });
     var maxAbs = Math.max.apply(null, list.map(function (s) { return Math.abs(s.pct); })) || 1;
     var html = '';
     list.forEach(function (s) {
@@ -467,13 +432,13 @@
     wrap.innerHTML = html;
   }
 
-  // ── Тепловая карта (оверлей) ───────────────────────────────────────────────
+  // ── Тепловая карта ─────────────────────────────────────────────────────────
   function renderHeatmap() {
     var overlay = document.getElementById('mktHeatmapOverlay');
     if (!overlay) return;
     var grid = overlay.querySelector('.mkt-heatmap-grid');
-    var raw  = D.ru.indices.sector;
-    var list = _mergedSectors(raw);
+    var list = _mergedSectors(D.ru.indices.sector);
+    if (!list.length) { overlay.classList.add('open'); grid.innerHTML = '<div class="mkt-no-data" style="padding:20px">Нет данных</div>'; return; }
     var total = list.reduce(function (a, s) { return a + s.weight; }, 0);
     var avail = window.innerWidth - 24;
     var html = '';
@@ -499,21 +464,23 @@
     var wrap = page.querySelector('#mktLeaders');
     if (!wrap || S.tab !== 'ru') return;
     var liveList = (S.ld.leaders && (S.ld.ldrStatus === 'ok' || S.ld.ldrStatus === 'stale'))
-      ? S.ld.leaders[S.leaderTab]
-      : null;
-    // Fallback на demo, если рынок закрыт (пустой список) или данных нет
-    var list = (liveList && liveList.length) ? liveList : D.ru.leaders[S.leaderTab];
-    var html = '';
-    list.forEach(function (l) {
-      var c = cls(l.change !== undefined ? l.change : l.pct);
-      html += '<div class="mkt-leader-row">'
-        + '<div class="mkt-leader-ticker">' + l.ticker + '</div>'
-        + '<div class="mkt-leader-name">' + l.name + '</div>'
-        + '<div class="mkt-leader-price">' + fNum(l.price) + ' ₽</div>'
-        + '<div class="mkt-leader-chg ' + c + '">' + icon(l.pct) + fPct(l.pct) + '</div>'
-        + '</div>';
-    });
-    wrap.innerHTML = html;
+      ? S.ld.leaders[S.leaderTab] : null;
+    if (!liveList || !liveList.length) {
+      var msg = S.ld.ldrStatus === 'loading' ? 'Загружаем…' : 'Нет данных · рынок может быть закрыт';
+      wrap.innerHTML = '<div class="mkt-no-data">' + msg + '</div>';
+    } else {
+      var html = '';
+      liveList.forEach(function (l) {
+        var c = cls(l.change !== undefined ? l.change : l.pct);
+        html += '<div class="mkt-leader-row">'
+          + '<div class="mkt-leader-ticker">' + l.ticker + '</div>'
+          + '<div class="mkt-leader-name">' + l.name + '</div>'
+          + '<div class="mkt-leader-price">' + fNum(l.price) + ' ₽</div>'
+          + '<div class="mkt-leader-chg ' + c + '">' + icon(l.pct) + fPct(l.pct) + '</div>'
+          + '</div>';
+      });
+      wrap.innerHTML = html;
+    }
     page.querySelectorAll('.mkt-leader-tab-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.mktLeader === S.leaderTab);
     });
@@ -523,28 +490,31 @@
   function renderBonds(page) {
     var wrap = page.querySelector('#mktBonds');
     if (!wrap || S.tab !== 'ru') return;
-    var map = S.ld.indexMap;
+    var map      = S.ld.indexMap;
     var govLive  = map && map['RGBI'];
     var corpLive = map && map['RUCBTRNS'];
-    var demoB    = D.ru.bonds;
-    var gov  = govLive  ? { name: demoB.gov.name,  value: govLive.value,  change: govLive.change,  pct: govLive.pct  } : demoB.gov;
-    var corp = corpLive ? { name: demoB.corp.name, value: corpLive.value, change: corpLive.change, pct: corpLive.pct } : demoB.corp;
-    var govC  = cls(gov.change);
-    var corpC = cls(corp.change);
-    wrap.innerHTML = ''
-      + '<div class="mkt-bond-cards">'
-      + '<div class="mkt-bond-card">'
-      + '<div class="mkt-bond-card-label">' + gov.name + '</div>'
-      + '<div class="mkt-bond-card-val">' + fNum(gov.value) + '</div>'
-      + '<div class="mkt-bond-card-chg ' + govC + '">' + icon(gov.change) + fChg(gov.change) + ' (' + fPct(gov.pct) + ')</div>'
-      + '</div>'
-      + '<div class="mkt-bond-card">'
-      + '<div class="mkt-bond-card-label">' + corp.name + '</div>'
-      + '<div class="mkt-bond-card-val">' + fNum(corp.value) + '</div>'
-      + '<div class="mkt-bond-card-chg ' + corpC + '">' + icon(corp.change) + fChg(corp.change) + ' (' + fPct(corp.pct) + ')</div>'
-      + '</div>'
-      + '</div>'
-      + '<div class="mkt-bond-note">' + demoB.note + '</div>';
+    if (!govLive && !corpLive) {
+      wrap.innerHTML = '<div class="mkt-no-data">Нет данных</div>';
+      return;
+    }
+    var demoB = D.ru.bonds;  // только имена и сноска
+    var html = '<div class="mkt-bond-cards">';
+    if (govLive) {
+      html += '<div class="mkt-bond-card">'
+        + '<div class="mkt-bond-card-label">' + demoB.gov.name + '</div>'
+        + '<div class="mkt-bond-card-val">' + fNum(govLive.value) + '</div>'
+        + '<div class="mkt-bond-card-chg ' + cls(govLive.change) + '">' + icon(govLive.change) + fChg(govLive.change) + ' (' + fPct(govLive.pct) + ')</div>'
+        + '</div>';
+    }
+    if (corpLive) {
+      html += '<div class="mkt-bond-card">'
+        + '<div class="mkt-bond-card-label">' + demoB.corp.name + '</div>'
+        + '<div class="mkt-bond-card-val">' + fNum(corpLive.value) + '</div>'
+        + '<div class="mkt-bond-card-chg ' + cls(corpLive.change) + '">' + icon(corpLive.change) + fChg(corpLive.change) + ' (' + fPct(corpLive.pct) + ')</div>'
+        + '</div>';
+    }
+    html += '</div><div class="mkt-bond-note">' + demoB.note + '</div>';
+    wrap.innerHTML = html;
   }
 
   // ── Аккордеон ──────────────────────────────────────────────────────────────
@@ -566,7 +536,7 @@
     }).join('');
   }
 
-  // ── TradingView (США) — без изменений от v3 ───────────────────────────────
+  // ── TradingView (США) ─────────────────────────────────────────────────────
   var _tvLoading = false;
   var _tvCbs = [];
   function tvLoadScript(cb) {
@@ -589,19 +559,12 @@
     var s = document.createElement('script');
     s.type = 'text/javascript'; s.async = true;
     s.appendChild(document.createTextNode(JSON.stringify(config)));
-
     var done = false, timeoutId, pollId;
     function _cleanup() { clearTimeout(timeoutId); clearInterval(pollId); }
     function _succeed() { if (done) return; done = true; _cleanup(); if (onSuccess) onSuccess(); }
     function _fail()    { if (done) return; done = true; _cleanup(); if (onErr) onErr(); }
-
-    timeoutId = setTimeout(function () {
-      inner.querySelector('iframe') ? _succeed() : _fail();
-    }, 8000);
-    pollId = setInterval(function () {
-      if (inner.querySelector('iframe')) _succeed();
-    }, 600);
-
+    timeoutId = setTimeout(function () { inner.querySelector('iframe') ? _succeed() : _fail(); }, 8000);
+    pollId = setInterval(function () { if (inner.querySelector('iframe')) _succeed(); }, 600);
     s.onerror = _fail;
     s.src = scriptSrc;
     container.appendChild(s);
@@ -616,12 +579,9 @@
     if (ce) ce.style.display = 'none';
     if (ci) { ci.style.display = 'none'; ci.innerHTML = ''; }
     if (ca) ca.style.display = 'none';
-
     tvLoadScript(function (ok) {
       if (!ok || !window.TradingView) {
-        if (cl) cl.style.display = 'none';
-        if (ce) ce.style.display = '';
-        return;
+        if (cl) cl.style.display = 'none'; if (ce) ce.style.display = ''; return;
       }
       try {
         new window.TradingView.widget({
@@ -631,15 +591,13 @@
           withdateranges: true, save_image: false, calendar: false,
           autosize: true, height: 380, container_id: 'tvChartInner',
         });
-        // Poll for iframe to confirm widget rendered
         var done = false, pollId, timeoutId;
         function _ok()   { if (done) return; done = true; clearTimeout(timeoutId); clearInterval(pollId); if (cl) cl.style.display = 'none'; if (ci) ci.style.display = ''; if (ca) ca.style.display = ''; }
         function _fail() { if (done) return; done = true; clearTimeout(timeoutId); clearInterval(pollId); if (cl) cl.style.display = 'none'; if (ce) ce.style.display = ''; }
         pollId    = setInterval(function () { if (ci && ci.querySelector('iframe')) _ok(); }, 600);
         timeoutId = setTimeout(function () { ci && ci.querySelector('iframe') ? _ok() : _fail(); }, 8000);
       } catch (e) {
-        if (cl) cl.style.display = 'none';
-        if (ce) ce.style.display = '';
+        if (cl) cl.style.display = 'none'; if (ce) ce.style.display = '';
       }
     });
   }
@@ -650,10 +608,7 @@
     var oe = page.querySelector('#tvOverviewError');
     var oa = page.querySelector('#tvOverviewAfter');
     if (!oc) return;
-    if (ol) ol.style.display = '';
-    if (oe) oe.style.display = 'none';
-    oc.style.display = 'none';
-    if (oa) oa.style.display = 'none';
+    if (ol) ol.style.display = ''; if (oe) oe.style.display = 'none'; oc.style.display = 'none'; if (oa) oa.style.display = 'none';
     tvInjectEmbed(oc,
       'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js',
       { colorTheme: 'dark', dateRange: '12M', showChart: true, locale: 'ru',
@@ -674,10 +629,7 @@
     var he = page.querySelector('#tvHeatmapError');
     var ha = page.querySelector('#tvHeatmapAfter');
     if (!hc) return;
-    if (hl) hl.style.display = '';
-    if (he) he.style.display = 'none';
-    hc.style.display = 'none';
-    if (ha) ha.style.display = 'none';
+    if (hl) hl.style.display = ''; if (he) he.style.display = 'none'; hc.style.display = 'none'; if (ha) ha.style.display = 'none';
     tvInjectEmbed(hc,
       'https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js',
       { exchanges: [], dataSource: 'SPX500', grouping: 'sector',
@@ -693,21 +645,17 @@
   function initUSSection(page) {
     if (S.tvInited.us) return;
     S.tvInited.us = true;
-    initTVChart(page);
-    initTVOverview(page);
-    initTVHeatmap(page);
+    initTVChart(page); initTVOverview(page); initTVHeatmap(page);
   }
 
   // ── HTML блока США ────────────────────────────────────────────────────────
   function buildUSHTML() {
     function tvLoading(id, text) {
-      return '<div class="mkt-tv-loading" id="' + id + '" role="status" aria-live="polite">'
-        + '<div class="mkt-tv-spinner"></div>' + text + '</div>';
+      return '<div class="mkt-tv-loading" id="' + id + '" role="status" aria-live="polite"><div class="mkt-tv-spinner"></div>' + text + '</div>';
     }
     function tvError(id, msg, retryKey, openUrl) {
       return '<div class="mkt-tv-error" id="' + id + '" style="display:none" role="status">'
-        + '<div class="mkt-tv-error-ico">📡</div>'
-        + '<div class="mkt-tv-error-msg">' + msg + '</div>'
+        + '<div class="mkt-tv-error-ico">📡</div><div class="mkt-tv-error-msg">' + msg + '</div>'
         + '<div class="mkt-tv-error-sub">Telegram ограничил внешний скрипт или нет соединения</div>'
         + '<div class="mkt-tv-btns">'
         + '<button class="mkt-tv-retry-btn" data-tv-retry="' + retryKey + '">↺ Повторить</button>'
@@ -730,7 +678,6 @@
       + '<div id="tvChartInner" style="height:380px;border-radius:8px;display:none"></div>'
       + tvAfter('tvChartAfter', 'https://www.tradingview.com/chart/?symbol=SP:SPX')
       + '</div>'
-
       + '<div class="mkt-section-head">Обзор рынка (TradingView)</div>'
       + '<div class="mkt-tv-wrap">'
       + tvLoading('tvOverviewLoading', 'Загружаем обзор рынка…')
@@ -738,7 +685,6 @@
       + '<div id="tvOverviewContainer" class="tradingview-widget-container" style="display:none;min-height:200px"></div>'
       + tvAfter('tvOverviewAfter', 'https://www.tradingview.com/markets/')
       + '</div>'
-
       + '<div class="mkt-section-head">Тепловая карта S&amp;P 500 (TradingView)</div>'
       + '<div class="mkt-tv-wrap">'
       + tvLoading('tvHeatmapLoading', 'Загружаем тепловую карту…')
@@ -748,35 +694,63 @@
       + '</div>';
   }
 
-  // ── Фетч всех российских данных ───────────────────────────────────────────
+  // ── Загрузка российских данных ────────────────────────────────────────────
+
+  function _renderAllRuSections(page) {
+    _renderStatus(page);
+    renderOverview(page, null, 'mktOverviewTrack');
+    renderIndices(page);
+    renderSectors(page);
+    renderLeaders(page);
+    renderBonds(page);
+    renderChart(page);
+  }
+
   function fetchRussianData(page) {
-    if (!MA || !MA.isEnabled()) { _renderStatus(page); return; }
+    if (!MA || !MA.isEnabled()) {
+      S.ld.indStatus = 'error'; S.ld.ldrStatus = 'error';
+      S.ld.error = 'MOEX adapter отключён';
+      _renderStatus(page);
+      return;
+    }
 
     var seq = ++S.fetchSeq;
-    S.ld.indStatus = 'loading';
-    S.ld.ldrStatus = 'loading';
+    S.ld.indStatus = 'loading'; S.ld.ldrStatus = 'loading';
     _renderStatus(page);
 
     Promise.all([MA.getIndices(), MA.getLeaders()]).then(function (results) {
-      if (S.fetchSeq !== seq) return; // Ответ устарел — пользователь переключил рынок
+      if (S.fetchSeq !== seq) return;
       var indRes = results[0];
       var ldrRes = results[1];
 
-      // Индексы
       if (indRes.data) {
         S.ld.indexMap  = _parseIndicesResponse(indRes);
         S.ld.indStatus = indRes.stale ? 'stale' : 'ok';
         S.ld.staleMin  = indRes.staleMin || null;
         S.ld.fetchTs   = Date.now();
+        S.ld.cacheTs   = indRes.stale ? (indRes.ts || null) : null;
         if (S.ld.indexMap && S.ld.indexMap['IMOEX']) {
           S.ld.updateTime = S.ld.indexMap['IMOEX'].updateTime;
         }
+        // Сохраняем только данные, реально полученные от MOEX (не stale)
+        if (!indRes.stale && S.ld.indexMap) {
+          _saveToLS(S.ld.indexMap, S.ld.updateTime, S.ld.fetchTs);
+        }
       } else {
-        S.ld.indStatus = 'error';
-        S.ld.error = indRes.error;
+        // Адаптер без данных → пробуем localStorage
+        var cached = _loadFromLS();
+        if (cached) {
+          S.ld.indexMap  = cached.data;
+          S.ld.indStatus = 'stale';
+          S.ld.cacheTs   = cached.fetchTs;
+          S.ld.updateTime = cached.quoteTs || null;
+        } else {
+          S.ld.indexMap  = null;
+          S.ld.indStatus = 'error';
+          S.ld.error = indRes.error;
+        }
       }
 
-      // Лидеры
       if (ldrRes.data) {
         S.ld.leaders   = _parseLeadersResponse(ldrRes);
         S.ld.ldrStatus = ldrRes.stale ? 'stale' : 'ok';
@@ -784,50 +758,45 @@
         S.ld.ldrStatus = 'error';
       }
 
-      if (S.tab === 'ru') {
-        renderOverview(page, null, 'mktOverviewTrack');
-        renderIndices(page);
-        renderSectors(page);
-        renderLeaders(page);
-        renderBonds(page);
-        _renderStatus(page);
-        _updateDemoBadges(page);
-        // Обновить график с живыми данными
-        renderChart(page);
-      }
+      if (S.tab === 'ru') _renderAllRuSections(page);
     }).catch(function (err) {
       if (S.fetchSeq !== seq) return;
-      S.ld.indStatus = 'error';
-      S.ld.ldrStatus = 'error';
-      S.ld.error = err.message;
-      if (S.tab === 'ru') {
-        _renderStatus(page);
-        _updateDemoBadges(page);
+      var cached = _loadFromLS();
+      if (cached) {
+        S.ld.indexMap  = cached.data;
+        S.ld.indStatus = 'stale';
+        S.ld.cacheTs   = cached.fetchTs;
+        S.ld.updateTime = cached.quoteTs || null;
+      } else {
+        S.ld.indStatus = 'error';
+        S.ld.error = err.message;
       }
+      S.ld.ldrStatus = 'error';
+      if (S.tab === 'ru') _renderAllRuSections(page);
     });
   }
 
   // ── Построение HTML страницы ───────────────────────────────────────────────
   function buildHTML() {
-    var DEMO = '<span class="mkt-demo-inline" data-demo="{KEY}">ДЕМО</span>';
-    function badge(key) { return ' ' + DEMO.replace('{KEY}', key); }
-
     return ''
-      // Статус-строка (динамическая)
-      + '<div class="mkt-status-bar"><span id="mktDataStatus" class="mkt-status-loading">'
-      + '<span class="mkt-status-spin"></span>Загружаем данные…</span></div>'
-
-      // Вкладки Россия / США
+      // Шапка с вкладками — вне панелей
       + '<div class="mkt-header" id="mktHeader">'
       + '<div class="mkt-tabs" role="tablist">'
-      + '<button class="mkt-tab-btn active" role="tab" aria-selected="true" data-mkt-tab="ru">🇷🇺 Россия</button>'
-      + '<button class="mkt-tab-btn" role="tab" aria-selected="false" data-mkt-tab="us">🇺🇸 США</button>'
+      + '<button class="mkt-tab-btn active" role="tab" id="tab-mkt-ru" aria-selected="true" aria-controls="mktRuPanel" data-mkt-tab="ru">🇷🇺 Россия</button>'
+      + '<button class="mkt-tab-btn" role="tab" id="tab-mkt-us" aria-selected="false" aria-controls="mktUsPanel" data-mkt-tab="us">🇺🇸 США</button>'
       + '</div>'
       + '<button class="mkt-refresh-btn" id="mktRefresh" aria-label="Обновить данные">'
       + '<svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,48V96a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h30.69L182.06,72.4a80,80,0,1,0,4.09,114.67,8,8,0,1,1,11.41,11.2A96,96,0,1,1,192,54.67l9.4,9.4V48a8,8,0,0,1,16,0Z"/></svg>'
       + 'Обновить</button>'
       + '</div>'
       + '<div id="mktPageTitle" class="mkt-page-title">Рынок России</div>'
+
+      // ── Панель России ──────────────────────────────────────────────────────
+      + '<div id="mktRuPanel" role="tabpanel" aria-labelledby="tab-mkt-ru">'
+
+      // Статус-строка
+      + '<div class="mkt-status-bar"><span id="mktDataStatus" class="mkt-status-loading">'
+      + '<span class="mkt-status-spin"></span>Загружаем данные…</span></div>'
 
       // Быстрый обзор
       + '<div class="mkt-overview-scroll" id="mkt-anchor-overview"><div class="mkt-overview-track" id="mktOverviewTrack"></div></div>'
@@ -844,7 +813,6 @@
           return '<button class="mkt-period-btn' + (p[0]==='1m'?' active':'') + '" data-mkt-period="' + p[0] + '">' + p[1] + '</button>';
         }).join('')
       + '</div>'
-      // Контейнер для Lightweight Charts
       + '<div class="mkt-lw-wrap">'
       + '<div class="mkt-tv-loading" id="mktChartLoading"><div class="mkt-tv-spinner"></div>Загрузка графика…</div>'
       + '<div class="mkt-chart-error" id="mktChartError" style="display:none">'
@@ -855,10 +823,8 @@
       + '</div>'
       + '</div>'
 
-      // ── Только Россия ───────────────────────────────────────────────────────
-      + '<div class="mkt-ru-only">'
-
-      + '<div class="mkt-section-head" id="mkt-anchor-indices">Индексы' + badge('indices') + '</div>'
+      // Индексы
+      + '<div class="mkt-section-head" id="mkt-anchor-indices">Индексы</div>'
       + '<div class="mkt-group-tabs">'
       + '<button class="mkt-group-btn active" data-mkt-group="main">Основные</button>'
       + '<button class="mkt-group-btn" data-mkt-group="bond">Облигационные</button>'
@@ -866,33 +832,35 @@
       + '</div>'
       + '<div id="mktIndices"></div>'
 
-      + '<div class="mkt-section-head" id="mkt-anchor-sectors">Отрасли — изменение за день' + badge('sectors') + '</div>'
+      // Отрасли
+      + '<div class="mkt-section-head" id="mkt-anchor-sectors">Отрасли — изменение за день</div>'
       + '<div class="mkt-sector-bar-wrap" id="mktSectorBars"></div>'
       + '<button class="mkt-heatmap-btn" id="mktHeatmapBtn">'
       + '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40ZM96,168H64V136H96Zm0-48H64V88H96Zm48,48H112V136h32Zm0-48H112V88h32Zm48,48H160V136h32Zm0-48H160V88h32Z" opacity="0.2"/><path d="M200,32H56A24,24,0,0,0,32,56V200a24,24,0,0,0,24,24H200a24,24,0,0,0,24-24V56A24,24,0,0,0,200,32Zm8,168a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8H200a8,8,0,0,1,8,8Z"/></svg>'
       + 'Тепловая карта отраслей</button>'
 
-      + '<div class="mkt-section-head" id="mkt-anchor-leaders">Лидеры дня — TQBR' + badge('leaders') + '</div>'
+      // Лидеры
+      + '<div class="mkt-section-head" id="mkt-anchor-leaders">Лидеры дня — TQBR</div>'
       + '<div class="mkt-leader-tabs">'
       + '<button class="mkt-leader-tab-btn active" data-mkt-leader="gain">▲ Растут</button>'
       + '<button class="mkt-leader-tab-btn" data-mkt-leader="loss">▼ Снижаются</button>'
       + '</div>'
       + '<div id="mktLeaders"></div>'
 
-      + '<div class="mkt-section-head" id="mkt-anchor-bonds">Облигации' + badge('bonds') + '</div>'
+      // Облигации
+      + '<div class="mkt-section-head" id="mkt-anchor-bonds">Облигации</div>'
       + '<div id="mktBonds"></div>'
 
-      + '</div>' // end .mkt-ru-only
-
-      // ── США (TradingView) ──────────────────────────────────────────────────
-      + '<div class="mkt-us-only" style="display:none">'
-      + '<div id="mktUSContent"></div>'
-      + '</div>'
-
-      // ── Аккордеон ──────────────────────────────────────────────────────────
+      // Аккордеон
       + '<div class="mkt-section-head" id="mkt-anchor-accordion" style="margin-top:24px">Как читать этот экран</div>'
       + '<div id="mktAccordion"></div>'
-      + '<div style="height:20px"></div>';
+      + '<div style="height:20px"></div>'
+      + '</div>'  // end #mktRuPanel
+
+      // ── Панель США ─────────────────────────────────────────────────────────
+      + '<div id="mktUsPanel" role="tabpanel" aria-labelledby="tab-mkt-us" hidden>'
+      + '<div id="mktUSContent"></div>'
+      + '</div>';
   }
 
   // ── Переключение вкладок ────────────────────────────────────────────────────
@@ -901,39 +869,36 @@
     S.tab = tab;
     S.selected = tab === 'ru' ? 'IMOEX' : 'SP500';
 
-    // Обновить активную вкладку + aria-selected
     page.querySelectorAll('.mkt-tab-btn').forEach(function (b) {
       var isActive = b.dataset.mktTab === tab;
       b.classList.toggle('active', isActive);
       b.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
 
-    // Заголовок рынка
     var titleEl = page.querySelector('#mktPageTitle');
     if (titleEl) titleEl.textContent = tab === 'ru' ? 'Рынок России' : 'Рынок США';
 
-    // CSS-маркер для синего акцента USA
     var hdr = page.querySelector('#mktHeader');
     if (hdr) hdr.classList.toggle('mkt-header--us', tab === 'us');
 
-    // Показ/скрытие секций
-    page.querySelectorAll('.mkt-ru-only').forEach(function (el) { el.style.display = tab === 'ru' ? '' : 'none'; });
-    page.querySelectorAll('.mkt-us-only').forEach(function (el) { el.style.display = tab === 'us' ? '' : 'none'; });
+    var ruPanel = page.querySelector('#mktRuPanel');
+    var usPanel = page.querySelector('#mktUsPanel');
+    if (ruPanel) ruPanel.hidden = (tab !== 'ru');
+    if (usPanel) usPanel.hidden = (tab !== 'us');
 
     if (tab === 'us') {
-      _renderStatusUS(page);
       var usContent = page.querySelector('#mktUSContent');
       if (usContent && !usContent._built) { usContent._built = true; usContent.innerHTML = buildUSHTML(); }
       initUSSection(page);
     } else {
-      // Рендерим текущие данные немедленно (demo или live)
-      renderOverview(page, null, 'mktOverviewTrack');
+      if (S.ld.indexMap) {
+        renderOverview(page, null, 'mktOverviewTrack');
+        renderIndices(page);
+        renderSectors(page);
+        renderLeaders(page);
+        renderBonds(page);
+      }
       renderChart(page);
-      renderIndices(page);
-      renderSectors(page);
-      renderLeaders(page);
-      renderBonds(page);
-      // Авто-загрузка: если данных нет или была ошибка — запускаем фетч
       if (S.ld.indStatus === 'idle' || S.ld.indStatus === 'error') {
         MA && MA.clearCache && MA.clearCache();
         fetchRussianData(page);
@@ -964,7 +929,6 @@
         page.querySelectorAll('.mkt-period-btn').forEach(function (b) {
           b.classList.toggle('active', b.dataset.mktPeriod === S.period);
         });
-        // Уничтожить старый LW Chart и запросить новые свечи
         if (S.ld.lwChart) { try { S.ld.lwChart.remove(); } catch(e) {} S.ld.lwChart = null; S.ld.lwSeries = null; }
         _fetchAndRenderChart(page, S.selected, S.period);
         return;
@@ -973,7 +937,6 @@
       if (t.dataset.mktGroup)  { S.indexGroup = t.dataset.mktGroup; renderIndices(page); return; }
       if (t.dataset.mktLeader) { S.leaderTab = t.dataset.mktLeader; renderLeaders(page); return; }
 
-      // Аккордеон
       if (t.dataset.mktAcc !== undefined) {
         var item = t.parentElement;
         var body = item.querySelector('.mkt-acc-body');
@@ -988,7 +951,6 @@
         return;
       }
 
-      // TV retry (одна попытка для каждого виджета)
       if (t.dataset.tvRetry) {
         var retryKey = t.dataset.tvRetry;
         if (retryKey === 'chart')    { initTVChart(page); }
@@ -997,52 +959,32 @@
         return;
       }
 
-      // TV открыть внешнюю ссылку
-      if (t.dataset.tvOpen) {
-        openExternal(t.dataset.tvOpen);
-        return;
-      }
+      if (t.dataset.tvOpen) { openExternal(t.dataset.tvOpen); return; }
 
-      // Тепловая карта
       if (t.id === 'mktHeatmapBtn') { renderHeatmap(); return; }
 
-      // Повтор при ошибке статус-строки
       if (t.id === 'mktStatusRetry') {
-        S.ld.indStatus = 'idle';
-        S.ld.ldrStatus = 'idle';
-        MA.clearCache && MA.clearCache();
+        S.ld.indStatus = 'idle'; S.ld.ldrStatus = 'idle';
+        MA && MA.clearCache && MA.clearCache();
         fetchRussianData(page);
         return;
       }
 
-      // Повтор при ошибке графика
       if (t.id === 'mktChartRetry') {
         _clearChartError(page);
         _fetchAndRenderChart(page, S.selected, S.period);
         return;
       }
 
-      // Обновить
       if (t.id === 'mktRefresh') {
-        MA.clearCache && MA.clearCache();
+        MA && MA.clearCache && MA.clearCache();
         if (S.ld.lwChart) { try { S.ld.lwChart.remove(); } catch(e) {} S.ld.lwChart = null; S.ld.lwSeries = null; }
-        S.ld.indStatus = 'idle';
-        S.ld.ldrStatus = 'idle';
-        S.ld.indexMap  = null;
-        S.ld.leaders   = null;
-        if (S.tab === 'ru') {
-          renderOverview(page, null, 'mktOverviewTrack');
-          renderIndices(page);
-          renderSectors(page);
-          renderLeaders(page);
-          renderBonds(page);
-          fetchRussianData(page);
-        }
+        S.ld.indStatus = 'idle'; S.ld.ldrStatus = 'idle';
+        if (S.tab === 'ru') fetchRussianData(page);
         return;
       }
     });
 
-    // Закрытие тепловой карты
     var overlay = document.getElementById('mktHeatmapOverlay');
     if (overlay) {
       overlay.querySelector('.mkt-heatmap-close').addEventListener('click', function () {
@@ -1053,15 +995,15 @@
 
   // ── Поиск: экспорт для faq.js ─────────────────────────────────────────────
   var SEARCH_ITEMS = [
-    { id: 'mks1', label: 'Котировки и обзор рынка',        sub: 'Открыть раздел рынка',          anchor: '',                    kw: 'котировки рынок биржа обзор акции индекс' },
-    { id: 'mks2', label: 'IMOEX — Индекс МосБиржи',        sub: 'Перейти к разделу индексов',    anchor: 'mkt-anchor-indices',  kw: 'imoex индекс мосбиржи' },
-    { id: 'mks3', label: 'RTSI — Долларовый индекс РТС',   sub: 'Перейти к разделу индексов',    anchor: 'mkt-anchor-indices',  kw: 'rtsi ртс долларовый индекс' },
-    { id: 'mks4', label: 'RGBI — Ценовой индекс ОФЗ',      sub: 'Перейти к разделу облигаций',   anchor: 'mkt-anchor-bonds',    kw: 'rgbi офз облигации государственные' },
-    { id: 'mks5', label: 'Облигации — индексы',             sub: 'ОФЗ, корп. облигации',          anchor: 'mkt-anchor-bonds',    kw: 'облигации купон корп бонд bond' },
-    { id: 'mks6', label: 'Отраслевые индексы',              sub: 'Нефтегаз, финансы, IT, металлы', anchor: 'mkt-anchor-sectors', kw: 'отрасль нефтегаз финансы металлы ит телеком энергетика' },
-    { id: 'mks7', label: 'Лидеры дня — акции TQBR',        sub: 'Лучшие и худшие бумаги за день', anchor: 'mkt-anchor-leaders', kw: 'лидеры рост падение снижение акции сбербанк' },
-    { id: 'mks8', label: 'RVI — Волатильность рынка РФ',   sub: 'Перейти к обзорным карточкам',  anchor: 'mkt-anchor-overview', kw: 'rvi волатильность vix тревога' },
-    { id: 'mks9', label: 'S&P 500 — рынок США',             sub: 'График TradingView',            anchor: 'mkt-anchor-us-chart', kw: 'sp500 сша америка nasdaq dow jones ndx djia' },
+    { id: 'mks1', label: 'Котировки и обзор рынка',        sub: 'Открыть раздел рынка',           anchor: '',                     kw: 'котировки рынок биржа обзор акции индекс' },
+    { id: 'mks2', label: 'IMOEX — Индекс МосБиржи',        sub: 'Перейти к разделу индексов',     anchor: 'mkt-anchor-indices',   kw: 'imoex индекс мосбиржи' },
+    { id: 'mks3', label: 'RTSI — Долларовый индекс РТС',   sub: 'Перейти к разделу индексов',     anchor: 'mkt-anchor-indices',   kw: 'rtsi ртс долларовый индекс' },
+    { id: 'mks4', label: 'RGBI — Ценовой индекс ОФЗ',      sub: 'Перейти к разделу облигаций',    anchor: 'mkt-anchor-bonds',     kw: 'rgbi офз облигации государственные' },
+    { id: 'mks5', label: 'Облигации — индексы',             sub: 'ОФЗ, корп. облигации',           anchor: 'mkt-anchor-bonds',     kw: 'облигации купон корп бонд bond' },
+    { id: 'mks6', label: 'Отраслевые индексы',              sub: 'Нефтегаз, финансы, IT, металлы', anchor: 'mkt-anchor-sectors',   kw: 'отрасль нефтегаз финансы металлы ит телеком энергетика' },
+    { id: 'mks7', label: 'Лидеры дня — акции TQBR',        sub: 'Лучшие и худшие бумаги за день', anchor: 'mkt-anchor-leaders',   kw: 'лидеры рост падение снижение акции сбербанк' },
+    { id: 'mks8', label: 'RVI — Волатильность рынка РФ',   sub: 'Перейти к обзорным карточкам',   anchor: 'mkt-anchor-overview',  kw: 'rvi волатильность vix тревога' },
+    { id: 'mks9', label: 'S&P 500 — рынок США',             sub: 'График TradingView',             anchor: 'mkt-anchor-us-chart',  kw: 'sp500 сша америка nasdaq dow jones ndx djia' },
     { id: 'mksA', label: 'Как читать этот экран',           sub: 'Объяснение всех блоков раздела', anchor: 'mkt-anchor-accordion', kw: 'как читать объяснение инструкция справка' },
   ];
 
@@ -1110,21 +1052,9 @@
 
     page.querySelector('#mktContent').innerHTML = buildHTML();
 
-    // Немедленно отрисовать demo-данные (пользователь видит что-то сразу)
-    renderOverview(page, null, 'mktOverviewTrack');
-    renderIndices(page);
-    renderSectors(page);
-    renderLeaders(page);
-    renderBonds(page);
-    renderAccordion(page);
-
-    // Chart: запустить загрузку (LW Charts или SVG)
-    renderChart(page);
-
+    renderAccordion(page);  // статичный контент
     bindEvents(page);
-
-    // Асинхронно загрузить живые данные MOEX ISS
-    fetchRussianData(page);
+    fetchRussianData(page); // сразу запускаем загрузку MOEX
   }
 
   var _origSetPage = window.setPage;

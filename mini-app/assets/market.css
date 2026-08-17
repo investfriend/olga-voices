@@ -662,3 +662,13 @@
   .mkt-ticker-card { width: 134px; }
   .mkt-acc-title   { font-size: 14px; }
 }
+
+/* ── Панели и общие утилиты ────────────────────────────────────────────────── */
+[hidden] { display: none !important; }
+
+.mkt-no-data {
+  padding: 16px 12px;
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+}
