@@ -583,28 +583,46 @@
     document.head.appendChild(s);
   }
 
-  function tvInjectEmbed(container, scriptSrc, config, onErr) {
+  function tvInjectEmbed(container, scriptSrc, config, onErr, onSuccess) {
     container.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
     var inner = container.querySelector('.tradingview-widget-container__widget');
     var s = document.createElement('script');
     s.type = 'text/javascript'; s.async = true;
     s.appendChild(document.createTextNode(JSON.stringify(config)));
-    var timer = setTimeout(function () { if (!inner.querySelector('iframe')) { if (onErr) onErr(); } }, 12000);
-    s.onload  = function () { setTimeout(function () { clearTimeout(timer); if (!inner.querySelector('iframe')) { if (onErr) onErr(); } }, 3000); };
-    s.onerror = function () { clearTimeout(timer); if (onErr) onErr(); };
+
+    var done = false, timeoutId, pollId;
+    function _cleanup() { clearTimeout(timeoutId); clearInterval(pollId); }
+    function _succeed() { if (done) return; done = true; _cleanup(); if (onSuccess) onSuccess(); }
+    function _fail()    { if (done) return; done = true; _cleanup(); if (onErr) onErr(); }
+
+    timeoutId = setTimeout(function () {
+      inner.querySelector('iframe') ? _succeed() : _fail();
+    }, 8000);
+    pollId = setInterval(function () {
+      if (inner.querySelector('iframe')) _succeed();
+    }, 600);
+
+    s.onerror = _fail;
     s.src = scriptSrc;
     container.appendChild(s);
   }
-  function tvShowError(el) { if (el) el.style.display = ''; }
 
-  function initUSSection(page) {
-    if (S.tvInited.us) return;
-    S.tvInited.us = true;
-    var chartLoading = page.querySelector('#tvChartLoading');
-    var chartError   = page.querySelector('#tvChartError');
+  function initTVChart(page) {
+    var ci = page.querySelector('#tvChartInner');
+    var cl = page.querySelector('#tvChartLoading');
+    var ce = page.querySelector('#tvChartError');
+    var ca = page.querySelector('#tvChartAfter');
+    if (cl) cl.style.display = '';
+    if (ce) ce.style.display = 'none';
+    if (ci) { ci.style.display = 'none'; ci.innerHTML = ''; }
+    if (ca) ca.style.display = 'none';
+
     tvLoadScript(function (ok) {
-      if (chartLoading) chartLoading.style.display = 'none';
-      if (!ok || !window.TradingView) { tvShowError(chartError); return; }
+      if (!ok || !window.TradingView) {
+        if (cl) cl.style.display = 'none';
+        if (ce) ce.style.display = '';
+        return;
+      }
       try {
         new window.TradingView.widget({
           symbol: 'SP:SPX', interval: 'D', timezone: 'America/New_York',
@@ -613,78 +631,120 @@
           withdateranges: true, save_image: false, calendar: false,
           autosize: true, height: 380, container_id: 'tvChartInner',
         });
-      } catch (e) { tvShowError(chartError); }
+        // Poll for iframe to confirm widget rendered
+        var done = false, pollId, timeoutId;
+        function _ok()   { if (done) return; done = true; clearTimeout(timeoutId); clearInterval(pollId); if (cl) cl.style.display = 'none'; if (ci) ci.style.display = ''; if (ca) ca.style.display = ''; }
+        function _fail() { if (done) return; done = true; clearTimeout(timeoutId); clearInterval(pollId); if (cl) cl.style.display = 'none'; if (ce) ce.style.display = ''; }
+        pollId    = setInterval(function () { if (ci && ci.querySelector('iframe')) _ok(); }, 600);
+        timeoutId = setTimeout(function () { ci && ci.querySelector('iframe') ? _ok() : _fail(); }, 8000);
+      } catch (e) {
+        if (cl) cl.style.display = 'none';
+        if (ce) ce.style.display = '';
+      }
     });
-    var ovContainer = page.querySelector('#tvOverviewContainer');
-    var ovLoading   = page.querySelector('#tvOverviewLoading');
-    var ovError     = page.querySelector('#tvOverviewError');
-    if (ovContainer) {
-      if (ovLoading) setTimeout(function () { ovLoading.style.display = 'none'; }, 500);
-      tvInjectEmbed(ovContainer,
-        'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js',
-        { colorTheme: 'dark', dateRange: '12M', showChart: true, locale: 'ru',
-          largeChartUrl: '', isTransparent: true, showSymbolLogo: true, showFloatingTooltip: false,
-          width: '100%', height: 400, plotLineColorBull: '#27C98A', plotLineColorBear: '#E05858',
-          tabs: [
-            { title: 'Индексы', symbols: [{ s: 'SP:SPX', d: 'S&P 500' }, { s: 'NASDAQ:NDX', d: 'Nasdaq 100' }, { s: 'DJ:DJI', d: 'Dow Jones' }, { s: 'CBOE:VIX', d: 'VIX' }] },
-            { title: 'Товары',  symbols: [{ s: 'OANDA:XAUUSD', d: 'Золото' }, { s: 'TVC:UKOIL', d: 'Brent' }, { s: 'TVC:USOIL', d: 'WTI' }] },
-          ] },
-        function () { if (ovLoading) ovLoading.style.display = 'none'; tvShowError(ovError); }
-      );
-    }
-    var hmContainer = page.querySelector('#tvHeatmapContainer');
-    var hmLoading   = page.querySelector('#tvHeatmapLoading');
-    var hmError     = page.querySelector('#tvHeatmapError');
-    if (hmContainer) {
-      if (hmLoading) setTimeout(function () { hmLoading.style.display = 'none'; }, 500);
-      tvInjectEmbed(hmContainer,
-        'https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js',
-        { exchanges: [], dataSource: 'SPX500', grouping: 'sector',
-          blockSize: 'market_cap_basic', blockColor: 'change',
-          locale: 'ru', colorTheme: 'dark', hasTopBar: false,
-          isDataSetEnabled: false, isZoomEnabled: true, hasSymbolTooltip: true,
-          isMonoSize: false, width: '100%', height: 400 },
-        function () { if (hmLoading) hmLoading.style.display = 'none'; tvShowError(hmError); }
-      );
-    }
+  }
+
+  function initTVOverview(page) {
+    var oc = page.querySelector('#tvOverviewContainer');
+    var ol = page.querySelector('#tvOverviewLoading');
+    var oe = page.querySelector('#tvOverviewError');
+    var oa = page.querySelector('#tvOverviewAfter');
+    if (!oc) return;
+    if (ol) ol.style.display = '';
+    if (oe) oe.style.display = 'none';
+    oc.style.display = 'none';
+    if (oa) oa.style.display = 'none';
+    tvInjectEmbed(oc,
+      'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js',
+      { colorTheme: 'dark', dateRange: '12M', showChart: true, locale: 'ru',
+        largeChartUrl: '', isTransparent: true, showSymbolLogo: true, showFloatingTooltip: false,
+        width: '100%', height: 400, plotLineColorBull: '#27C98A', plotLineColorBear: '#E05858',
+        tabs: [
+          { title: 'Индексы', symbols: [{ s: 'SP:SPX', d: 'S&P 500' }, { s: 'NASDAQ:NDX', d: 'Nasdaq 100' }, { s: 'DJ:DJI', d: 'Dow Jones' }, { s: 'CBOE:VIX', d: 'VIX' }] },
+          { title: 'Товары',  symbols: [{ s: 'OANDA:XAUUSD', d: 'Золото' }, { s: 'TVC:UKOIL', d: 'Brent' }, { s: 'TVC:USOIL', d: 'WTI' }] },
+        ] },
+      function () { if (ol) ol.style.display = 'none'; if (oe) oe.style.display = ''; },
+      function () { if (ol) ol.style.display = 'none'; oc.style.display = ''; if (oa) oa.style.display = ''; }
+    );
+  }
+
+  function initTVHeatmap(page) {
+    var hc = page.querySelector('#tvHeatmapContainer');
+    var hl = page.querySelector('#tvHeatmapLoading');
+    var he = page.querySelector('#tvHeatmapError');
+    var ha = page.querySelector('#tvHeatmapAfter');
+    if (!hc) return;
+    if (hl) hl.style.display = '';
+    if (he) he.style.display = 'none';
+    hc.style.display = 'none';
+    if (ha) ha.style.display = 'none';
+    tvInjectEmbed(hc,
+      'https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js',
+      { exchanges: [], dataSource: 'SPX500', grouping: 'sector',
+        blockSize: 'market_cap_basic', blockColor: 'change',
+        locale: 'ru', colorTheme: 'dark', hasTopBar: false,
+        isDataSetEnabled: false, isZoomEnabled: true, hasSymbolTooltip: true,
+        isMonoSize: false, width: '100%', height: 400 },
+      function () { if (hl) hl.style.display = 'none'; if (he) he.style.display = ''; },
+      function () { if (hl) hl.style.display = 'none'; hc.style.display = ''; if (ha) ha.style.display = ''; }
+    );
+  }
+
+  function initUSSection(page) {
+    if (S.tvInited.us) return;
+    S.tvInited.us = true;
+    initTVChart(page);
+    initTVOverview(page);
+    initTVHeatmap(page);
   }
 
   // ── HTML блока США ────────────────────────────────────────────────────────
   function buildUSHTML() {
-    var tvErrBody = '<div class="mkt-tv-error-ico">📡</div>'
-      + '<div class="mkt-tv-error-msg">Виджет не загрузился</div>'
-      + '<div class="mkt-tv-error-sub">Браузер ограничил внешний скрипт или нет соединения</div>'
-      + '<div class="mkt-tv-btns">';
+    function tvLoading(id, text) {
+      return '<div class="mkt-tv-loading" id="' + id + '" role="status" aria-live="polite">'
+        + '<div class="mkt-tv-spinner"></div>' + text + '</div>';
+    }
+    function tvError(id, msg, retryKey, openUrl) {
+      return '<div class="mkt-tv-error" id="' + id + '" style="display:none" role="status">'
+        + '<div class="mkt-tv-error-ico">📡</div>'
+        + '<div class="mkt-tv-error-msg">' + msg + '</div>'
+        + '<div class="mkt-tv-error-sub">Telegram ограничил внешний скрипт или нет соединения</div>'
+        + '<div class="mkt-tv-btns">'
+        + '<button class="mkt-tv-retry-btn" data-tv-retry="' + retryKey + '">↺ Повторить</button>'
+        + '<button class="mkt-tv-ext-btn" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
+        + '</div></div>';
+    }
+    function tvAfter(id, openUrl) {
+      return '<div class="mkt-tv-after" id="' + id + '" style="display:none">'
+        + '<button class="mkt-tv-ext-btn" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
+        + '</div>';
+    }
     return ''
       + '<div class="mkt-tv-delay-notice">⏱ Данные от TradingView · Cboe One с возможной задержкой 15–30 мин</div>'
       + '<div class="mkt-section-head" id="mkt-anchor-us-chart">Интерактивный график рынка США</div>'
       + '<div class="mkt-tv-delay-notice" style="margin-bottom:4px">По умолчанию — S&amp;P 500 (SP:SPX). Инструмент можно сменить внутри графика.</div>'
       + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Период (1 мес, 3 мес…) — глубина истории. Интервал свечи настраивается внутри графика отдельно.</div>'
       + '<div class="mkt-tv-wrap">'
-      + '<div class="mkt-tv-loading" id="tvChartLoading"><div class="mkt-tv-spinner"></div>Загрузка TradingView...</div>'
-      + '<div class="mkt-tv-error" id="tvChartError" style="display:none">' + tvErrBody
-      + '<button class="mkt-tv-retry-btn" data-tv-retry="chart">↺ Повторить</button>'
-      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/chart/?symbol=SP:SPX" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
-      + '</div></div>'
-      + '<div id="tvChartInner" style="height:380px;background:var(--bg-card);border-radius:8px"></div>'
+      + tvLoading('tvChartLoading', 'Загружаем график…')
+      + tvError('tvChartError', 'График не загрузился внутри Telegram', 'chart', 'https://www.tradingview.com/chart/?symbol=SP:SPX')
+      + '<div id="tvChartInner" style="height:380px;border-radius:8px;display:none"></div>'
+      + tvAfter('tvChartAfter', 'https://www.tradingview.com/chart/?symbol=SP:SPX')
       + '</div>'
+
       + '<div class="mkt-section-head">Обзор рынка (TradingView)</div>'
       + '<div class="mkt-tv-wrap">'
-      + '<div class="mkt-tv-loading" id="tvOverviewLoading"><div class="mkt-tv-spinner"></div>Загрузка виджета...</div>'
-      + '<div class="mkt-tv-error" id="tvOverviewError" style="display:none">' + tvErrBody
-      + '<button class="mkt-tv-retry-btn" data-tv-retry="overview">↺ Повторить</button>'
-      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/markets/" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
-      + '</div></div>'
-      + '<div id="tvOverviewContainer" class="tradingview-widget-container" style="min-height:200px"></div>'
+      + tvLoading('tvOverviewLoading', 'Загружаем обзор рынка…')
+      + tvError('tvOverviewError', 'Виджет не загрузился внутри Telegram', 'overview', 'https://www.tradingview.com/markets/')
+      + '<div id="tvOverviewContainer" class="tradingview-widget-container" style="display:none;min-height:200px"></div>'
+      + tvAfter('tvOverviewAfter', 'https://www.tradingview.com/markets/')
       + '</div>'
+
       + '<div class="mkt-section-head">Тепловая карта S&amp;P 500 (TradingView)</div>'
       + '<div class="mkt-tv-wrap">'
-      + '<div class="mkt-tv-loading" id="tvHeatmapLoading"><div class="mkt-tv-spinner"></div>Загрузка виджета...</div>'
-      + '<div class="mkt-tv-error" id="tvHeatmapError" style="display:none">' + tvErrBody
-      + '<button class="mkt-tv-retry-btn" data-tv-retry="heatmap">↺ Повторить</button>'
-      + '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/heatmap/stock/" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
-      + '</div></div>'
-      + '<div id="tvHeatmapContainer" class="tradingview-widget-container" style="min-height:200px"></div>'
+      + tvLoading('tvHeatmapLoading', 'Загружаем тепловую карту…')
+      + tvError('tvHeatmapError', 'Виджет не загрузился внутри Telegram', 'heatmap', 'https://www.tradingview.com/heatmap/stock/')
+      + '<div id="tvHeatmapContainer" class="tradingview-widget-container" style="display:none;min-height:200px"></div>'
+      + tvAfter('tvHeatmapAfter', 'https://www.tradingview.com/heatmap/stock/')
       + '</div>';
   }
 
@@ -928,16 +988,12 @@
         return;
       }
 
-      // TV retry
+      // TV retry (одна попытка для каждого виджета)
       if (t.dataset.tvRetry) {
-        if (t.dataset.tvRetry === 'chart') {
-          var ce = page.querySelector('#tvChartError');
-          var cl = page.querySelector('#tvChartLoading');
-          if (ce) ce.style.display = 'none';
-          if (cl) cl.style.display = '';
-          S.tvInited.us = false;
-          initUSSection(page);
-        }
+        var retryKey = t.dataset.tvRetry;
+        if (retryKey === 'chart')    { initTVChart(page); }
+        if (retryKey === 'overview') { initTVOverview(page); }
+        if (retryKey === 'heatmap')  { initTVHeatmap(page); }
         return;
       }
 

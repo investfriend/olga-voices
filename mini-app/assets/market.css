@@ -578,6 +578,14 @@
 }
 .mkt-tv-ext-btn svg { pointer-events: none; }
 
+/* Блок ссылки после успешной загрузки виджета */
+.mkt-tv-after {
+  margin-top: 8px;
+}
+.mkt-tv-after .mkt-tv-ext-btn {
+  width: 100%;
+}
+
 /* Карточка США с пометкой ДЕМО */
 .mkt-ticker-demo { position: relative; }
 
