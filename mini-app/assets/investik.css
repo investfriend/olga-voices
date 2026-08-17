@@ -87,9 +87,10 @@
 .ivk-bubble--show {
   opacity: 1;
   transform: translateY(0) scale(1);
-  pointer-events: auto;
+  pointer-events: none; /* bubble area passes clicks through */
 }
 .ivk-bubble-close {
+  pointer-events: auto; /* close button remains clickable */
   float: right;
   margin: -2px -4px 4px 8px;
   background: none;

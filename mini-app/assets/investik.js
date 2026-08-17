@@ -361,6 +361,8 @@
       setTimeout(function () {
         _greetEl.classList.add('ivk-bubble--show');
         setTimeout(_hideGreeting, 6000);
+        // Hide immediately on first scroll (content scroll only, not character drag)
+        document.addEventListener('scroll', _hideGreeting, { capture: true, once: true, passive: true });
       }, 700);
     } else {
       _greetEl.style.display = 'none';
