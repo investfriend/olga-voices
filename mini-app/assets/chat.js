@@ -28,15 +28,13 @@
           {
             id: 'telegram-club',
             title: 'Telegram клуба',
-            badge: 'Для участников клуба',
-            access: 'getcourse_protected',
+            badge: 'Настраиваем',
+            access: 'coming_soon',
             icon: 'chat',
-            external: true,
             desc: 'Основная площадка общения клуба. Здесь публикуются анонсы, обсуждения, инвестиционные идеи, комментарии аналитиков и сообщения участников.',
-            note: 'Сейчас подключение выполняется через специальный урок и Telegram-бота, который управляет доступом участника.',
-            btn: 'Открыть Telegram',
-            connectionLessonUrl: 'https://investfriend.ru/pl/teach/control/lesson/view?id=346013705&editMode=0',
-            directUrl: null,
+            note: 'Прямой переход в Telegram настраивается',
+            btn: 'Скоро',
+            url: null,
           },
           {
             id: 'max-channel',
@@ -198,7 +196,7 @@
       + (isSoon ? ' disabled aria-disabled="true"' : ' data-action="' + item.id + '"')
       + (item.external && !isSoon ? ' aria-label="' + item.btn + '"' : '')
       + '>'
-      + (isSoon ? '' : (item.external ? item.btn + '&nbsp;' + btnIcon : btnIcon + item.btn))
+      + (isSoon ? item.btn : (item.external ? item.btn + '&nbsp;' + btnIcon : btnIcon + item.btn))
       + '</button>';
 
     var starBtn = '';
