@@ -570,33 +570,56 @@
     container.appendChild(s);
   }
 
+  var _tvChartSeq    = 0;
+  var _tvChartPollId = null;
+  var _tvChartTimId  = null;
+
+  function _tvChartStop() {
+    if (_tvChartPollId !== null) { clearInterval(_tvChartPollId); _tvChartPollId = null; }
+    if (_tvChartTimId  !== null) { clearTimeout(_tvChartTimId);  _tvChartTimId  = null; }
+  }
+
   function initTVChart(page) {
+    var seq = ++_tvChartSeq;
+    _tvChartStop();
+
     var ci = page.querySelector('#tvChartInner');
     var cl = page.querySelector('#tvChartLoading');
     var ce = page.querySelector('#tvChartError');
     var ca = page.querySelector('#tvChartAfter');
+
+    if (ci) { ci.innerHTML = ''; ci.style.display = 'none'; }
     if (cl) cl.style.display = '';
     if (ce) ce.style.display = 'none';
-    if (ci) { ci.style.display = 'none'; ci.innerHTML = ''; }
     if (ca) ca.style.display = 'none';
+
     tvLoadScript(function (ok) {
+      if (seq !== _tvChartSeq) return;
       if (!ok || !window.TradingView) {
         if (cl) cl.style.display = 'none'; if (ce) ce.style.display = ''; return;
       }
       try {
         new window.TradingView.widget({
-          symbol: 'SP:SPX', interval: 'D', timezone: 'America/New_York',
+          symbol: 'NASDAQ:AAPL', interval: 'D', timezone: 'America/New_York',
           theme: 'dark', style: '1', locale: 'ru', toolbar_bg: '#181D1B',
-          enable_publishing: false, hide_side_toolbar: true, allow_symbol_change: true,
+          enable_publishing: false, hide_side_toolbar: true, allow_symbol_change: false,
           withdateranges: true, save_image: false, calendar: false,
           autosize: true, height: 380, container_id: 'tvChartInner',
         });
-        var done = false, pollId, timeoutId;
-        function _ok()   { if (done) return; done = true; clearTimeout(timeoutId); clearInterval(pollId); if (cl) cl.style.display = 'none'; if (ci) ci.style.display = ''; if (ca) ca.style.display = ''; }
-        function _fail() { if (done) return; done = true; clearTimeout(timeoutId); clearInterval(pollId); if (cl) cl.style.display = 'none'; if (ce) ce.style.display = ''; }
-        pollId    = setInterval(function () { if (ci && ci.querySelector('iframe')) _ok(); }, 600);
-        timeoutId = setTimeout(function () { ci && ci.querySelector('iframe') ? _ok() : _fail(); }, 8000);
+        function _ok() {
+          if (seq !== _tvChartSeq) return;
+          _tvChartStop();
+          if (cl) cl.style.display = 'none'; if (ci) ci.style.display = ''; if (ca) ca.style.display = '';
+        }
+        function _fail() {
+          if (seq !== _tvChartSeq) return;
+          _tvChartStop();
+          if (cl) cl.style.display = 'none'; if (ce) ce.style.display = '';
+        }
+        _tvChartPollId = setInterval(function () { if (ci && ci.querySelector('iframe')) _ok(); }, 600);
+        _tvChartTimId  = setTimeout(function ()  { ci && ci.querySelector('iframe') ? _ok() : _fail(); }, 12000);
       } catch (e) {
+        if (seq !== _tvChartSeq) return;
         if (cl) cl.style.display = 'none'; if (ce) ce.style.display = '';
       }
     });
@@ -643,9 +666,11 @@
   }
 
   function initUSSection(page) {
-    if (S.tvInited.us) return;
-    S.tvInited.us = true;
-    initTVChart(page); initTVOverview(page); initTVHeatmap(page);
+    initTVChart(page);
+    if (!S.tvInited.us) {
+      S.tvInited.us = true;
+      initTVOverview(page); initTVHeatmap(page);
+    }
   }
 
   // ── HTML блока США ────────────────────────────────────────────────────────
@@ -668,15 +693,13 @@
         + '</div>';
     }
     return ''
-      + '<div class="mkt-tv-delay-notice">⏱ Данные от TradingView · Cboe One с возможной задержкой 15–30 мин</div>'
-      + '<div class="mkt-section-head" id="mkt-anchor-us-chart">Интерактивный график рынка США</div>'
-      + '<div class="mkt-tv-delay-notice" style="margin-bottom:4px">По умолчанию — S&amp;P 500 (SP:SPX). Инструмент можно сменить внутри графика.</div>'
-      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Период (1 мес, 3 мес…) — глубина истории. Интервал свечи настраивается внутри графика отдельно.</div>'
+      + '<div class="mkt-section-head" id="mkt-anchor-us-chart">Акции Apple · NASDAQ:AAPL</div>'
+      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Котировки TradingView могут отображаться с задержкой</div>'
       + '<div class="mkt-tv-wrap">'
-      + tvLoading('tvChartLoading', 'Загружаем график…')
-      + tvError('tvChartError', 'График не загрузился внутри Telegram', 'chart', 'https://www.tradingview.com/chart/?symbol=SP:SPX')
+      + tvLoading('tvChartLoading', 'Загружаем график Apple…')
+      + tvError('tvChartError', 'График Apple не загрузился', 'chart', 'https://www.tradingview.com/chart/?symbol=NASDAQ:AAPL')
       + '<div id="tvChartInner" style="height:380px;border-radius:8px;display:none"></div>'
-      + tvAfter('tvChartAfter', 'https://www.tradingview.com/chart/?symbol=SP:SPX')
+      + tvAfter('tvChartAfter', 'https://www.tradingview.com/chart/?symbol=NASDAQ:AAPL')
       + '</div>'
       + '<div class="mkt-section-head">Обзор рынка (TradingView)</div>'
       + '<div class="mkt-tv-wrap">'
@@ -891,6 +914,7 @@
       if (usContent && !usContent._built) { usContent._built = true; usContent.innerHTML = buildUSHTML(); }
       initUSSection(page);
     } else {
+      _tvChartSeq++; _tvChartStop();
       if (S.ld.indexMap) {
         renderOverview(page, null, 'mktOverviewTrack');
         renderIndices(page);
@@ -1003,7 +1027,7 @@
     { id: 'mks6', label: 'Отраслевые индексы',              sub: 'Нефтегаз, финансы, IT, металлы', anchor: 'mkt-anchor-sectors',   kw: 'отрасль нефтегаз финансы металлы ит телеком энергетика' },
     { id: 'mks7', label: 'Лидеры дня — акции TQBR',        sub: 'Лучшие и худшие бумаги за день', anchor: 'mkt-anchor-leaders',   kw: 'лидеры рост падение снижение акции сбербанк' },
     { id: 'mks8', label: 'RVI — Волатильность рынка РФ',   sub: 'Перейти к обзорным карточкам',   anchor: 'mkt-anchor-overview',  kw: 'rvi волатильность vix тревога' },
-    { id: 'mks9', label: 'S&P 500 — рынок США',             sub: 'График TradingView',             anchor: 'mkt-anchor-us-chart',  kw: 'sp500 сша америка nasdaq dow jones ndx djia' },
+    { id: 'mks9', label: 'Apple (AAPL) — рынок США',          sub: 'График TradingView',             anchor: 'mkt-anchor-us-chart',  kw: 'apple aapl nasdaq сша америка dow jones ndx djia' },
     { id: 'mksA', label: 'Как читать этот экран',           sub: 'Объяснение всех блоков раздела', anchor: 'mkt-anchor-accordion', kw: 'как читать объяснение инструкция справка' },
   ];
 
