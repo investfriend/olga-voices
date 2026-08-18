@@ -1,4 +1,4 @@
-/* assets/learning.js v1 — иерархический навигатор обучения (Ступень → Курс) */
+/* assets/learning.js v2 — иерархический навигатор обучения */
 (function () {
   'use strict';
 
@@ -8,7 +8,8 @@
   var EXT_SVG = '<svg class="lrn-ext-ic" width="14" height="14" viewBox="0 0 256 256" fill="currentColor">'
     + '<path d="M228 104v116a12 12 0 0 1-12 12H40a12 12 0 0 1-12-12V40a12 12 0 0 1 12-12h116a12 12 0 0 1 0 24H52v152h152v-100a12 12 0 0 1 24 0Zm-40-88H148a12 12 0 0 0 0 24h22.06l-86.53 86.53a12 12 0 1 0 16.94 16.94L187 56.94V79a12 12 0 0 0 24 0V40a12 12 0 0 0-12-12Z"/></svg>';
 
-  var _curStepId = null;
+  var _curStepId      = null;
+  var _curArchiveId   = null;
 
   function _cc() { return window.COURSE_CATALOG || null; }
 
@@ -114,15 +115,13 @@
       + '</div>';
 
     var lessons = course.lessons;
-    if (course.noLessons) {
-      // Курс без внутреннего списка уроков — только кнопка
-    } else if (lessons && lessons.length) {
+    if (lessons && lessons.length) {
       html += '<div class="lrn-section-hdr">Уроки</div>'
         + '<div class="lrn-list">';
       lessons.forEach(function (l, idx) {
         html += '<button class="lrn-row-btn lrn-lesson-btn" data-lesson="' + l.lessonId + '">'
           + '<span class="lrn-lesson-num">' + (idx + 1) + '</span>'
-          + '<span class="lrn-row-title">' + (_title('lesson', l.lessonId) || l.title || '—') + '</span>'
+          + '<span class="lrn-row-title">' + (l.title || _title('lesson', l.lessonId) || '—') + '</span>'
           + '</button>';
       });
       html += '</div>';
@@ -145,11 +144,112 @@
     if (typeof setPage === 'function') setPage('course');
   };
 
+  // ── Archive screen (список интенсивов/эфиров) ────────────────────────────────
+  window.openArchive = function (archiveId) {
+    var cc = _cc();
+    var cat = cc && cc.archiveCatalog;
+    if (!cat) return;
+
+    var arc = null;
+    for (var i = 0; i < cat.length; i++) { if (cat[i].id === archiveId) { arc = cat[i]; break; } }
+    if (!arc) return;
+
+    _curArchiveId = archiveId;
+
+    var el = document.getElementById('archive-content');
+    if (!el) return;
+
+    var html = '<div class="lrn-head">'
+      + '<h2 class="lrn-title">' + arc.label + '</h2>'
+      + '</div>';
+
+    if (arc.items && arc.items.length) {
+      html += '<div class="lrn-list">';
+      arc.items.forEach(function (item) {
+        html += '<button class="lrn-row-btn lrn-arc-item-btn"'
+          + ' data-archive-id="' + arc.id + '"'
+          + ' data-item-id="' + item.id + '">'
+          + '<span class="lrn-row-title">' + item.label + '</span>'
+          + ARROW_SVG
+          + '</button>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="lrn-no-lessons"><p>Записи появятся здесь по мере публикации.</p></div>';
+    }
+
+    html += '<button class="lrn-gc-link" data-stream="' + arc.streamId + '">'
+      + 'Открыть весь архив в GetCourse'
+      + '</button>';
+
+    el.innerHTML = html;
+
+    var backBtn = document.getElementById('archive-back');
+    if (backBtn) backBtn.onclick = function () { setPage('home'); };
+
+    if (typeof setPage === 'function') setPage('archive');
+  };
+
+  // ── Archive-item screen (список уроков интенсива/месяца) ─────────────────────
+  window.openArchiveItem = function (archiveId, itemId) {
+    var cc = _cc();
+    var cat = cc && cc.archiveCatalog;
+    if (!cat) return;
+
+    var arc = null;
+    for (var i = 0; i < cat.length; i++) { if (cat[i].id === archiveId) { arc = cat[i]; break; } }
+    if (!arc) return;
+
+    var item = null;
+    for (var j = 0; j < arc.items.length; j++) { if (arc.items[j].id === itemId) { item = arc.items[j]; break; } }
+    if (!item) return;
+
+    var el = document.getElementById('archive-item-content');
+    if (!el) return;
+
+    var html = '<div class="lrn-head">'
+      + '<div class="lrn-badge">' + arc.label + '</div>'
+      + '<h2 class="lrn-title">' + item.label + '</h2>'
+      + '</div>';
+
+    if (item.lessons && item.lessons.length) {
+      html += '<div class="lrn-section-hdr">Уроки</div>'
+        + '<div class="lrn-list">';
+      item.lessons.forEach(function (l, idx) {
+        html += '<button class="lrn-row-btn lrn-lesson-btn" data-lesson="' + l.lessonId + '">'
+          + '<span class="lrn-lesson-num">' + (idx + 1) + '</span>'
+          + '<span class="lrn-row-title">' + (l.title || '—') + '</span>'
+          + '</button>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="lrn-no-lessons"><p>Записи появятся здесь по мере публикации.</p></div>';
+    }
+
+    html += '<button class="lrn-gc-link" data-stream="' + item.streamId + '">'
+      + 'Открыть интенсив в GetCourse'
+      + '</button>';
+
+    el.innerHTML = html;
+
+    var aid = archiveId;
+    var backBtn = document.getElementById('archive-item-back');
+    if (backBtn) backBtn.onclick = function () { openArchive(aid); };
+
+    if (typeof setPage === 'function') setPage('archive-item');
+  };
+
   // ── Global click delegation ──────────────────────────────────────────────────
   document.addEventListener('click', function (e) {
     var courseBtn = e.target.closest('.lrn-course-btn');
     if (courseBtn) {
       openCourse(parseInt(courseBtn.dataset.stream, 10));
+      return;
+    }
+
+    var arcItemBtn = e.target.closest('.lrn-arc-item-btn');
+    if (arcItemBtn) {
+      openArchiveItem(arcItemBtn.dataset.archiveId, arcItemBtn.dataset.itemId);
       return;
     }
 

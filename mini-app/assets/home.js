@@ -1,4 +1,4 @@
-// assets/home.js v3 — Home screen rendering
+// assets/home.js v10 — Home screen rendering
 // Depends on: script.js (STATE, setPage, showToast), data.js (DATA)
 
 (function () {
@@ -139,7 +139,7 @@
 
     archives: [
       { id: 'arc-intensivy', title: 'Записи живых интенсивов', url: 'https://investfriend.ru/teach/control/stream/view/id/935539310' },
-      { id: 'arc-efiry',     title: 'Записи эфиров',            url: 'https://investfriend.ru/teach/control/stream/view/id/935138978' },
+      { id: 'arc-efiry',     title: 'Записи эфиров',           url: 'https://investfriend.ru/teach/control/stream/view/id/935138978' },
     ],
 
     accordion: {
@@ -677,7 +677,8 @@
         + '</button>'
         + '<div class="hp-acc-body" data-hp-body="' + a.id + '" hidden>'
         + '<div class="hp-archive-row">'
-        + '<a class="hp-archive-link" data-url="' + a.url + '" aria-label="Открыть материалы на GetCourse">Перейти к материалам&nbsp;' + _EXT_IC + '</a>'
+        + '<button class="hp-archive-map-btn" data-arc-open="' + a.id + '" aria-label="Открыть карту архива">Открыть карту</button>'
+        + '<a class="hp-archive-link" data-url="' + a.url + '" aria-label="Открыть весь архив на GetCourse">Весь архив&nbsp;' + _EXT_IC + '</a>'
         + arcStar
         + '</div>'
         + '</div>'
@@ -715,6 +716,11 @@
       var openBtn = e.target.closest('.hp-step-open');
       if (openBtn) {
         if (typeof openStep === 'function') openStep(openBtn.dataset.stepId);
+        return;
+      }
+      var arcMapBtn = e.target.closest('.hp-archive-map-btn');
+      if (arcMapBtn) {
+        if (typeof openArchive === 'function') openArchive(arcMapBtn.dataset.arcOpen);
         return;
       }
       var arcLink = e.target.closest('.hp-archive-link');
