@@ -1,4 +1,4 @@
-// assets/market.js v18 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v19 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -69,28 +69,52 @@
   }
 
   // ── Форматирование ─────────────────────────────────────────────────────────
+  function isFiniteNumber(v) { return typeof v === 'number' && Number.isFinite(v); }
+
   function fNum(v, unit) {
-    if (v === null || v === undefined) return '—';
+    if (!isFiniteNumber(v)) return '—';
     if (unit === '%') return v.toFixed(2) + '%';
     if (v >= 10000) return v.toLocaleString('ru-RU', { maximumFractionDigits: 0 });
     if (v >= 100)   return v.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return v.toFixed(2);
   }
   function fChg(v, unit) {
-    if (v === null || v === undefined) return '';
+    if (!isFiniteNumber(v)) return '';
     var s = v > 0 ? '+' : '';
     if (unit === '%') return s + v.toFixed(2) + '%';
     return s + fNum(v, unit);
   }
   function fPct(v) {
-    if (v === null || v === undefined) return '';
+    if (!isFiniteNumber(v)) return '';
     return (v > 0 ? '+' : '') + v.toFixed(2) + '%';
   }
-  function cls(v) { return v > 0 ? 'mkt-up' : v < 0 ? 'mkt-down' : 'mkt-neutral'; }
+  function cls(v) {
+    if (!isFiniteNumber(v)) return 'mkt-neutral';
+    return v > 0 ? 'mkt-up' : v < 0 ? 'mkt-down' : 'mkt-neutral';
+  }
 
   var SVG_UP   = '<svg width="10" height="10" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,200H40a8,8,0,0,1,0-16H216a8,8,0,0,1,0,16Zm-37.65-93.65-42.34-42.35a8,8,0,0,0-11.32,0L82.35,106.35a8,8,0,0,0,11.32,11.32L120,91.31V160a8,8,0,0,0,16,0V91.31l26.34,26.36a8,8,0,0,0,11.32-11.32Z"/></svg>';
   var SVG_DOWN = '<svg width="10" height="10" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,56H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm-37.65,90.35a8,8,0,0,0-11.32,0L136,172.69V104a8,8,0,0,0-16,0v68.69l-26.34-26.34a8,8,0,0,0-11.32,11.32l40,40a8,8,0,0,0,11.32,0l40-40A8,8,0,0,0,178.35,146.35Z"/></svg>';
-  function icon(v) { return v > 0 ? SVG_UP : v < 0 ? SVG_DOWN : ''; }
+  function icon(v) {
+    if (!isFiniteNumber(v)) return '';
+    return v > 0 ? SVG_UP : v < 0 ? SVG_DOWN : '';
+  }
+
+  // Direction: prefer pct, fall back to change; null → neutral/absent
+  function _dir(pct, change) {
+    if (isFiniteNumber(pct))    return pct;
+    if (isFiniteNumber(change)) return change;
+    return null;
+  }
+  // Combined change+pct display string; unit optional (for overview cards)
+  function _fmtChgPct(change, pct, unit) {
+    var hasChg = isFiniteNumber(change);
+    var hasPct = isFiniteNumber(pct);
+    if (!hasChg && !hasPct) return 'Нет данных';
+    if (hasChg && hasPct)   return fChg(change, unit) + ' (' + fPct(pct) + ')';
+    if (hasChg)             return fChg(change, unit);
+    return fPct(pct);
+  }
 
   function _timeHM(str) {
     if (!str || str.length < 16) return str || '';
@@ -178,7 +202,7 @@
         ticker: item.ticker,
         name:   item.name,
         value:  live.value,
-        change: live.change !== null && live.change !== undefined ? live.change : 0,
+        change: live.change,
         pct:    live.pct,
         unit:   item.unit,
         time:   _timeHM(live.updateTime) || '',
@@ -241,12 +265,13 @@
     var html = '';
     list.forEach(function (item) {
       var sel = item.ticker === S.selected ? ' selected' : '';
-      var c   = cls(item.change);
+      var d   = _dir(item.pct, item.change);
+      var c   = cls(d);
       html += '<div class="mkt-ticker-card' + sel + '" data-mkt-sel="' + item.ticker + '">'
         + '<div class="mkt-ticker-name">' + item.name + '</div>'
         + '<div class="mkt-ticker-sym">' + item.ticker + '</div>'
         + '<div class="mkt-ticker-val">' + fNum(item.value, item.unit) + ' <span style="font-size:10px;color:var(--text-muted)">' + item.unit + '</span></div>'
-        + '<div class="mkt-ticker-chg ' + c + '">' + icon(item.change) + fChg(item.change, item.unit) + ' <span style="opacity:.7">' + fPct(item.pct) + '</span></div>'
+        + '<div class="mkt-ticker-chg ' + c + '">' + icon(d) + _fmtChgPct(item.change, item.pct, item.unit) + '</div>'
         + '<div class="mkt-ticker-time">' + item.time + '</div>'
         + '</div>';
     });
@@ -349,9 +374,14 @@
     el = page.querySelector('#mktChartVal');
     if (el) el.textContent = data ? (fNum(data.value, data.unit) + ' ' + (data.unit || '')) : '—';
     el = page.querySelector('#mktChartChg');
-    if (el) el.innerHTML = data
-      ? '<span class="' + cls(data.change) + '">' + icon(data.change) + fChg(data.change, data.unit) + ' (' + fPct(data.pct) + ')</span>'
-      : '';
+    if (el) {
+      if (data) {
+        var chartDir = _dir(data.pct, data.change);
+        el.innerHTML = '<span class="' + cls(chartDir) + '">' + icon(chartDir) + _fmtChgPct(data.change, data.pct, data.unit) + '</span>';
+      } else {
+        el.innerHTML = '';
+      }
+    }
 
     page.querySelectorAll('.mkt-period-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.mktPeriod === S.period);
@@ -396,11 +426,13 @@
       var html = '';
       list.forEach(function (idx) {
         var sel = idx.ticker === S.selected ? ' selected' : '';
-        var c   = cls(idx.change);
+        var d   = _dir(idx.pct, idx.change);
+        var c   = cls(d);
+        var pctLabel = isFiniteNumber(idx.pct) ? fPct(idx.pct) : 'Нет данных';
         html += '<div class="mkt-index-row' + sel + '" data-mkt-sel="' + idx.ticker + '">'
           + '<div class="mkt-index-name"><div class="mkt-index-ticker">' + idx.ticker + '</div><div class="mkt-index-label">' + idx.name + '</div></div>'
           + '<div class="mkt-index-val">' + fNum(idx.value) + '</div>'
-          + '<div class="mkt-index-chg ' + c + '">' + icon(idx.change) + fPct(idx.pct) + '</div>'
+          + '<div class="mkt-index-chg ' + c + '">' + icon(d) + pctLabel + '</div>'
           + '</div>';
       });
       wrap.innerHTML = html;
@@ -417,17 +449,27 @@
     var raw  = D.ru.indices.sector;
     var list = _mergedSectors(raw);
     if (!list.length) { wrap.innerHTML = '<div class="mkt-no-data">Нет данных</div>'; return; }
-    list = list.slice().sort(function (a, b) { return b.pct - a.pct; });
-    var maxAbs = Math.max.apply(null, list.map(function (s) { return Math.abs(s.pct); })) || 1;
+    list = list.slice().sort(function (a, b) {
+      var ap = isFiniteNumber(a.pct) ? a.pct : 0;
+      var bp = isFiniteNumber(b.pct) ? b.pct : 0;
+      return bp - ap;
+    });
+    var maxAbs = 0;
+    list.forEach(function (s) { if (isFiniteNumber(s.pct) && Math.abs(s.pct) > maxAbs) maxAbs = Math.abs(s.pct); });
+    if (!maxAbs) maxAbs = 1;
     var html = '';
     list.forEach(function (s) {
-      var c   = cls(s.change);
-      var w   = (Math.abs(s.pct) / maxAbs * 100).toFixed(1);
-      var clr = s.pct > 0 ? 'var(--mkt-up)' : 'var(--mkt-down)';
+      var d      = _dir(s.pct, s.change);
+      var c      = cls(d);
+      var w      = isFiniteNumber(s.pct) ? (Math.abs(s.pct) / maxAbs * 100).toFixed(1) : '0';
+      var barClr = isFiniteNumber(s.pct) && s.pct !== 0
+        ? (s.pct > 0 ? 'var(--mkt-up)' : 'var(--mkt-down)')
+        : 'var(--mkt-neutral)';
+      var pctText = isFiniteNumber(s.pct) ? icon(d) + fPct(s.pct) : 'Нет данных';
       html += '<div class="mkt-sector-row">'
         + '<div class="mkt-sector-label" title="' + s.name + '">' + s.name + '</div>'
-        + '<div class="mkt-sector-bar-track"><div class="mkt-sector-bar-fill" style="width:' + w + '%;background:' + clr + '"></div></div>'
-        + '<div class="mkt-sector-pct ' + c + '">' + icon(s.change) + fPct(s.pct) + '</div>'
+        + '<div class="mkt-sector-bar-track"><div class="mkt-sector-bar-fill" style="width:' + w + '%;background:' + barClr + '"></div></div>'
+        + '<div class="mkt-sector-pct ' + c + '">' + pctText + '</div>'
         + '</div>';
     });
     wrap.innerHTML = html;
@@ -474,17 +516,19 @@
     var bondCfg = D.ru.bonds;
     var html = '<div class="mkt-bond-cards">';
     if (govLive) {
+      var govDir = _dir(govLive.pct, govLive.change);
       html += '<div class="mkt-bond-card">'
         + '<div class="mkt-bond-card-label">' + bondCfg.gov.name + '</div>'
         + '<div class="mkt-bond-card-val">' + fNum(govLive.value) + '</div>'
-        + '<div class="mkt-bond-card-chg ' + cls(govLive.change) + '">' + icon(govLive.change) + fChg(govLive.change) + ' (' + fPct(govLive.pct) + ')</div>'
+        + '<div class="mkt-bond-card-chg ' + cls(govDir) + '">' + icon(govDir) + _fmtChgPct(govLive.change, govLive.pct) + '</div>'
         + '</div>';
     }
     if (corpLive) {
+      var corpDir = _dir(corpLive.pct, corpLive.change);
       html += '<div class="mkt-bond-card">'
         + '<div class="mkt-bond-card-label">' + bondCfg.corp.name + '</div>'
         + '<div class="mkt-bond-card-val">' + fNum(corpLive.value) + '</div>'
-        + '<div class="mkt-bond-card-chg ' + cls(corpLive.change) + '">' + icon(corpLive.change) + fChg(corpLive.change) + ' (' + fPct(corpLive.pct) + ')</div>'
+        + '<div class="mkt-bond-card-chg ' + cls(corpDir) + '">' + icon(corpDir) + _fmtChgPct(corpLive.change, corpLive.pct) + '</div>'
         + '</div>';
     }
     html += '</div><div class="mkt-bond-note">' + bondCfg.note + '</div>';
