@@ -1,4 +1,4 @@
-// assets/market.js v15 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v16 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -431,33 +431,6 @@
         + '</div>';
     });
     wrap.innerHTML = html;
-  }
-
-  // ── Тепловая карта ─────────────────────────────────────────────────────────
-  function renderHeatmap() {
-    var overlay = document.getElementById('mktHeatmapOverlay');
-    if (!overlay) return;
-    var grid = overlay.querySelector('.mkt-heatmap-grid');
-    var list = _mergedSectors(D.ru.indices.sector);
-    if (!list.length) { overlay.classList.add('open'); grid.innerHTML = '<div class="mkt-no-data" style="padding:20px">Нет данных</div>'; return; }
-    var total = list.reduce(function (a, s) { return a + s.weight; }, 0);
-    var avail = window.innerWidth - 24;
-    var html = '';
-    list.forEach(function (s) {
-      var w = Math.round((s.weight / total) * avail);
-      var h = Math.max(54, w * 0.65);
-      var intensity = Math.min(Math.abs(s.pct) / 1.5, 1);
-      var bg;
-      if (s.pct > 0)      bg = 'rgba(39,201,138,' + (0.25 + intensity * 0.55) + ')';
-      else if (s.pct < 0) bg = 'rgba(224,88,88,'  + (0.25 + intensity * 0.55) + ')';
-      else                 bg = 'rgba(100,110,108,0.4)';
-      html += '<div class="mkt-heatmap-cell" style="width:' + w + 'px;height:' + h + 'px;background:' + bg + '">'
-        + '<div class="mkt-heatmap-cell-ticker">' + s.ticker + '</div>'
-        + '<div class="mkt-heatmap-cell-pct">' + (s.pct > 0 ? '+' : '') + s.pct.toFixed(2) + '%</div>'
-        + '</div>';
-    });
-    grid.innerHTML = html;
-    overlay.classList.add('open');
   }
 
   // ── Лидеры дня ─────────────────────────────────────────────────────────────
@@ -1060,10 +1033,6 @@
       // Отрасли
       + '<div class="mkt-section-head" id="mkt-anchor-sectors">Отрасли — изменение за день</div>'
       + '<div class="mkt-sector-bar-wrap" id="mktSectorBars"></div>'
-      + '<button class="mkt-heatmap-btn" id="mktHeatmapBtn">'
-      + '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40ZM96,168H64V136H96Zm0-48H64V88H96Zm48,48H112V136h32Zm0-48H112V88h32Zm48,48H160V136h32Zm0-48H160V88h32Z" opacity="0.2"/><path d="M200,32H56A24,24,0,0,0,32,56V200a24,24,0,0,0,24,24H200a24,24,0,0,0,24-24V56A24,24,0,0,0,200,32Zm8,168a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8H200a8,8,0,0,1,8,8Z"/></svg>'
-      + 'Тепловая карта отраслей</button>'
-
       // Лидеры
       + '<div class="mkt-section-head" id="mkt-anchor-leaders">Лидеры дня — TQBR</div>'
       + '<div class="mkt-leader-tabs">'
@@ -1191,8 +1160,6 @@
 
       if (t.dataset.tvOpen) { openExternal(t.dataset.tvOpen); return; }
 
-      if (t.id === 'mktHeatmapBtn') { renderHeatmap(); return; }
-
       if (t.id === 'mktStatusRetry') {
         S.ld.indStatus = 'idle'; S.ld.ldrStatus = 'idle';
         MA && MA.clearCache && MA.clearCache();
@@ -1215,12 +1182,6 @@
       }
     });
 
-    var overlay = document.getElementById('mktHeatmapOverlay');
-    if (overlay) {
-      overlay.querySelector('.mkt-heatmap-close').addEventListener('click', function () {
-        overlay.classList.remove('open');
-      });
-    }
   }
 
   // ── Поиск: экспорт для faq.js ─────────────────────────────────────────────
