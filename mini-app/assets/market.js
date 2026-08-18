@@ -1,4 +1,4 @@
-// assets/market.js v21 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v22 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -625,6 +625,8 @@
     var em = page.querySelector('#tvChartErrorMsg');
     if (em) em.textContent = 'График ' + cfg.name + ' не загрузился';
     page.querySelectorAll('.tvChartExtUrl').forEach(function (b) { b.dataset.tvOpen = cfg.tv; });
+    var ob = page.querySelector('#tvChartOpenBtn');
+    if (ob) ob.setAttribute('aria-label', 'Открыть ' + cfg.name + ' на TradingView');
   }
 
   var _tvChartSeq    = 0;
@@ -911,6 +913,7 @@
       + '</div>'
       + '<div class="mkt-tv-delay-notice">Котировки TradingView могут отображаться с задержкой</div>'
       + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Время на графике указано по Нью-Йорку</div>'
+      + '<button id="tvChartOpenBtn" class="mkt-tv-ext-btn tvChartExtUrl" data-tv-open="' + initCfg.tv + '" aria-label="Открыть ' + initCfg.name + ' на TradingView" style="display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;width:100%;margin-bottom:12px;box-sizing:border-box">Открыть выбранный инструмент на TradingView&nbsp;' + _EXT_IC + '</button>'
       + '<div class="mkt-tv-wrap">'
       + tvLoading('tvChartLoading', 'Загружаем график ' + initCfg.name + '…')
       + '<div class="mkt-tv-error" id="tvChartError" style="display:none" role="status">'
@@ -1266,10 +1269,26 @@
       }
 
       if (t.id === 'mktRefresh') {
-        MA && MA.clearCache && MA.clearCache();
-        if (S.ld.lwChart) { try { S.ld.lwChart.remove(); } catch(e) {} S.ld.lwChart = null; S.ld.lwSeries = null; }
-        S.ld.indStatus = 'idle'; S.ld.ldrStatus = 'idle';
-        if (S.tab === 'ru') fetchRussianData(page);
+        if (S.tab === 'ru') {
+          MA && MA.clearCache && MA.clearCache();
+          if (S.ld.lwChart) { try { S.ld.lwChart.remove(); } catch(e) {} S.ld.lwChart = null; S.ld.lwSeries = null; }
+          S.ld.indStatus = 'idle'; S.ld.ldrStatus = 'idle';
+          fetchRussianData(page);
+        } else if (S.tab === 'us') {
+          // Re-init chart: bumps _tvChartSeq → stale callbacks abort; _tvChartStop() clears timers;
+          // ci.innerHTML='' inside initTVChart removes any existing iframe — max one iframe at a time.
+          initTVChart(page, S.usSymbol);
+          // Retry overview only if it failed or never rendered (container empty)
+          var _oe = page.querySelector('#tvOverviewError');
+          var _oc = page.querySelector('#tvOverviewContainer');
+          if ((_oe && _oe.style.display !== 'none') || (_oc && !_oc.firstChild)) {
+            initTVOverview(page);
+          }
+          // Retry heatmap only if not already ready
+          if (_tvHeatmapStatus !== 'ready') {
+            initTVHeatmap(page);
+          }
+        }
         return;
       }
     });
