@@ -1,4 +1,4 @@
-// assets/market.js v17 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v18 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -763,7 +763,7 @@
     s.type = 'text/javascript';
     s.async = true;
     s.textContent = JSON.stringify({
-      dataSource: 'SPX500', grouping: 'sector',
+      dataSource: 'SPX500', grouping: 'no_group',
       blockSize: 'market_cap_basic', blockColor: 'change',
       locale: 'ru', colorTheme: theme,
       hasTopBar: false, isDataSetEnabled: false,
@@ -881,13 +881,14 @@
       + '</div>'
       // ── Тепловая карта ────────────────────────────────────────────────────
       + '<div class="mkt-section-head">Тепловая карта S&amp;P 500</div>'
-      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Изменение акций S&amp;P 500 за день. Цвет показывает направление и величину изменения, размер блока — рыночную капитализацию компании.</div>'
+      + '<div class="mkt-tv-delay-notice" style="margin-bottom:4px">Крупнейшие компании S&amp;P 500. Размер блока зависит от рыночной капитализации, цвет показывает изменение цены за день. Нажмите на блок, чтобы увидеть данные компании.</div>'
+      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Для подробного просмотра всех компаний откройте карту крупно в TradingView.</div>'
       + '<div class="mkt-tv-wrap">'
       + tvLoading('tvHeatmapLoading', 'Загружаем тепловую карту…')
       + tvError('tvHeatmapError', 'Не удалось загрузить тепловую карту TradingView', 'heatmap', 'https://www.tradingview.com/heatmap/stock/')
       + '<div id="tvHeatmapContainer" class="tradingview-widget-container mkt-heatmap-container"></div>'
       + '<div class="mkt-tv-after" id="tvHeatmapAfter" style="display:none">'
-      +   '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/heatmap/stock/" aria-label="Открыть тепловую карту">Открыть тепловую карту&nbsp;' + _EXT_IC + '</button>'
+      +   '<button class="mkt-tv-ext-btn mkt-tv-ext-btn--accent" data-tv-open="https://www.tradingview.com/heatmap/stock/" aria-label="Открыть тепловую карту S&amp;P 500 крупно в TradingView">Открыть карту крупно&nbsp;' + _EXT_IC + '</button>'
       + '</div>'
       + '</div>';
   }
