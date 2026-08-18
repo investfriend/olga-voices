@@ -1,4 +1,4 @@
-// assets/market.js v14 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v15 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -730,6 +730,9 @@
   var _tvHeatmapSeq    = 0;
   var _tvHeatmapPollId = null;
   var _tvHeatmapTimId  = null;
+  // idle → loading → ready | error; cancelled loading → idle
+  var _tvHeatmapStatus = 'idle';
+
   function _tvHeatmapStop() {
     if (_tvHeatmapPollId !== null) { clearInterval(_tvHeatmapPollId); _tvHeatmapPollId = null; }
     if (_tvHeatmapTimId  !== null) { clearTimeout(_tvHeatmapTimId);  _tvHeatmapTimId  = null; }
@@ -744,6 +747,7 @@
 
     var seq = ++_tvHeatmapSeq;
     _tvHeatmapStop();
+    _tvHeatmapStatus = 'loading';
 
     // Clear previous children (script + iframe) via DOM API — no innerHTML
     while (hc.firstChild) hc.removeChild(hc.firstChild);
@@ -761,6 +765,7 @@
     function _fail() {
       if (seq !== _tvHeatmapSeq) return;
       _tvHeatmapStop();
+      _tvHeatmapStatus = 'error';
       if (hl) hl.style.display = 'none';
       hc.style.display = 'none';
       hc.style.visibility = '';
@@ -769,6 +774,7 @@
     function _succeed() {
       if (seq !== _tvHeatmapSeq) return;
       _tvHeatmapStop();
+      _tvHeatmapStatus = 'ready';
       if (hl) hl.style.display = 'none';
       hc.style.visibility = 'visible';
       if (ha) ha.style.display = '';
@@ -806,11 +812,25 @@
     hc.appendChild(s);
   }
 
+  // Checks heatmap status and starts/resumes loading only when needed.
+  // Called on every US tab entry — S.tvInited.us guards only the select handler.
+  function ensureTVHeatmap(page) {
+    if (_tvHeatmapStatus === 'ready') {
+      var hc = page.querySelector('#tvHeatmapContainer');
+      // Verify iframe still present; if not, reset and restart
+      if (hc && hc.querySelector('iframe')) return;
+      _tvHeatmapStatus = 'idle';
+    }
+    if (_tvHeatmapStatus === 'loading') return; // already in progress
+    // idle or error → start a fresh attempt
+    initTVHeatmap(page);
+  }
+
   function initUSSection(page) {
     initTVChart(page, S.usSymbol);
     if (!S.tvInited.us) {
       S.tvInited.us = true;
-      initTVOverview(page); initTVHeatmap(page);
+      initTVOverview(page);
       var sel = page.querySelector('#tvSymbolSelect');
       if (sel) {
         sel.addEventListener('change', function () {
@@ -822,6 +842,8 @@
       var sel2 = page.querySelector('#tvSymbolSelect');
       if (sel2) sel2.value = S.usSymbol;
     }
+    // Always check heatmap — S.tvInited.us does not track heatmap readiness
+    ensureTVHeatmap(page);
   }
 
   // ── HTML блока США ────────────────────────────────────────────────────────
@@ -1095,7 +1117,10 @@
       initUSSection(page);
     } else {
       _tvChartSeq++; _tvChartStop();
-      _tvHeatmapSeq++; _tvHeatmapStop();
+      // Only cancel heatmap if it is still loading; ready iframe is preserved
+      if (_tvHeatmapStatus === 'loading') {
+        _tvHeatmapSeq++; _tvHeatmapStop(); _tvHeatmapStatus = 'idle';
+      }
       if (S.ld.indexMap) {
         renderOverview(page, null, 'mktOverviewTrack');
         renderIndices(page);
@@ -1160,7 +1185,7 @@
         var retryKey = t.dataset.tvRetry;
         if (retryKey === 'chart')    { initTVChart(page, S.usSymbol); }
         if (retryKey === 'overview') { initTVOverview(page); }
-        if (retryKey === 'heatmap')  { initTVHeatmap(page); }
+        if (retryKey === 'heatmap' && _tvHeatmapStatus !== 'loading') { initTVHeatmap(page); }
         return;
       }
 
