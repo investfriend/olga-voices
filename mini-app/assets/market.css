@@ -6,23 +6,6 @@
   --mkt-bg-band: rgba(39,201,138,.07);
 }
 
-/* ── Демо-баннер ────────────────────────────────────────────────────────── */
-.mkt-demo-banner {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(255,193,7,.10);
-  border: 1px solid rgba(255,193,7,.22);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #FFC107;
-  font-weight: 600;
-  letter-spacing: .3px;
-  margin-bottom: 16px;
-}
-.mkt-demo-banner svg { flex-shrink: 0; }
-
 /* ── Заголовок страницы ─────────────────────────────────────────────────── */
 .mkt-header {
   margin-bottom: 14px;
@@ -102,21 +85,6 @@
   cursor: pointer;
 }
 @keyframes mkt-spin { to { transform: rotate(360deg); } }
-
-/* ── ДЕМО-инлайн бейдж ───────────────────────────────────────────────────── */
-.mkt-demo-inline {
-  display: inline-block;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .5px;
-  color: #FFC107;
-  background: rgba(255,193,7,.12);
-  border: 1px solid rgba(255,193,7,.28);
-  border-radius: 4px;
-  padding: 1px 5px;
-  vertical-align: middle;
-  margin-left: 4px;
-}
 
 /* ── Обёртка Lightweight Charts ─────────────────────────────────────────── */
 .mkt-lw-wrap {
@@ -407,34 +375,6 @@
   margin-top: 8px;
 }
 
-/* ── Постоянная маркировка ДЕМО (инлайн бейдж в заголовке блока) ────────── */
-.mkt-demo-inline {
-  display: inline-block;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .4px;
-  text-transform: uppercase;
-  background: rgba(255,193,7,.18);
-  color: #FFC107;
-  border: 1px solid rgba(255,193,7,.3);
-  border-radius: 4px;
-  padding: 1px 5px;
-  vertical-align: middle;
-  margin-left: 4px;
-}
-.mkt-demo-src-link {
-  color: #FFC107;
-  text-decoration: underline;
-  text-decoration-color: rgba(255,193,7,.4);
-  font-size: 11px;
-}
-.mkt-block-demo-note {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 6px;
-  opacity: .7;
-}
-
 /* ── Задержка TradingView ────────────────────────────────────────────────── */
 .mkt-tv-delay-notice {
   font-size: 11px;
@@ -520,9 +460,6 @@
 .mkt-tv-after .mkt-tv-ext-btn {
   width: 100%;
 }
-
-/* Карточка США с пометкой ДЕМО */
-.mkt-ticker-demo { position: relative; }
 
 /* ── Аккордеон «Как читать этот экран» ─────────────────────────────────── */
 .mkt-acc-item {

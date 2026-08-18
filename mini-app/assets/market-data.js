@@ -1,4 +1,4 @@
-// assets/market-data.js v3 — конфигурация тикеров раздела «Рынок»
+// assets/market-data.js v4 — конфигурация тикеров раздела «Рынок»
 // Реальные котировки: MOEX ISS API (market-api.js). Здесь — только имена, тикеры, единицы.
 
 window.MARKET_DATA = {
@@ -25,18 +25,17 @@ window.MARKET_DATA = {
         { ticker: 'RGBI',     name: 'ОФЗ (ценовой)'                      },
         { ticker: 'RUCBTRNS', name: 'Корп. облигации (совокупный доход)' },
       ],
-      // weight — доля в IMOEX, используется для ширины полосы отраслей
       sector: [
-        { ticker: 'MOEXOG', name: 'Нефть и газ',            weight: 25 },
-        { ticker: 'MOEXFN', name: 'Финансы',                weight: 20 },
-        { ticker: 'MOEXTL', name: 'Телекоммуникации',       weight: 2  },
-        { ticker: 'MOEXCH', name: 'Химия и нефтехимия',     weight: 4  },
-        { ticker: 'MOEXMM', name: 'Металлы и добыча',       weight: 15 },
-        { ticker: 'MOEXTN', name: 'Транспорт',              weight: 3  },
-        { ticker: 'MOEXIT', name: 'IT',                     weight: 10 },
-        { ticker: 'MOEXCN', name: 'Потребительский сектор', weight: 12 },
-        { ticker: 'MOEXEU', name: 'Электроэнергетика',      weight: 8  },
-        { ticker: 'MOEXRE', name: 'Недвижимость',           weight: 1  },
+        { ticker: 'MOEXOG', name: 'Нефть и газ'            },
+        { ticker: 'MOEXFN', name: 'Финансы'                },
+        { ticker: 'MOEXTL', name: 'Телекоммуникации'       },
+        { ticker: 'MOEXCH', name: 'Химия и нефтехимия'     },
+        { ticker: 'MOEXMM', name: 'Металлы и добыча'       },
+        { ticker: 'MOEXTN', name: 'Транспорт'              },
+        { ticker: 'MOEXIT', name: 'IT'                     },
+        { ticker: 'MOEXCN', name: 'Потребительский сектор' },
+        { ticker: 'MOEXEU', name: 'Электроэнергетика'      },
+        { ticker: 'MOEXRE', name: 'Недвижимость'           },
       ],
     },
 
@@ -59,7 +58,7 @@ window.MARKET_DATA = {
     },
     {
       title: 'Что такое RVI — индекс волатильности',
-      body: 'RVI (Russian Volatility Index) — российский аналог американского VIX. Он отражает ожидаемую волатильность рынка на ближайший месяц. При RVI &lt; 20 рынок спокоен, 30–50 — повышенная тревожность, выше 60 — кризисные уровни.',
+      body: 'RVI (Russian Volatility Index) отражает ожидаемую волатильность российского рынка. Чем выше его значение, тем более сильные колебания ожидают участники рынка. Значение RVI не является самостоятельным сигналом к покупке или продаже: его следует оценивать в динамике и вместе с другими показателями.',
     },
     {
       title: 'Ценовой индекс и индекс совокупного дохода облигаций',

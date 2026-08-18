@@ -1,4 +1,4 @@
-// assets/market.js v16 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v17 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -201,7 +201,7 @@
     if (!map) return [];
     return cfgSectors.filter(function (item) { return !!map[item.ticker]; }).map(function (item) {
       var live = map[item.ticker];
-      return { ticker: item.ticker, name: item.name, value: live.value, change: live.change, pct: live.pct, weight: item.weight, live: true };
+      return { ticker: item.ticker, name: item.name, value: live.value, change: live.change, pct: live.pct, live: true };
     });
   }
 
@@ -471,23 +471,23 @@
       wrap.innerHTML = '<div class="mkt-no-data">Нет данных</div>';
       return;
     }
-    var demoB = D.ru.bonds;  // только имена и сноска
+    var bondCfg = D.ru.bonds;
     var html = '<div class="mkt-bond-cards">';
     if (govLive) {
       html += '<div class="mkt-bond-card">'
-        + '<div class="mkt-bond-card-label">' + demoB.gov.name + '</div>'
+        + '<div class="mkt-bond-card-label">' + bondCfg.gov.name + '</div>'
         + '<div class="mkt-bond-card-val">' + fNum(govLive.value) + '</div>'
         + '<div class="mkt-bond-card-chg ' + cls(govLive.change) + '">' + icon(govLive.change) + fChg(govLive.change) + ' (' + fPct(govLive.pct) + ')</div>'
         + '</div>';
     }
     if (corpLive) {
       html += '<div class="mkt-bond-card">'
-        + '<div class="mkt-bond-card-label">' + demoB.corp.name + '</div>'
+        + '<div class="mkt-bond-card-label">' + bondCfg.corp.name + '</div>'
         + '<div class="mkt-bond-card-val">' + fNum(corpLive.value) + '</div>'
         + '<div class="mkt-bond-card-chg ' + cls(corpLive.change) + '">' + icon(corpLive.change) + fChg(corpLive.change) + ' (' + fPct(corpLive.pct) + ')</div>'
         + '</div>';
     }
-    html += '</div><div class="mkt-bond-note">' + demoB.note + '</div>';
+    html += '</div><div class="mkt-bond-note">' + bondCfg.note + '</div>';
     wrap.innerHTML = html;
   }
 
