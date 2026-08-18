@@ -706,3 +706,16 @@
   outline-offset: 2px;
   border-color: var(--accent);
 }
+
+/* ── Тепловая карта — адаптивные высоты ─────────────────────────────────── */
+.mkt-heatmap-container {
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+}
+@media (min-width: 480px) {
+  .mkt-heatmap-container { height: 520px; }
+}
+@media (min-width: 1024px) {
+  .mkt-heatmap-container { height: 600px; }
+}

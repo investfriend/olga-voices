@@ -1,4 +1,4 @@
-// assets/market.js v13 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v14 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -726,23 +726,84 @@
     }, 12000);
   }
 
+  // ── Stock Heatmap — iframe embed ─────────────────────────────────────────
+  var _tvHeatmapSeq    = 0;
+  var _tvHeatmapPollId = null;
+  var _tvHeatmapTimId  = null;
+  function _tvHeatmapStop() {
+    if (_tvHeatmapPollId !== null) { clearInterval(_tvHeatmapPollId); _tvHeatmapPollId = null; }
+    if (_tvHeatmapTimId  !== null) { clearTimeout(_tvHeatmapTimId);  _tvHeatmapTimId  = null; }
+  }
+
   function initTVHeatmap(page) {
     var hc = page.querySelector('#tvHeatmapContainer');
     var hl = page.querySelector('#tvHeatmapLoading');
     var he = page.querySelector('#tvHeatmapError');
     var ha = page.querySelector('#tvHeatmapAfter');
     if (!hc) return;
-    if (hl) hl.style.display = ''; if (he) he.style.display = 'none'; hc.style.display = 'none'; if (ha) ha.style.display = 'none';
-    tvInjectEmbed(hc,
-      'https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js',
-      { exchanges: [], dataSource: 'SPX500', grouping: 'sector',
-        blockSize: 'market_cap_basic', blockColor: 'change',
-        locale: 'ru', colorTheme: 'dark', hasTopBar: false,
-        isDataSetEnabled: false, isZoomEnabled: true, hasSymbolTooltip: true,
-        isMonoSize: false, width: '100%', height: 400 },
-      function () { if (hl) hl.style.display = 'none'; if (he) he.style.display = ''; },
-      function () { if (hl) hl.style.display = 'none'; hc.style.display = ''; if (ha) ha.style.display = ''; }
-    );
+
+    var seq = ++_tvHeatmapSeq;
+    _tvHeatmapStop();
+
+    // Clear previous children (script + iframe) via DOM API — no innerHTML
+    while (hc.firstChild) hc.removeChild(hc.firstChild);
+
+    // Container stays in layout flow so TradingView gets real dimensions;
+    // widget hidden via visibility until iframe appears
+    hc.style.visibility = 'hidden';
+    hc.style.display = '';
+    if (hl) hl.style.display = '';
+    if (he) he.style.display = 'none';
+    if (ha) ha.style.display = 'none';
+
+    var theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+
+    function _fail() {
+      if (seq !== _tvHeatmapSeq) return;
+      _tvHeatmapStop();
+      if (hl) hl.style.display = 'none';
+      hc.style.display = 'none';
+      hc.style.visibility = '';
+      if (he) he.style.display = '';
+    }
+    function _succeed() {
+      if (seq !== _tvHeatmapSeq) return;
+      _tvHeatmapStop();
+      if (hl) hl.style.display = 'none';
+      hc.style.visibility = 'visible';
+      if (ha) ha.style.display = '';
+    }
+
+    // Inner target div required by TradingView embed
+    var inner = document.createElement('div');
+    inner.className = 'tradingview-widget-container__widget';
+    hc.appendChild(inner);
+
+    // Embed script with JSON config via textContent (not innerHTML)
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.textContent = JSON.stringify({
+      dataSource: 'SPX500', grouping: 'sector',
+      blockSize: 'market_cap_basic', blockColor: 'change',
+      locale: 'ru', colorTheme: theme,
+      hasTopBar: false, isDataSetEnabled: false,
+      isZoomEnabled: true, hasSymbolTooltip: true,
+      width: '100%', height: '100%',
+    });
+    s.onerror = function () { if (seq === _tvHeatmapSeq) _fail(); };
+    s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js';
+
+    _tvHeatmapPollId = setInterval(function () {
+      if (seq !== _tvHeatmapSeq) return;
+      if (hc.querySelector('iframe')) _succeed();
+    }, 600);
+    _tvHeatmapTimId = setTimeout(function () {
+      if (seq !== _tvHeatmapSeq) return;
+      hc.querySelector('iframe') ? _succeed() : _fail();
+    }, 12000);
+
+    hc.appendChild(s);
   }
 
   function initUSSection(page) {
@@ -824,12 +885,15 @@
       + tvAfter('tvOverviewAfter', 'https://www.tradingview.com/markets/stocks-usa/')
       + '</div>'
       // ── Тепловая карта ────────────────────────────────────────────────────
-      + '<div class="mkt-section-head">Тепловая карта S&amp;P 500 (TradingView)</div>'
+      + '<div class="mkt-section-head">Тепловая карта S&amp;P 500</div>'
+      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Изменение акций S&amp;P 500 за день. Цвет показывает направление и величину изменения, размер блока — рыночную капитализацию компании.</div>'
       + '<div class="mkt-tv-wrap">'
       + tvLoading('tvHeatmapLoading', 'Загружаем тепловую карту…')
-      + tvError('tvHeatmapError', 'Виджет не загрузился внутри Telegram', 'heatmap', 'https://www.tradingview.com/heatmap/stock/')
-      + '<div id="tvHeatmapContainer" class="tradingview-widget-container" style="display:none;min-height:200px"></div>'
-      + tvAfter('tvHeatmapAfter', 'https://www.tradingview.com/heatmap/stock/')
+      + tvError('tvHeatmapError', 'Не удалось загрузить тепловую карту TradingView', 'heatmap', 'https://www.tradingview.com/heatmap/stock/')
+      + '<div id="tvHeatmapContainer" class="tradingview-widget-container mkt-heatmap-container"></div>'
+      + '<div class="mkt-tv-after" id="tvHeatmapAfter" style="display:none">'
+      +   '<button class="mkt-tv-ext-btn" data-tv-open="https://www.tradingview.com/heatmap/stock/" aria-label="Открыть тепловую карту">Открыть тепловую карту&nbsp;' + _EXT_IC + '</button>'
+      + '</div>'
       + '</div>';
   }
 
@@ -1031,6 +1095,7 @@
       initUSSection(page);
     } else {
       _tvChartSeq++; _tvChartStop();
+      _tvHeatmapSeq++; _tvHeatmapStop();
       if (S.ld.indexMap) {
         renderOverview(page, null, 'mktOverviewTrack');
         renderIndices(page);
