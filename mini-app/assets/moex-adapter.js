@@ -1,4 +1,4 @@
-// assets/moex-adapter.js v3 — ISS MOEX data adapter
+// assets/moex-adapter.js v4 — ISS MOEX data adapter
 // Авторизация на подключение: Юрий, 2026-08-07
 // Для production-деплоя: получить письменное подтверждение от itsales@moex.com
 // Данные задержаны ≥15 мин согласно условиям ISS бесплатного доступа
@@ -21,8 +21,9 @@
   var TIMEOUT_MS  = 10000;
   var MAX_RETRIES = 1;
 
-  var _cache = {};  // url-key → { data, ts }
-  var _stale = {};  // url-key → last successful { data, ts }
+  var _cache    = {};  // url-key → { data, ts }
+  var _stale    = {};  // url-key → last successful { data, ts }
+  var _inflight = Object.create(null);  // url-key → pending Promise (dedup concurrent calls)
 
   function _now() { return Date.now(); }
   function _isFresh(key, ttl) { return !!(_cache[key] && (_now() - _cache[key].ts) < ttl); }
@@ -71,16 +72,9 @@
     });
   }
 
-  function _get(key, url, ttl, retriesLeft) {
-    if (!RIGHTS_CONFIRMED) {
-      return Promise.reject(new Error('RIGHTS_CONFIRMED = false — live-данные отключены'));
-    }
-    if (retriesLeft === undefined) retriesLeft = MAX_RETRIES;
-
-    if (_isFresh(key, ttl)) {
-      return Promise.resolve({ data: _cache[key].data, stale: false, fromCache: true, ts: _cache[key].ts });
-    }
-
+  // Сетевой цикл с повторной попыткой; вызывает сам себя рекурсивно, не _get(),
+  // чтобы не конкурировать с _inflight-дедупликацией.
+  function _requestWithRetry(key, url, retriesLeft) {
     return _fetchWithTimeout(url)
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + r.statusText);
@@ -93,7 +87,7 @@
         return { data: data, stale: false, fromCache: false, ts: ts };
       })
       .catch(function (err) {
-        if (retriesLeft > 0) return _get(key, url, ttl, retriesLeft - 1);
+        if (retriesLeft > 0) return _requestWithRetry(key, url, retriesLeft - 1);
         if (_stale[key]) {
           return {
             data:     _stale[key].data,
@@ -105,6 +99,26 @@
         }
         return { data: null, stale: true, error: err.message };
       });
+  }
+
+  function _get(key, url, ttl) {
+    if (!RIGHTS_CONFIRMED) {
+      return Promise.reject(new Error('RIGHTS_CONFIRMED = false — live-данные отключены'));
+    }
+
+    if (_isFresh(key, ttl)) {
+      return Promise.resolve({ data: _cache[key].data, stale: false, fromCache: true, ts: _cache[key].ts });
+    }
+
+    if (_inflight[key]) return _inflight[key];
+
+    var requestPromise = _requestWithRetry(key, url, MAX_RETRIES);
+    _inflight[key] = requestPromise;
+    function cleanup() {
+      if (_inflight[key] === requestPromise) delete _inflight[key];
+    }
+    requestPromise.then(cleanup, cleanup);
+    return requestPromise;
   }
 
   // ── Тикеры для батч-запроса индексов ─────────────────────────────────────
