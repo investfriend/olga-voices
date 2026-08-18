@@ -573,9 +573,15 @@
 
   // ── Инструменты рынка США ────────────────────────────────────────────────
   var _US_SYMS = [
-    { sym: 'NASDAQ:AAPL', name: 'Apple',     label: 'Apple · AAPL',     tv: 'https://www.tradingview.com/symbols/NASDAQ-AAPL/' },
-    { sym: 'NASDAQ:MSFT', name: 'Microsoft', label: 'Microsoft · MSFT', tv: 'https://www.tradingview.com/symbols/NASDAQ-MSFT/' },
-    { sym: 'NASDAQ:NVDA', name: 'NVIDIA',    label: 'NVIDIA · NVDA',    tv: 'https://www.tradingview.com/symbols/NASDAQ-NVDA/' },
+    { sym: 'NASDAQ:AAPL', name: 'Apple',     label: 'Apple · AAPL',         head: 'Акции Apple · NASDAQ:AAPL',               tv: 'https://www.tradingview.com/symbols/NASDAQ-AAPL/'  },
+    { sym: 'NASDAQ:MSFT', name: 'Microsoft', label: 'Microsoft · MSFT',     head: 'Акции Microsoft · NASDAQ:MSFT',           tv: 'https://www.tradingview.com/symbols/NASDAQ-MSFT/'  },
+    { sym: 'NASDAQ:NVDA', name: 'NVIDIA',    label: 'NVIDIA · NVDA',        head: 'Акции NVIDIA · NASDAQ:NVDA',              tv: 'https://www.tradingview.com/symbols/NASDAQ-NVDA/'  },
+    { sym: 'NASDAQ:AMZN', name: 'Amazon',    label: 'Amazon · AMZN',        head: 'Акции Amazon · NASDAQ:AMZN',              tv: 'https://www.tradingview.com/symbols/NASDAQ-AMZN/'  },
+    { sym: 'NASDAQ:GOOGL',name: 'Alphabet',  label: 'Alphabet · GOOGL',     head: 'Акции Alphabet · NASDAQ:GOOGL',           tv: 'https://www.tradingview.com/symbols/NASDAQ-GOOGL/' },
+    { sym: 'NASDAQ:META', name: 'Meta',      label: 'Meta · META',          head: 'Акции Meta · NASDAQ:META',                tv: 'https://www.tradingview.com/symbols/NASDAQ-META/'  },
+    { sym: 'NASDAQ:TSLA', name: 'Tesla',     label: 'Tesla · TSLA',         head: 'Акции Tesla · NASDAQ:TSLA',               tv: 'https://www.tradingview.com/symbols/NASDAQ-TSLA/'  },
+    { sym: 'AMEX:SPY',    name: 'SPY',       label: 'SPY · ETF S&P 500',    head: 'SPY · ETF на S&P 500 · AMEX:SPY',         tv: 'https://www.tradingview.com/symbols/AMEX-SPY/'     },
+    { sym: 'NASDAQ:QQQ',  name: 'QQQ',       label: 'QQQ · ETF Nasdaq-100', head: 'QQQ · ETF на Nasdaq-100 · NASDAQ:QQQ',    tv: 'https://www.tradingview.com/symbols/NASDAQ-QQQ/'   },
   ];
   function _usCfg(sym) {
     for (var i = 0; i < _US_SYMS.length; i++) { if (_US_SYMS[i].sym === sym) return _US_SYMS[i]; }
@@ -584,7 +590,7 @@
   function _updateChartTexts(page, sym) {
     var cfg = _usCfg(sym);
     var sh = page.querySelector('#mkt-anchor-us-chart');
-    if (sh) sh.textContent = 'Акции ' + cfg.name + ' · ' + sym;
+    if (sh) sh.textContent = cfg.head;
     var cl = page.querySelector('#tvChartLoading');
     if (cl) cl.innerHTML = '<div class="mkt-tv-spinner"></div>Загружаем график ' + cfg.name + '…';
     var em = page.querySelector('#tvChartErrorMsg');
@@ -730,7 +736,7 @@
     var initSym = S.usSymbol || 'NASDAQ:AAPL';
     var initCfg = _usCfg(initSym);
     return ''
-      + '<div class="mkt-section-head" id="mkt-anchor-us-chart">Акции ' + initCfg.name + ' · ' + initSym + '</div>'
+      + '<div class="mkt-section-head" id="mkt-anchor-us-chart">' + initCfg.head + '</div>'
       + '<div class="mkt-us-select-wrap">'
       + '<label class="mkt-us-select-label" for="tvSymbolSelect">Выберите инструмент</label>'
       + '<select class="mkt-us-select" id="tvSymbolSelect" aria-label="Выберите инструмент">'
