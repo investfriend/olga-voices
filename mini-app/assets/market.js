@@ -1,4 +1,4 @@
-// assets/market.js v19 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v20 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -270,7 +270,7 @@
       html += '<div class="mkt-ticker-card' + sel + '" data-mkt-sel="' + item.ticker + '">'
         + '<div class="mkt-ticker-name">' + item.name + '</div>'
         + '<div class="mkt-ticker-sym">' + item.ticker + '</div>'
-        + '<div class="mkt-ticker-val">' + fNum(item.value, item.unit) + ' <span style="font-size:10px;color:var(--text-muted)">' + item.unit + '</span></div>'
+        + '<div class="mkt-ticker-val">' + fNum(item.value, item.unit) + (isFiniteNumber(item.value) ? ' <span style="font-size:10px;color:var(--text-muted)">' + item.unit + '</span>' : '') + '</div>'
         + '<div class="mkt-ticker-chg ' + c + '">' + icon(d) + _fmtChgPct(item.change, item.pct, item.unit) + '</div>'
         + '<div class="mkt-ticker-time">' + item.time + '</div>'
         + '</div>';
@@ -372,7 +372,7 @@
     var el = page.querySelector('#mktChartTicker');
     if (el) el.textContent = data ? (data.name + ' · ' + ticker) : ticker;
     el = page.querySelector('#mktChartVal');
-    if (el) el.textContent = data ? (fNum(data.value, data.unit) + ' ' + (data.unit || '')) : '—';
+    if (el) el.textContent = data ? (isFiniteNumber(data.value) ? fNum(data.value, data.unit) + ' ' + (data.unit || '') : '—') : '—';
     el = page.querySelector('#mktChartChg');
     if (el) {
       if (data) {
@@ -426,13 +426,18 @@
       var html = '';
       list.forEach(function (idx) {
         var sel = idx.ticker === S.selected ? ' selected' : '';
-        var d   = _dir(idx.pct, idx.change);
-        var c   = cls(d);
-        var pctLabel = isFiniteNumber(idx.pct) ? fPct(idx.pct) : 'Нет данных';
+        var d, c, chgLabel;
+        if (isFiniteNumber(idx.pct)) {
+          d = idx.pct; c = cls(d); chgLabel = icon(d) + fPct(idx.pct);
+        } else if (isFiniteNumber(idx.change)) {
+          d = idx.change; c = cls(d); chgLabel = icon(d) + fChg(idx.change);
+        } else {
+          c = 'mkt-neutral'; chgLabel = 'Нет данных';
+        }
         html += '<div class="mkt-index-row' + sel + '" data-mkt-sel="' + idx.ticker + '">'
           + '<div class="mkt-index-name"><div class="mkt-index-ticker">' + idx.ticker + '</div><div class="mkt-index-label">' + idx.name + '</div></div>'
           + '<div class="mkt-index-val">' + fNum(idx.value) + '</div>'
-          + '<div class="mkt-index-chg ' + c + '">' + icon(d) + pctLabel + '</div>'
+          + '<div class="mkt-index-chg ' + c + '">' + chgLabel + '</div>'
           + '</div>';
       });
       wrap.innerHTML = html;
@@ -459,13 +464,13 @@
     if (!maxAbs) maxAbs = 1;
     var html = '';
     list.forEach(function (s) {
-      var d      = _dir(s.pct, s.change);
-      var c      = cls(d);
-      var w      = isFiniteNumber(s.pct) ? (Math.abs(s.pct) / maxAbs * 100).toFixed(1) : '0';
-      var barClr = isFiniteNumber(s.pct) && s.pct !== 0
+      var hasPct = isFiniteNumber(s.pct);
+      var c      = hasPct ? cls(s.pct) : 'mkt-neutral';
+      var w      = hasPct ? (Math.abs(s.pct) / maxAbs * 100).toFixed(1) : '0';
+      var barClr = hasPct && s.pct !== 0
         ? (s.pct > 0 ? 'var(--mkt-up)' : 'var(--mkt-down)')
         : 'var(--mkt-neutral)';
-      var pctText = isFiniteNumber(s.pct) ? icon(d) + fPct(s.pct) : 'Нет данных';
+      var pctText = hasPct ? (icon(s.pct) + fPct(s.pct)) : 'Нет данных';
       html += '<div class="mkt-sector-row">'
         + '<div class="mkt-sector-label" title="' + s.name + '">' + s.name + '</div>'
         + '<div class="mkt-sector-bar-track"><div class="mkt-sector-bar-fill" style="width:' + w + '%;background:' + barClr + '"></div></div>'
