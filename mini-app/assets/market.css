@@ -673,3 +673,36 @@
   color: var(--text-dim);
   text-align: center;
 }
+
+/* ── Выбор инструмента США ──────────────────────────────────────────────── */
+.mkt-us-select-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.mkt-us-select-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: .02em;
+}
+.mkt-us-select {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  min-height: 44px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 280px;
+  appearance: auto;
+}
+.mkt-us-select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}

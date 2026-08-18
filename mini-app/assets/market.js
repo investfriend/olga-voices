@@ -19,6 +19,7 @@
     leaderTab:  'gain',
     fetchSeq:   0,
     tvInited:   {},
+    usSymbol:   'NASDAQ:AAPL',
     ld: {
       indexMap:   null,
       leaders:    null,
@@ -570,6 +571,27 @@
     container.appendChild(s);
   }
 
+  // ── Инструменты рынка США ────────────────────────────────────────────────
+  var _US_SYMS = [
+    { sym: 'NASDAQ:AAPL', name: 'Apple',     label: 'Apple · AAPL',     tv: 'https://www.tradingview.com/symbols/NASDAQ-AAPL/' },
+    { sym: 'NASDAQ:MSFT', name: 'Microsoft', label: 'Microsoft · MSFT', tv: 'https://www.tradingview.com/symbols/NASDAQ-MSFT/' },
+    { sym: 'NASDAQ:NVDA', name: 'NVIDIA',    label: 'NVIDIA · NVDA',    tv: 'https://www.tradingview.com/symbols/NASDAQ-NVDA/' },
+  ];
+  function _usCfg(sym) {
+    for (var i = 0; i < _US_SYMS.length; i++) { if (_US_SYMS[i].sym === sym) return _US_SYMS[i]; }
+    return _US_SYMS[0];
+  }
+  function _updateChartTexts(page, sym) {
+    var cfg = _usCfg(sym);
+    var sh = page.querySelector('#mkt-anchor-us-chart');
+    if (sh) sh.textContent = 'Акции ' + cfg.name + ' · ' + sym;
+    var cl = page.querySelector('#tvChartLoading');
+    if (cl) cl.innerHTML = '<div class="mkt-tv-spinner"></div>Загружаем график ' + cfg.name + '…';
+    var em = page.querySelector('#tvChartErrorMsg');
+    if (em) em.textContent = 'График ' + cfg.name + ' не загрузился';
+    page.querySelectorAll('.tvChartExtUrl').forEach(function (b) { b.dataset.tvOpen = cfg.tv; });
+  }
+
   var _tvChartSeq    = 0;
   var _tvChartPollId = null;
   var _tvChartTimId  = null;
@@ -579,7 +601,8 @@
     if (_tvChartTimId  !== null) { clearTimeout(_tvChartTimId);  _tvChartTimId  = null; }
   }
 
-  function initTVChart(page) {
+  function initTVChart(page, sym) {
+    sym = sym || S.usSymbol || 'NASDAQ:AAPL';
     var seq = ++_tvChartSeq;
     _tvChartStop();
 
@@ -588,6 +611,7 @@
     var ce = page.querySelector('#tvChartError');
     var ca = page.querySelector('#tvChartAfter');
 
+    _updateChartTexts(page, sym);
     if (ci) { ci.innerHTML = ''; ci.style.display = 'none'; }
     if (cl) cl.style.display = '';
     if (ce) ce.style.display = 'none';
@@ -600,7 +624,7 @@
       }
       try {
         new window.TradingView.widget({
-          symbol: 'NASDAQ:AAPL', interval: 'D', timezone: 'America/New_York',
+          symbol: sym, interval: 'D', timezone: 'exchange',
           theme: 'dark', style: '1', locale: 'ru', toolbar_bg: '#181D1B',
           enable_publishing: false, hide_side_toolbar: true, allow_symbol_change: false,
           withdateranges: true, save_image: false, calendar: false,
@@ -666,10 +690,20 @@
   }
 
   function initUSSection(page) {
-    initTVChart(page);
+    initTVChart(page, S.usSymbol);
     if (!S.tvInited.us) {
       S.tvInited.us = true;
       initTVOverview(page); initTVHeatmap(page);
+      var sel = page.querySelector('#tvSymbolSelect');
+      if (sel) {
+        sel.addEventListener('change', function () {
+          S.usSymbol = this.value;
+          initTVChart(page, S.usSymbol);
+        });
+      }
+    } else {
+      var sel2 = page.querySelector('#tvSymbolSelect');
+      if (sel2) sel2.value = S.usSymbol;
     }
   }
 
@@ -678,28 +712,40 @@
     function tvLoading(id, text) {
       return '<div class="mkt-tv-loading" id="' + id + '" role="status" aria-live="polite"><div class="mkt-tv-spinner"></div>' + text + '</div>';
     }
-    function tvError(id, msg, retryKey, openUrl) {
+    function tvError(id, msgId, retryKey, openUrl) {
       return '<div class="mkt-tv-error" id="' + id + '" style="display:none" role="status">'
-        + '<div class="mkt-tv-error-ico">📡</div><div class="mkt-tv-error-msg">' + msg + '</div>'
+        + '<div class="mkt-tv-error-ico">📡</div>'
+        + '<div class="mkt-tv-error-msg" id="' + msgId + '"></div>'
         + '<div class="mkt-tv-error-sub">Telegram ограничил внешний скрипт или нет соединения</div>'
         + '<div class="mkt-tv-btns">'
         + '<button class="mkt-tv-retry-btn" data-tv-retry="' + retryKey + '">↺ Повторить</button>'
-        + '<button class="mkt-tv-ext-btn" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
+        + '<button class="mkt-tv-ext-btn tvChartExtUrl" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
         + '</div></div>';
     }
     function tvAfter(id, openUrl) {
       return '<div class="mkt-tv-after" id="' + id + '" style="display:none">'
-        + '<button class="mkt-tv-ext-btn" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
+        + '<button class="mkt-tv-ext-btn tvChartExtUrl" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
         + '</div>';
     }
+    var initSym = S.usSymbol || 'NASDAQ:AAPL';
+    var initCfg = _usCfg(initSym);
     return ''
-      + '<div class="mkt-section-head" id="mkt-anchor-us-chart">Акции Apple · NASDAQ:AAPL</div>'
-      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Котировки TradingView могут отображаться с задержкой</div>'
+      + '<div class="mkt-section-head" id="mkt-anchor-us-chart">Акции ' + initCfg.name + ' · ' + initSym + '</div>'
+      + '<div class="mkt-us-select-wrap">'
+      + '<label class="mkt-us-select-label" for="tvSymbolSelect">Выберите инструмент</label>'
+      + '<select class="mkt-us-select" id="tvSymbolSelect" aria-label="Выберите инструмент">'
+      + _US_SYMS.map(function (c) {
+          return '<option value="' + c.sym + '"' + (c.sym === initSym ? ' selected' : '') + '>' + c.label + '</option>';
+        }).join('')
+      + '</select>'
+      + '</div>'
+      + '<div class="mkt-tv-delay-notice">Котировки TradingView могут отображаться с задержкой</div>'
+      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Время на графике указано по Нью-Йорку</div>'
       + '<div class="mkt-tv-wrap">'
-      + tvLoading('tvChartLoading', 'Загружаем график Apple…')
-      + tvError('tvChartError', 'График Apple не загрузился', 'chart', 'https://www.tradingview.com/chart/?symbol=NASDAQ:AAPL')
+      + tvLoading('tvChartLoading', 'Загружаем график ' + initCfg.name + '…')
+      + tvError('tvChartError', 'tvChartErrorMsg', 'chart', initCfg.tv)
       + '<div id="tvChartInner" style="height:380px;border-radius:8px;display:none"></div>'
-      + tvAfter('tvChartAfter', 'https://www.tradingview.com/chart/?symbol=NASDAQ:AAPL')
+      + tvAfter('tvChartAfter', initCfg.tv)
       + '</div>'
       + '<div class="mkt-section-head">Обзор рынка (TradingView)</div>'
       + '<div class="mkt-tv-wrap">'
@@ -977,7 +1023,7 @@
 
       if (t.dataset.tvRetry) {
         var retryKey = t.dataset.tvRetry;
-        if (retryKey === 'chart')    { initTVChart(page); }
+        if (retryKey === 'chart')    { initTVChart(page, S.usSymbol); }
         if (retryKey === 'overview') { initTVOverview(page); }
         if (retryKey === 'heatmap')  { initTVHeatmap(page); }
         return;
