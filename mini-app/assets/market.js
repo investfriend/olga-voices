@@ -1,4 +1,4 @@
-// assets/market.js v20 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v21 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -487,7 +487,14 @@
     var liveList = (S.ld.leaders && (S.ld.ldrStatus === 'ok' || S.ld.ldrStatus === 'stale'))
       ? S.ld.leaders[S.leaderTab] : null;
     if (!liveList || !liveList.length) {
-      var msg = S.ld.ldrStatus === 'loading' ? 'Загружаем…' : 'Нет данных · рынок может быть закрыт';
+      var msg;
+      if (S.ld.ldrStatus === 'loading') {
+        msg = 'Загружаем лидеров…';
+      } else if (S.ld.ldrStatus === 'error') {
+        msg = 'Не удалось получить лидеров дня';
+      } else {
+        msg = 'Нет данных · рынок может быть закрыт';
+      }
       wrap.innerHTML = '<div class="mkt-no-data">' + msg + '</div>';
     } else {
       var html = '';
@@ -954,6 +961,19 @@
     renderChart(page);
   }
 
+  function _renderRuIndexSections(page) {
+    _renderStatus(page);
+    renderOverview(page, null, 'mktOverviewTrack');
+    renderIndices(page);
+    renderSectors(page);
+    renderBonds(page);
+    renderChart(page);
+  }
+
+  function _renderRuLeadersSection(page) {
+    renderLeaders(page);
+  }
+
   function fetchRussianData(page) {
     if (!MA || !MA.isEnabled()) {
       S.ld.indStatus = 'error'; S.ld.ldrStatus = 'error';
@@ -965,63 +985,85 @@
     var seq = ++S.fetchSeq;
     S.ld.indStatus = 'loading'; S.ld.ldrStatus = 'loading';
     _renderStatus(page);
+    renderLeaders(page);
 
-    Promise.all([MA.getIndices(), MA.getLeaders()]).then(function (results) {
-      if (S.fetchSeq !== seq) return;
-      var indRes = results[0];
-      var ldrRes = results[1];
-
-      if (indRes.data) {
-        S.ld.indexMap  = _parseIndicesResponse(indRes);
-        S.ld.indStatus = indRes.stale ? 'stale' : 'ok';
-        S.ld.staleMin  = indRes.staleMin || null;
-        S.ld.fetchTs   = Date.now();
-        S.ld.cacheTs   = indRes.stale ? (indRes.ts || null) : null;
-        if (S.ld.indexMap && S.ld.indexMap['IMOEX']) {
-          S.ld.updateTime = S.ld.indexMap['IMOEX'].updateTime;
+    // ── Ветка индексов — независима от лидеров ────────────────────────────
+    Promise.resolve()
+      .then(function () { return MA.getIndices(); })
+      .then(function (indRes) {
+        if (S.fetchSeq !== seq) return;
+        if (indRes.data) {
+          var parsed = _parseIndicesResponse(indRes);
+          if (parsed) {
+            S.ld.indexMap  = parsed;
+            S.ld.indStatus = indRes.stale ? 'stale' : 'ok';
+            S.ld.staleMin  = indRes.staleMin || null;
+            S.ld.fetchTs   = Date.now();
+            S.ld.cacheTs   = indRes.stale ? (indRes.ts || null) : null;
+            if (S.ld.indexMap['IMOEX']) S.ld.updateTime = S.ld.indexMap['IMOEX'].updateTime;
+            // Сохраняем только данные, реально полученные от MOEX (не stale)
+            if (!indRes.stale) _saveToLS(S.ld.indexMap, S.ld.updateTime, S.ld.fetchTs);
+          } else {
+            // data есть, но parse не дал строк → пробуем localStorage
+            var cached = _loadFromLS();
+            if (cached) {
+              S.ld.indexMap   = cached.data;
+              S.ld.indStatus  = 'stale';
+              S.ld.cacheTs    = cached.fetchTs;
+              S.ld.updateTime = cached.quoteTs || null;
+            } else {
+              S.ld.indexMap  = null;
+              S.ld.indStatus = 'error';
+              S.ld.error     = 'Нет данных в ответе MOEX';
+            }
+          }
+        } else {
+          // Адаптер без данных → пробуем localStorage
+          var cached = _loadFromLS();
+          if (cached) {
+            S.ld.indexMap   = cached.data;
+            S.ld.indStatus  = 'stale';
+            S.ld.cacheTs    = cached.fetchTs;
+            S.ld.updateTime = cached.quoteTs || null;
+          } else {
+            S.ld.indexMap  = null;
+            S.ld.indStatus = 'error';
+            S.ld.error     = indRes.error;
+          }
         }
-        // Сохраняем только данные, реально полученные от MOEX (не stale)
-        if (!indRes.stale && S.ld.indexMap) {
-          _saveToLS(S.ld.indexMap, S.ld.updateTime, S.ld.fetchTs);
-        }
-      } else {
-        // Адаптер без данных → пробуем localStorage
+        if (S.tab === 'ru') _renderRuIndexSections(page);
+      }, function (err) {
+        if (S.fetchSeq !== seq) return;
         var cached = _loadFromLS();
         if (cached) {
-          S.ld.indexMap  = cached.data;
-          S.ld.indStatus = 'stale';
-          S.ld.cacheTs   = cached.fetchTs;
+          S.ld.indexMap   = cached.data;
+          S.ld.indStatus  = 'stale';
+          S.ld.cacheTs    = cached.fetchTs;
           S.ld.updateTime = cached.quoteTs || null;
         } else {
-          S.ld.indexMap  = null;
           S.ld.indStatus = 'error';
-          S.ld.error = indRes.error;
+          S.ld.error     = err.message;
         }
-      }
+        if (S.tab === 'ru') _renderRuIndexSections(page);
+      });
 
-      if (ldrRes.data) {
-        S.ld.leaders   = _parseLeadersResponse(ldrRes);
-        S.ld.ldrStatus = ldrRes.stale ? 'stale' : 'ok';
-      } else {
+    // ── Ветка лидеров — независима от индексов ────────────────────────────
+    Promise.resolve()
+      .then(function () { return MA.getLeaders(); })
+      .then(function (ldrRes) {
+        if (S.fetchSeq !== seq) return;
+        if (ldrRes.data) {
+          S.ld.leaders   = _parseLeadersResponse(ldrRes);
+          S.ld.ldrStatus = ldrRes.stale ? 'stale' : 'ok';
+        } else {
+          S.ld.ldrStatus = 'error';
+        }
+        if (S.tab === 'ru') _renderRuLeadersSection(page);
+      }, function () {
+        if (S.fetchSeq !== seq) return;
         S.ld.ldrStatus = 'error';
-      }
-
-      if (S.tab === 'ru') _renderAllRuSections(page);
-    }).catch(function (err) {
-      if (S.fetchSeq !== seq) return;
-      var cached = _loadFromLS();
-      if (cached) {
-        S.ld.indexMap  = cached.data;
-        S.ld.indStatus = 'stale';
-        S.ld.cacheTs   = cached.fetchTs;
-        S.ld.updateTime = cached.quoteTs || null;
-      } else {
-        S.ld.indStatus = 'error';
-        S.ld.error = err.message;
-      }
-      S.ld.ldrStatus = 'error';
-      if (S.tab === 'ru') _renderAllRuSections(page);
-    });
+        if (S.tab === 'ru') _renderRuLeadersSection(page);
+      });
   }
 
   // ── Построение HTML страницы ───────────────────────────────────────────────
