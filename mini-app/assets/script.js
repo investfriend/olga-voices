@@ -32,8 +32,14 @@ const STATE = {
   activeCategory: null,
   activeItem: null,
   activeFilter: 'Все',
-  favorites: JSON.parse(localStorage.getItem('iv_favs') || '[]'),
+  favorites: (function () {
+    try {
+      var v = JSON.parse(localStorage.getItem('iv_favs') || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  }()),
 };
+window.STATE = STATE;
 
 // === Routing ===
 function setPage(name, push = true) {

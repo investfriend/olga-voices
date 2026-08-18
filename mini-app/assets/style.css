@@ -1627,7 +1627,7 @@ button, input, textarea, select { font-family: inherit; }
   min-height: 44px;
   justify-content: center;
 }
-.hp-step-fav.active { color: var(--gold); }
+.hp-step-fav.is-fav { color: var(--gold); }
 .hp-step-fav svg { pointer-events: none; }
 
 /* === УТИЛИТЫ: ШРИФТЫ === */

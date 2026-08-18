@@ -200,25 +200,8 @@
     return (window.STATE && STATE.favorites || []).includes('home/' + id);
   }
 
-  var FAV_EMPTY  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="20" height="20"><path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,177.57-51.77-32.35a8,8,0,0,0-8.48,0L72,209.57V48H184Z"/></svg>';
-  var FAV_ACTIVE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="20" height="20"><path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Z"/></svg>';
-
   function toggleStepFav(stepId, btn) {
-    if (!window.STATE) return;
-    var key = 'home/' + stepId;
-    var idx = STATE.favorites.indexOf(key);
-    if (idx >= 0) {
-      STATE.favorites.splice(idx, 1);
-      btn.classList.remove('active');
-      btn.innerHTML = FAV_EMPTY;
-    } else {
-      STATE.favorites.push(key);
-      btn.classList.add('active');
-      btn.innerHTML = FAV_ACTIVE;
-      var tg = window.Telegram && window.Telegram.WebApp;
-      if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    }
-    localStorage.setItem('iv_favs', JSON.stringify(STATE.favorites));
+    if (typeof FAV !== 'undefined') FAV.toggle('home/' + stepId, btn);
   }
 
   var CHEVRON_SVG = '<svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>';
@@ -670,8 +653,8 @@
         + '<div class="hp-step-desc">' + s.desc + '</div>'
         + '<button class="hp-step-open" data-step-id="' + s.id + '">' + courseCount + ' →</button>'
         + '</div>'
-        + '<button class="hp-step-fav ' + (fav ? 'active' : '') + '" data-step="' + s.id + '" aria-label="Избранное">'
-        + (fav ? FAV_ACTIVE : FAV_EMPTY)
+        + '<button class="hp-step-fav' + (fav ? ' is-fav' : '') + '" data-fav-key="home/' + s.id + '" aria-label="' + (fav ? 'Убрать из избранного' : 'Добавить в избранное') + '">'
+        + (fav ? FAV.starFill : FAV.starEmpty)
         + '</button>'
         + '</div>';
     }).join('');
@@ -720,7 +703,7 @@
       var favBtn = e.target.closest('.hp-step-fav');
       if (favBtn) {
         e.stopPropagation();
-        toggleStepFav(favBtn.dataset.step, favBtn);
+        if (typeof FAV !== 'undefined') FAV.toggle(favBtn.dataset.favKey, favBtn);
         return;
       }
       var arcFavBtn = e.target.closest('[data-arc-fav]');
