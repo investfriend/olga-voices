@@ -1,4 +1,4 @@
-// assets/moex-adapter.js v2 — ISS MOEX data adapter
+// assets/moex-adapter.js v3 — ISS MOEX data adapter
 // Авторизация на подключение: Юрий, 2026-08-07
 // Для production-деплоя: получить письменное подтверждение от itsales@moex.com
 // Данные задержаны ≥15 мин согласно условиям ISS бесплатного доступа
@@ -46,12 +46,28 @@
   function _fetchWithTimeout(url) {
     return new Promise(function (resolve, reject) {
       var settled = false;
+      var controller = typeof AbortController === 'function'
+        ? new AbortController()
+        : null;
       var timer = setTimeout(function () {
-        if (!settled) { settled = true; reject(new Error('Тайм-аут ' + TIMEOUT_MS + ' мс')); }
+        if (settled) return;
+        settled = true;
+        if (controller) controller.abort();
+        reject(new Error('Тайм-аут ' + TIMEOUT_MS + ' мс'));
       }, TIMEOUT_MS);
-      fetch(url)
-        .then(function (r) { clearTimeout(timer); if (!settled) { settled = true; resolve(r); } })
-        .catch(function (e) { clearTimeout(timer); if (!settled) { settled = true; reject(e); } });
+      fetch(url, controller ? { signal: controller.signal } : undefined)
+        .then(function (r) {
+          clearTimeout(timer);
+          if (settled) return;
+          settled = true;
+          resolve(r);
+        })
+        .catch(function (err) {
+          clearTimeout(timer);
+          if (settled) return;
+          settled = true;
+          reject(err);
+        });
     });
   }
 

@@ -1,5 +1,5 @@
-// assets/market-data.js v4 — конфигурация тикеров раздела «Рынок»
-// Реальные котировки: MOEX ISS API (market-api.js). Здесь — только имена, тикеры, единицы.
+// assets/market-data.js v5 — конфигурация тикеров раздела «Рынок»
+// Реальные котировки: MOEX ISS API (moex-adapter.js). Здесь — только имена, тикеры, единицы.
 
 window.MARKET_DATA = {
 
