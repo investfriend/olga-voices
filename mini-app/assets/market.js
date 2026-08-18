@@ -1,4 +1,4 @@
-// assets/market.js v8 — live MOEX ISS + Lightweight Charts (no demo fallback)
+// assets/market.js v13 — live MOEX ISS + Lightweight Charts (no demo fallback)
 // Источник данных: iss.moex.com (задержка ≥15 мин)
 // График: Lightweight Charts (Apache 2.0, локальная копия assets/lwcharts.js)
 
@@ -655,25 +655,75 @@
     });
   }
 
+  // ── Market Overview — Web Component ──────────────────────────────────────
+  var _tvOverviewSeq   = 0;
+  var _tvOverviewTimId = null;
+  var _TV_OVERVIEW_SYMS = JSON.stringify([
+    { sectionName: 'Фонды рынка США',   symbols: ['AMEX:SPY', 'NASDAQ:QQQ'] },
+    { sectionName: 'Крупные компании',  symbols: ['NASDAQ:AAPL', 'NASDAQ:MSFT', 'NASDAQ:NVDA', 'NASDAQ:AMZN', 'NASDAQ:GOOGL', 'NASDAQ:META', 'NASDAQ:TSLA'] },
+  ]);
+  function _tvOverviewStop() {
+    if (_tvOverviewTimId !== null) { clearTimeout(_tvOverviewTimId); _tvOverviewTimId = null; }
+  }
   function initTVOverview(page) {
     var oc = page.querySelector('#tvOverviewContainer');
     var ol = page.querySelector('#tvOverviewLoading');
     var oe = page.querySelector('#tvOverviewError');
     var oa = page.querySelector('#tvOverviewAfter');
     if (!oc) return;
-    if (ol) ol.style.display = ''; if (oe) oe.style.display = 'none'; oc.style.display = 'none'; if (oa) oa.style.display = 'none';
-    tvInjectEmbed(oc,
-      'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js',
-      { colorTheme: 'dark', dateRange: '12M', showChart: true, locale: 'ru',
-        largeChartUrl: '', isTransparent: true, showSymbolLogo: true, showFloatingTooltip: false,
-        width: '100%', height: 400, plotLineColorBull: '#27C98A', plotLineColorBear: '#E05858',
-        tabs: [
-          { title: 'Индексы', symbols: [{ s: 'SP:SPX', d: 'S&P 500' }, { s: 'NASDAQ:NDX', d: 'Nasdaq 100' }, { s: 'DJ:DJI', d: 'Dow Jones' }, { s: 'CBOE:VIX', d: 'VIX' }] },
-          { title: 'Товары',  symbols: [{ s: 'OANDA:XAUUSD', d: 'Золото' }, { s: 'TVC:UKOIL', d: 'Brent' }, { s: 'TVC:USOIL', d: 'WTI' }] },
-        ] },
-      function () { if (ol) ol.style.display = 'none'; if (oe) oe.style.display = ''; },
-      function () { if (ol) ol.style.display = 'none'; oc.style.display = ''; if (oa) oa.style.display = ''; }
-    );
+
+    var seq = ++_tvOverviewSeq;
+    _tvOverviewStop();
+    while (oc.firstChild) oc.removeChild(oc.firstChild);
+    oc.style.display = 'none';
+    if (ol) ol.style.display = '';
+    if (oe) oe.style.display = 'none';
+    if (oa) oa.style.display = 'none';
+
+    function _fail() {
+      if (seq !== _tvOverviewSeq) return;
+      _tvOverviewStop();
+      if (ol) ol.style.display = 'none'; if (oe) oe.style.display = '';
+    }
+    function _succeed() {
+      if (seq !== _tvOverviewSeq) return;
+      _tvOverviewStop();
+      if (ol) ol.style.display = 'none'; oc.style.display = ''; if (oa) oa.style.display = '';
+    }
+
+    // Inject type="module" script once per page lifetime
+    if (!document.querySelector('script[data-tv-overview]')) {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src = 'https://widgets.tradingview-widget.com/w/en/tv-market-overview.js';
+      s.setAttribute('data-tv-overview', '1');
+      s.onerror = function () { if (seq === _tvOverviewSeq) _fail(); };
+      document.head.appendChild(s);
+    }
+
+    // Create Web Component via DOM API (not innerHTML)
+    var cs = getComputedStyle(document.documentElement);
+    var comp = document.createElement('tv-market-overview');
+    comp.setAttribute('symbol-sectors', _TV_OVERVIEW_SYMS);
+    comp.style.cssText = 'width:100%;min-height:350px;display:block';
+    comp.style.setProperty('--tv-widget-background-color', cs.getPropertyValue('--bg').trim()       || '#101311');
+    comp.style.setProperty('--tv-widget-text-color',       cs.getPropertyValue('--text').trim()     || '#F3F1EA');
+    comp.style.setProperty('--tv-widget-positive-color',   cs.getPropertyValue('--mkt-up').trim()   || '#27C98A');
+    comp.style.setProperty('--tv-widget-negative-color',   cs.getPropertyValue('--mkt-down').trim() || '#E05858');
+    comp.style.setProperty('--tv-widget-accent-color',     '#2962FF');
+    comp.style.setProperty('--tv-widget-font-family',      "'IBM Plex Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif");
+    oc.appendChild(comp);
+
+    // customElements.whenDefined resolves when the element is registered
+    customElements.whenDefined('tv-market-overview').then(function () {
+      if (seq !== _tvOverviewSeq) return;
+      _succeed();
+    });
+    // 12-second timeout fallback
+    _tvOverviewTimId = setTimeout(function () {
+      if (seq !== _tvOverviewSeq) return;
+      customElements.get('tv-market-overview') ? _succeed() : _fail();
+    }, 12000);
   }
 
   function initTVHeatmap(page) {
@@ -715,27 +765,29 @@
 
   // ── HTML блока США ────────────────────────────────────────────────────────
   function buildUSHTML() {
+    // Generic helpers — no tvChartExtUrl class (chart section inlined separately)
     function tvLoading(id, text) {
       return '<div class="mkt-tv-loading" id="' + id + '" role="status" aria-live="polite"><div class="mkt-tv-spinner"></div>' + text + '</div>';
     }
-    function tvError(id, msgId, retryKey, openUrl) {
+    function tvError(id, errMsg, retryKey, openUrl) {
       return '<div class="mkt-tv-error" id="' + id + '" style="display:none" role="status">'
         + '<div class="mkt-tv-error-ico">📡</div>'
-        + '<div class="mkt-tv-error-msg" id="' + msgId + '"></div>'
+        + '<div class="mkt-tv-error-msg">' + errMsg + '</div>'
         + '<div class="mkt-tv-error-sub">Telegram ограничил внешний скрипт или нет соединения</div>'
         + '<div class="mkt-tv-btns">'
         + '<button class="mkt-tv-retry-btn" data-tv-retry="' + retryKey + '">↺ Повторить</button>'
-        + '<button class="mkt-tv-ext-btn tvChartExtUrl" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
+        + '<button class="mkt-tv-ext-btn" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
         + '</div></div>';
     }
     function tvAfter(id, openUrl) {
       return '<div class="mkt-tv-after" id="' + id + '" style="display:none">'
-        + '<button class="mkt-tv-ext-btn tvChartExtUrl" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
+        + '<button class="mkt-tv-ext-btn" data-tv-open="' + openUrl + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
         + '</div>';
     }
     var initSym = S.usSymbol || 'NASDAQ:AAPL';
     var initCfg = _usCfg(initSym);
     return ''
+      // ── Основной график (chart error/after inlined — нужен tvChartExtUrl) ──
       + '<div class="mkt-section-head" id="mkt-anchor-us-chart">' + initCfg.head + '</div>'
       + '<div class="mkt-us-select-wrap">'
       + '<label class="mkt-us-select-label" for="tvSymbolSelect">Выберите инструмент</label>'
@@ -749,17 +801,29 @@
       + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Время на графике указано по Нью-Йорку</div>'
       + '<div class="mkt-tv-wrap">'
       + tvLoading('tvChartLoading', 'Загружаем график ' + initCfg.name + '…')
-      + tvError('tvChartError', 'tvChartErrorMsg', 'chart', initCfg.tv)
+      + '<div class="mkt-tv-error" id="tvChartError" style="display:none" role="status">'
+      +   '<div class="mkt-tv-error-ico">📡</div>'
+      +   '<div class="mkt-tv-error-msg" id="tvChartErrorMsg"></div>'
+      +   '<div class="mkt-tv-error-sub">Telegram ограничил внешний скрипт или нет соединения</div>'
+      +   '<div class="mkt-tv-btns">'
+      +   '<button class="mkt-tv-retry-btn" data-tv-retry="chart">↺ Повторить</button>'
+      +   '<button class="mkt-tv-ext-btn tvChartExtUrl" data-tv-open="' + initCfg.tv + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
+      +   '</div></div>'
       + '<div id="tvChartInner" style="height:380px;border-radius:8px;display:none"></div>'
-      + tvAfter('tvChartAfter', initCfg.tv)
+      + '<div class="mkt-tv-after" id="tvChartAfter" style="display:none">'
+      +   '<button class="mkt-tv-ext-btn tvChartExtUrl" data-tv-open="' + initCfg.tv + '" aria-label="Открыть TradingView">Открыть TradingView&nbsp;' + _EXT_IC + '</button>'
       + '</div>'
-      + '<div class="mkt-section-head">Обзор рынка (TradingView)</div>'
+      + '</div>'
+      // ── Обзор рынка США (Web Component) ──────────────────────────────────
+      + '<div class="mkt-section-head">Обзор рынка США</div>'
+      + '<div class="mkt-tv-delay-notice" style="margin-bottom:8px">Сравнение фондов и крупнейших компаний. Котировки TradingView могут отображаться с задержкой.</div>'
       + '<div class="mkt-tv-wrap">'
       + tvLoading('tvOverviewLoading', 'Загружаем обзор рынка…')
-      + tvError('tvOverviewError', 'Виджет не загрузился внутри Telegram', 'overview', 'https://www.tradingview.com/markets/')
-      + '<div id="tvOverviewContainer" class="tradingview-widget-container" style="display:none;min-height:200px"></div>'
-      + tvAfter('tvOverviewAfter', 'https://www.tradingview.com/markets/')
+      + tvError('tvOverviewError', 'Обзор рынка не загрузился', 'overview', 'https://www.tradingview.com/markets/stocks-usa/')
+      + '<div id="tvOverviewContainer" style="display:none;min-height:350px"></div>'
+      + tvAfter('tvOverviewAfter', 'https://www.tradingview.com/markets/stocks-usa/')
       + '</div>'
+      // ── Тепловая карта ────────────────────────────────────────────────────
       + '<div class="mkt-section-head">Тепловая карта S&amp;P 500 (TradingView)</div>'
       + '<div class="mkt-tv-wrap">'
       + tvLoading('tvHeatmapLoading', 'Загружаем тепловую карту…')
