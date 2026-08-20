@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="assets/style.css?v=17">
 <link rel="stylesheet" href="assets/market.css?v=12">
 <link rel="stylesheet" href="assets/investik.css?v=2">
-<link rel="stylesheet" href="assets/money.css?v=1">
+<link rel="stylesheet" href="assets/money.css?v=2">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -253,7 +253,7 @@
         </div>
         <div class="mn-metric">
           <div class="mn-metric-label">Расходы</div>
-          <div class="mn-metric-value">—</div>
+          <div class="mn-metric-value" id="mn-month-expenses">—</div>
         </div>
         <div class="mn-metric">
           <div class="mn-metric-label">В цели</div>
@@ -261,6 +261,8 @@
         </div>
       </div>
     </div>
+
+    <div id="mn-quick-wrap"></div>
 
     <div class="mn-block-title">На сегодня</div>
     <div class="mn-today">
@@ -319,9 +321,7 @@
   <section class="page sub" data-page="money-ops">
     <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
     <h2 class="page-title">Операции</h2>
-    <div class="mn-empty">
-      <p class="mn-empty-text">Пока нет операций</p>
-    </div>
+    <div id="mn-ops-content"></div>
   </section>
 
   <!-- МОИ ДЕНЬГИ — Цели -->
@@ -403,7 +403,7 @@
 <script src="assets/lwcharts.js"></script>
 <script src="assets/market.js?v=22"></script>
 <script src="assets/chat.js?v=5"></script>
-<script src="assets/money.js?v=1"></script>
+<script src="assets/money.js?v=2"></script>
 <script>
 /* Инвестик — конфигурация (менять здесь, не в investik.js) */
 window.INVESTIK_CFG = {
