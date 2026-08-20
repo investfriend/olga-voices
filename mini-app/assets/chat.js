@@ -82,8 +82,8 @@
       type: 'group',
       label: 'Аналитика',
       items: [
-        { icon: 'chartbar',  title: 'Разборы компаний',      sub: 'Детальный анализ эмитентов' },
-        { icon: 'news2',     title: 'Дайджест и новости',    sub: 'Важные события рынка и клуба' },
+        { icon: 'chartbar',  title: 'Разборы компаний',      sub: 'Детальный анализ эмитентов',    topicId: 20 },
+        { icon: 'news2',     title: 'Дайджест и новости',    sub: 'Важные события рынка и клуба',  topicId: 18 },
         { icon: 'video',     title: 'Ответы на вопросы',     sub: 'Записи эфиров и разборов' },
       ],
     },
@@ -91,9 +91,9 @@
       type: 'group',
       label: 'Инвестиционные идеи',
       items: [
-        { icon: 'lightning', title: 'Идеи РФ: высокий риск', sub: 'Высокодоходные истории с повышенным риском' },
+        { icon: 'lightning', title: 'Идеи РФ: высокий риск', sub: 'Высокодоходные истории с повышенным риском', topicId: 10 },
         { icon: 'globe',     title: 'Зарубежный рынок',      sub: 'Идеи по иностранным активам' },
-        { icon: 'briefcase', title: 'Портфель клуба',        sub: 'Модельные позиции и изменения' },
+        { icon: 'briefcase', title: 'Портфель клуба',        sub: 'Модельные позиции и изменения',               topicId: 8 },
         { icon: 'house',     title: 'Инвестиции в недвижимость', sub: 'ЗПИФ, объекты и стратегии' },
         { icon: 'btc',       title: 'Криптовалюта',          sub: 'Крипторынок, идеи и аналитика' },
       ],
@@ -261,7 +261,10 @@
 
   // ── Лента: HTML ──────────────────────────────────────────────────────────────
   function _feedItemHTML(entry) {
-    return '<button class="club-feed-item" type="button" data-feed-topic="' + entry.title + '" aria-label="' + entry.title + '">'
+    return '<button class="club-feed-item" type="button"'
+      + ' data-feed-topic="' + entry.title + '"'
+      + (entry.topicId ? ' data-feed-topic-id="' + entry.topicId + '"' : '')
+      + ' aria-label="' + entry.title + '">'
       + '<span class="club-feed-icon">' + (_FIC[entry.icon] || _FIC.newsp) + '</span>'
       + '<span class="club-feed-text">'
       + '<span class="club-feed-title">' + entry.title + '</span>'
@@ -353,6 +356,90 @@
     if (_feedModalTrigger) { _feedModalTrigger.focus(); _feedModalTrigger = null; }
   }
 
+  // ── Лента: реальные посты из Telegram ────────────────────────────────────────
+  var _feedPostsEl  = null;
+  var _feedPostsTrigger = null;
+  var _feedCache    = null;        // кешируем feed.json на сессию
+
+  function _esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function _createFeedPostsSheet() {
+    if (_feedPostsEl) return;
+    var el = document.createElement('div');
+    el.id = 'feed-posts-sheet';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML =
+      '<div class="fp-backdrop"></div>'
+      + '<div class="fp-panel">'
+      + '<div class="fp-header">'
+      + '<h3 class="fp-title" id="fp-title"></h3>'
+      + '<button class="fp-close" aria-label="Закрыть">' + _X_IC + '</button>'
+      + '</div>'
+      + '<div class="fp-body" id="fp-body"></div>'
+      + '</div>';
+    document.body.appendChild(el);
+    _feedPostsEl = el;
+
+    el.querySelector('.fp-backdrop').addEventListener('click', _closeFeedPosts);
+    el.querySelector('.fp-close').addEventListener('click', _closeFeedPosts);
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') _closeFeedPosts();
+    });
+  }
+
+  function _openFeedPosts(topicId, title, triggerEl) {
+    _createFeedPostsSheet();
+    _feedPostsTrigger = triggerEl || null;
+    var el = _feedPostsEl;
+    el.querySelector('#fp-title').textContent = title;
+    var body = el.querySelector('#fp-body');
+    body.innerHTML = '<p class="fp-loading">Загружаем посты…</p>';
+    el.setAttribute('aria-hidden', 'false');
+    el.classList.add('fp--open');
+    document.body.classList.add('ch-no-scroll');
+
+    var render = function (feed) {
+      var topic = feed.topics && feed.topics[String(topicId)];
+      if (!topic || !topic.posts || !topic.posts.length) {
+        body.innerHTML = '<p class="fp-empty">Пока нет публикаций в этой теме.</p>';
+        return;
+      }
+      var html = '';
+      topic.posts.forEach(function (p) {
+        var dateStr = p.date || '';
+        var preview = _esc(p.preview || p.text || '');
+        var link = p.link || '';
+        html += '<div class="fp-post">'
+          + '<div class="fp-post-date">' + _esc(dateStr) + '</div>'
+          + '<p class="fp-post-text">' + preview.replace(/\n/g,'<br>') + '</p>'
+          + (link ? '<a class="fp-post-link" href="' + _esc(link) + '" target="_blank" rel="noopener">Открыть в Telegram ↗</a>' : '')
+          + '</div>';
+      });
+      var upd = feed.updated_at ? feed.updated_at.slice(0,10) : '';
+      body.innerHTML = html
+        + (upd ? '<p class="fp-updated">Обновлено ' + _esc(upd) + '</p>' : '');
+    };
+
+    if (_feedCache) { render(_feedCache); return; }
+
+    fetch('assets/feed.json?' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (data) { _feedCache = data; render(data); })
+      .catch(function () { body.innerHTML = '<p class="fp-empty">Не удалось загрузить данные. Попробуйте позже.</p>'; });
+  }
+
+  function _closeFeedPosts() {
+    if (!_feedPostsEl) return;
+    _feedPostsEl.setAttribute('aria-hidden', 'true');
+    _feedPostsEl.classList.remove('fp--open');
+    document.body.classList.remove('ch-no-scroll');
+    if (_feedPostsTrigger) { _feedPostsTrigger.focus(); _feedPostsTrigger = null; }
+  }
+
   // ── Общение: утилиты ──────────────────────────────────────────────────────────
   function _findItem(id) {
     var found = null;
@@ -423,7 +510,15 @@
 
   function _handleClick(e) {
     var feedBtn = e.target.closest('[data-feed-topic]');
-    if (feedBtn) { _openFeedModal(feedBtn.dataset.feedTopic, feedBtn); return; }
+    if (feedBtn) {
+      var tid = feedBtn.dataset.feedTopicId;
+      if (tid) {
+        _openFeedPosts(parseInt(tid, 10), feedBtn.dataset.feedTopic, feedBtn);
+      } else {
+        _openFeedModal(feedBtn.dataset.feedTopic, feedBtn);
+      }
+      return;
+    }
 
     var resFavBtn = e.target.closest('[data-res-fav]');
     if (resFavBtn) {

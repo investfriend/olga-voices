@@ -2892,3 +2892,82 @@ html[data-theme="light"] .lrn-gc-link {
   transition: opacity .15s;
 }
 .feed-modal-ok:active { opacity: .87; }
+
+/* ─── Feed Posts Sheet (real Telegram posts) ─────────────────────────────── */
+#feed-posts-sheet { display: none; position: fixed; inset: 0; z-index: 600; }
+#feed-posts-sheet.fp--open { display: block; }
+
+.fp-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.52);
+  animation: fpBdIn .2s;
+}
+@keyframes fpBdIn { from { opacity: 0; } to { opacity: 1; } }
+
+.fp-panel {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--bg); border-radius: 20px 20px 0 0;
+  max-height: 92vh; display: flex; flex-direction: column;
+  animation: fpUp .25s ease-out;
+}
+@keyframes fpUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+@media (min-width: 600px) {
+  .fp-panel {
+    bottom: auto; left: 50%; top: 50%; width: 480px;
+    border-radius: 20px; transform: translate(-50%,-50%);
+    max-height: 86vh; animation: none;
+  }
+}
+
+.fp-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.fp-title {
+  font-size: 17px; font-weight: 700; color: var(--text); margin: 0; flex: 1; min-width: 0;
+}
+.fp-close {
+  flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--bg-card-2); border: none; color: var(--text-dim);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; margin-left: 10px;
+}
+.fp-close:active { opacity: .7; }
+.fp-close svg { width: 16px; height: 16px; display: block; }
+
+.fp-body {
+  flex: 1; overflow-y: auto; padding: 0 16px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fp-loading, .fp-empty {
+  text-align: center; color: var(--text-dim); font-size: 14px;
+  padding: 40px 0;
+}
+
+.fp-post {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.fp-post:last-of-type { border-bottom: none; }
+
+.fp-post-date {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--text-dim); margin-bottom: 6px;
+}
+.fp-post-text {
+  font-size: 14px; color: var(--text); line-height: 1.55;
+  margin: 0 0 10px; white-space: pre-line;
+}
+.fp-post-link {
+  display: inline-block; font-size: 13px; font-weight: 600;
+  color: var(--accent); text-decoration: none;
+}
+.fp-post-link:active { opacity: .75; }
+
+.fp-updated {
+  font-size: 11px; color: var(--text-dim); text-align: center;
+  padding: 16px 0 0; margin: 0;
+}
