@@ -54,6 +54,12 @@
     caret: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>',
   };
 
+
+  // X (Close) — кнопка закрытия модалки
+  var _X_IC = '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>';
+
+  var _feedModalTrigger = null;
+
   // ── Каталог тем «Лента» ───────────────────────────────────────────────────────
   var FEED_CATALOG = [
     {
@@ -255,7 +261,7 @@
 
   // ── Лента: HTML ──────────────────────────────────────────────────────────────
   function _feedItemHTML(entry) {
-    return '<button class="club-feed-item" type="button" aria-label="' + entry.title + '">'
+    return '<button class="club-feed-item" type="button" data-feed-topic="' + entry.title + '" aria-label="' + entry.title + '">'
       + '<span class="club-feed-icon">' + (_FIC[entry.icon] || _FIC.newsp) + '</span>'
       + '<span class="club-feed-text">'
       + '<span class="club-feed-title">' + entry.title + '</span>'
@@ -269,14 +275,14 @@
     var html = '';
     FEED_CATALOG.forEach(function (block) {
       if (block.type === 'all') {
-        html += '<div class="club-feed-all">'
+        html += '<button class="club-feed-all" type="button" data-feed-topic="' + block.title + '" aria-label="' + block.title + '">'
           + '<span class="club-feed-icon">' + (_FIC[block.icon] || _FIC.newsp) + '</span>'
           + '<span class="club-feed-text">'
           + '<span class="club-feed-title">' + block.title + '</span>'
           + '<span class="club-feed-sub">' + block.sub + '</span>'
           + '</span>'
           + '<span class="club-feed-caret">' + _FIC.caret + '</span>'
-          + '</div>';
+          + '</button>';
       } else if (block.type === 'group') {
         html += '<div class="club-feed-group">'
           + '<div class="club-feed-group-label">' + block.label + '</div>';
@@ -287,6 +293,64 @@
       }
     });
     return '<div class="club-feed">' + html + '</div>';
+  }
+
+  // ── Лента: модальное окно-заглушка ─────────────────────────────────────────
+  function _createFeedModal() {
+    if (document.getElementById('feed-modal')) return;
+    var el = document.createElement('div');
+    el.id = 'feed-modal';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.setAttribute('aria-labelledby', 'feed-modal-title');
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML =
+      '<div class="feed-modal-backdrop"></div>'
+      + '<div class="feed-modal-sheet">'
+      + '<button class="feed-modal-close" aria-label="Закрыть">' + _X_IC + '</button>'
+      + '<h3 class="feed-modal-heading" id="feed-modal-title">Лента готовится</h3>'
+      + '<p class="feed-modal-body">Сейчас мы подключаем автоматическую загрузку публикаций из Telegram. Скоро здесь появятся материалы выбранной темы.</p>'
+      + '<p class="feed-modal-chosen">Вы выбрали: <span id="feed-modal-topic"></span></p>'
+      + '<button class="feed-modal-ok">Понятно</button>'
+      + '</div>';
+    document.body.appendChild(el);
+
+    el.querySelector('.feed-modal-backdrop').addEventListener('click', _closeFeedModal);
+    el.querySelector('.feed-modal-close').addEventListener('click', _closeFeedModal);
+    el.querySelector('.feed-modal-ok').addEventListener('click', _closeFeedModal);
+
+    el.addEventListener('keydown', function (e) {
+      if (!el.classList.contains('feed-modal--open')) return;
+      if (e.key === 'Escape') { _closeFeedModal(); return; }
+      if (e.key === 'Tab') {
+        var foc = Array.prototype.slice.call(el.querySelectorAll('button'));
+        var first = foc[0], last = foc[foc.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
+
+  function _openFeedModal(title, triggerEl) {
+    var modal = document.getElementById('feed-modal');
+    if (!modal) return;
+    _feedModalTrigger = triggerEl || null;
+    var topicEl = document.getElementById('feed-modal-topic');
+    if (topicEl) topicEl.textContent = title;
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('feed-modal--open');
+    document.body.classList.add('ch-no-scroll');
+    var ok = modal.querySelector('.feed-modal-ok');
+    if (ok) ok.focus();
+  }
+
+  function _closeFeedModal() {
+    var modal = document.getElementById('feed-modal');
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    modal.classList.remove('feed-modal--open');
+    document.body.classList.remove('ch-no-scroll');
+    if (_feedModalTrigger) { _feedModalTrigger.focus(); _feedModalTrigger = null; }
   }
 
   // ── Общение: утилиты ──────────────────────────────────────────────────────────
@@ -358,6 +422,9 @@
   var _pendingUrl = null;
 
   function _handleClick(e) {
+    var feedBtn = e.target.closest('[data-feed-topic]');
+    if (feedBtn) { _openFeedModal(feedBtn.dataset.feedTopic, feedBtn); return; }
+
     var resFavBtn = e.target.closest('[data-res-fav]');
     if (resFavBtn) {
       if (typeof FAV !== 'undefined') FAV.toggle(resFavBtn.dataset.favKey, resFavBtn);
@@ -485,6 +552,7 @@
   function initChat() {
     renderChat();
     _initModal();
+    _createFeedModal();
   }
 
   if (document.readyState === 'loading') {
