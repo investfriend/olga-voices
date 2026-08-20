@@ -1,0 +1,167 @@
+/* assets/money.css v1 — Раздел «Мои деньги» */
+
+/* === HOME ENTRY CARD === */
+.mn-home-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  -webkit-tap-highlight-color: transparent;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  transition: opacity .15s;
+}
+.mn-home-card:active { opacity: .82; }
+
+.mn-home-ic {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: var(--bg-card-2);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+.mn-home-ic svg { width: 24px; height: 24px; }
+
+.mn-home-body { flex: 1; min-width: 0; }
+.mn-home-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.mn-home-desc  { font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+.mn-home-arr   { color: var(--text-dim); flex-shrink: 0; display: flex; }
+.mn-home-arr svg { width: 20px; height: 20px; }
+
+/* === OVERVIEW PAGE === */
+.mn-main-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.mn-main-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.mn-main-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.mn-main-note {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.45;
+  margin-bottom: 18px;
+}
+
+.mn-metrics {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.mn-metric { flex: 1; text-align: center; }
+.mn-metric + .mn-metric { border-left: 1px solid var(--border); }
+.mn-metric-label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+.mn-metric-value { font-size: 20px; font-weight: 700; color: var(--text); }
+
+/* Block section headings */
+.mn-block-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--text-dim);
+  margin: 20px 0 8px;
+}
+
+/* Today block */
+.mn-today {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.mn-today-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.mn-today-row:last-child { border-bottom: none; }
+.mn-today-label { font-size: 14px; color: var(--text); }
+.mn-today-val   { font-size: 13px; color: var(--text-dim); white-space: nowrap; }
+
+/* Section cards */
+.mn-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.mn-sec-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .12s;
+}
+.mn-sec-btn:active { opacity: .8; }
+
+.mn-sec-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-card-2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+.mn-sec-icon svg { width: 22px; height: 22px; }
+
+.mn-sec-body   { flex: 1; min-width: 0; }
+.mn-sec-label  { display: block; font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.mn-sec-sub    { display: block; font-size: 12px; color: var(--text-dim); line-height: 1.35; }
+
+.mn-sec-caret  { color: var(--text-dim); flex-shrink: 0; display: flex; }
+.mn-sec-caret svg { width: 18px; height: 18px; }
+
+/* === SUB-PAGES empty state === */
+.mn-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 20px 40px;
+  text-align: center;
+}
+.mn-empty-text {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}

@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="assets/style.css?v=17">
 <link rel="stylesheet" href="assets/market.css?v=12">
 <link rel="stylesheet" href="assets/investik.css?v=2">
+<link rel="stylesheet" href="assets/money.css?v=1">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -39,6 +40,7 @@
       <div id="hp-slider-wrap"></div>
       <div id="hp-crypto-event"></div>
       <div id="hp-portfolios"></div>
+      <div id="hp-money"></div>
       <div id="hp-chats"></div>
       <div id="hp-learning"></div>
     </div>
@@ -234,6 +236,121 @@
     <textarea class="form-textarea" placeholder="Опиши ситуацию: кто, что, когда."></textarea>
     <button class="btn btn-primary" onclick="submitComplaint()">Отправить</button>
   </section>
+
+  <!-- МОИ ДЕНЬГИ — обзор -->
+  <section class="page sub" data-page="money">
+    <button class="back-btn" onclick="setPage('home')" aria-label="Назад на главную">← Назад</button>
+    <h2 class="page-title">Мои деньги</h2>
+
+    <div class="mn-main-card">
+      <div class="mn-main-label">Доступно до конца месяца</div>
+      <div class="mn-main-value">Не рассчитано</div>
+      <div class="mn-main-note">Появится после настройки доходов, обязательных расходов и целей</div>
+      <div class="mn-metrics">
+        <div class="mn-metric">
+          <div class="mn-metric-label">Доходы</div>
+          <div class="mn-metric-value">—</div>
+        </div>
+        <div class="mn-metric">
+          <div class="mn-metric-label">Расходы</div>
+          <div class="mn-metric-value">—</div>
+        </div>
+        <div class="mn-metric">
+          <div class="mn-metric-label">В цели</div>
+          <div class="mn-metric-value">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mn-block-title">На сегодня</div>
+    <div class="mn-today">
+      <div class="mn-today-row">
+        <span class="mn-today-label">Ориентир на день</span>
+        <span class="mn-today-val">Не рассчитан</span>
+      </div>
+      <div class="mn-today-row">
+        <span class="mn-today-label">Ближайший платёж</span>
+        <span class="mn-today-val">Не добавлен</span>
+      </div>
+      <div class="mn-today-row">
+        <span class="mn-today-label">Главная цель</span>
+        <span class="mn-today-val">Не выбрана</span>
+      </div>
+    </div>
+
+    <div class="mn-block-title">Разделы</div>
+    <div class="mn-sections">
+      <button class="mn-sec-btn" type="button" onclick="setPage('money-ops')" aria-label="Операции">
+        <span class="mn-sec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z"/></svg></span>
+        <span class="mn-sec-body">
+          <span class="mn-sec-label">Операции</span>
+          <span class="mn-sec-sub">Доходы, расходы и переводы</span>
+        </span>
+        <span class="mn-sec-caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+      </button>
+      <button class="mn-sec-btn" type="button" onclick="setPage('money-goals')" aria-label="Цели">
+        <span class="mn-sec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-136a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></svg></span>
+        <span class="mn-sec-body">
+          <span class="mn-sec-label">Цели</span>
+          <span class="mn-sec-sub">Накопления и движение к результату</span>
+        </span>
+        <span class="mn-sec-caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+      </button>
+      <button class="mn-sec-btn" type="button" onclick="setPage('money-plan')" aria-label="План месяца">
+        <span class="mn-sec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H72v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V208Z"/></svg></span>
+        <span class="mn-sec-body">
+          <span class="mn-sec-label">План месяца</span>
+          <span class="mn-sec-sub">Доходы, обязательные расходы и свободный остаток</span>
+        </span>
+        <span class="mn-sec-caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+      </button>
+      <button class="mn-sec-btn" type="button" onclick="setPage('money-accounts')" aria-label="Счета">
+        <span class="mn-sec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM32,64H224v32H32Zm192,128H32V112H224v80ZM48,152a8,8,0,0,1,8-8H104a8,8,0,0,1,0,16H56A8,8,0,0,1,48,152Zm144,0a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h16A8,8,0,0,1,192,152Z"/></svg></span>
+        <span class="mn-sec-body">
+          <span class="mn-sec-label">Счета</span>
+          <span class="mn-sec-sub">Карты, наличные и накопительные счета</span>
+        </span>
+        <span class="mn-sec-caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- МОИ ДЕНЬГИ — Операции -->
+  <section class="page sub" data-page="money-ops">
+    <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
+    <h2 class="page-title">Операции</h2>
+    <div class="mn-empty">
+      <p class="mn-empty-text">Пока нет операций</p>
+    </div>
+  </section>
+
+  <!-- МОИ ДЕНЬГИ — Цели -->
+  <section class="page sub" data-page="money-goals">
+    <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
+    <h2 class="page-title">Цели</h2>
+    <div class="mn-empty">
+      <p class="mn-empty-text">Пока нет целей</p>
+    </div>
+  </section>
+
+  <!-- МОИ ДЕНЬГИ — План месяца -->
+  <section class="page sub" data-page="money-plan">
+    <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
+    <h2 class="page-title">План месяца</h2>
+    <div class="mn-empty">
+      <p class="mn-empty-text">План месяца не настроен</p>
+    </div>
+  </section>
+
+  <!-- МОИ ДЕНЬГИ — Счета -->
+  <section class="page sub" data-page="money-accounts">
+    <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
+    <h2 class="page-title">Счета</h2>
+    <div class="mn-empty">
+      <p class="mn-empty-text">Счета не добавлены</p>
+    </div>
+  </section>
+
 </main>
 
 <!-- Bottom Navigation -->
@@ -286,6 +403,7 @@
 <script src="assets/lwcharts.js"></script>
 <script src="assets/market.js?v=22"></script>
 <script src="assets/chat.js?v=5"></script>
+<script src="assets/money.js?v=1"></script>
 <script>
 /* Инвестик — конфигурация (менять здесь, не в investik.js) */
 window.INVESTIK_CFG = {
