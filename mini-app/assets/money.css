@@ -1,4 +1,4 @@
-/* assets/money.css v2 — Мои деньги */
+/* assets/money.css v3 — Мои деньги */
 
 /* ─── HOME ENTRY CARD ─────────────────────────────────────────────────────── */
 .mn-home-card {
@@ -85,6 +85,76 @@
 .mn-sec-caret  { color: var(--text-dim); flex-shrink: 0; display: flex; }
 .mn-sec-caret svg { width: 18px; height: 18px; }
 
+/* ─── INVESTMENT BLOCK ────────────────────────────────────────────────────── */
+.mn-invest-block {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px; margin: 16px 0 4px;
+}
+
+.mn-invest-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .8px; color: var(--accent); margin-bottom: 10px;
+}
+
+/* empty state */
+.mn-invest-empty-h {
+  font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.35; margin-bottom: 8px;
+}
+.mn-invest-empty-p {
+  font-size: 13px; color: var(--text-dim); line-height: 1.5; margin: 0 0 14px;
+}
+.mn-invest-plan-btn {
+  display: block; width: 100%; min-height: 46px; padding: 10px 16px;
+  background: var(--accent); color: var(--btn-text);
+  border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent; transition: opacity .15s;
+}
+.mn-invest-plan-btn:active { opacity: .85; }
+
+/* filled state */
+.mn-invest-plan-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.mn-invest-plan-lbl { font-size: 13px; color: var(--text-dim); }
+.mn-invest-plan-val { font-size: 15px; font-weight: 700; color: var(--text); }
+
+.mn-invest-progress-wrap {
+  height: 6px; background: var(--bg-card-2); border-radius: 3px; margin-bottom: 12px; overflow: hidden;
+}
+.mn-invest-progress-fill {
+  height: 100%; background: var(--accent); border-radius: 3px;
+  transition: width .4s ease;
+  min-width: 0;
+}
+
+.mn-invest-stats {
+  display: flex; gap: 12px; margin-bottom: 14px;
+}
+.mn-invest-stat { flex: 1; }
+.mn-invest-stat--right { text-align: right; }
+.mn-invest-stat-lbl { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 2px; }
+.mn-invest-stat-val { display: block; font-size: 16px; font-weight: 700; color: var(--text); }
+.mn-invest-stat-val--done { color: var(--accent); }
+
+.mn-invest-record-btn {
+  display: block; width: 100%; min-height: 46px; padding: 10px 16px;
+  background: var(--accent); color: var(--btn-text);
+  border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: inherit; margin-bottom: 8px;
+  -webkit-tap-highlight-color: transparent; transition: opacity .15s;
+}
+.mn-invest-record-btn:active { opacity: .85; }
+
+.mn-invest-change-btn {
+  display: block; width: 100%; padding: 8px 0; text-align: center;
+  background: none; border: none; color: var(--text-dim);
+  font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.mn-invest-change-btn:active { opacity: .7; }
+
 /* ─── QUICK EXPENSES — empty state ───────────────────────────────────────── */
 .mn-quick-empty {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
@@ -99,6 +169,11 @@
 }
 .mn-quick-add-btn:active { opacity: .85; }
 
+/* ─── QUICK EXPENSES — hint ───────────────────────────────────────────────── */
+.mn-quick-hint {
+  font-size: 12px; color: var(--text-dim); margin: 0 0 8px; line-height: 1.4;
+}
+
 /* ─── QUICK EXPENSES — template grid ─────────────────────────────────────── */
 .mn-quick-grid {
   display: grid;
@@ -111,7 +186,7 @@
   display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
   padding: 12px; background: var(--bg-card); border: 1px solid var(--border);
   border-radius: 12px; cursor: pointer; text-align: left; width: 100%;
-  font-family: inherit; min-height: 84px; overflow: hidden;
+  font-family: inherit; min-height: 88px; overflow: hidden;
   -webkit-tap-highlight-color: transparent; transition: opacity .12s;
 }
 .mn-tmpl-btn:active { opacity: .78; }
@@ -124,7 +199,21 @@
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;
   max-width: calc(50vw - 40px);
 }
-.mn-tmpl-amt  { font-size: 14px; font-weight: 700; color: var(--accent); }
+
+/* action CTA replaces bare amount (v3) */
+.mn-tmpl-cta {
+  display: inline-block;
+  font-size: 12px; font-weight: 600;
+  color: var(--accent);
+  background: var(--bg-card-2);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .mn-tmpl-today {
   font-size: 10px; color: var(--text-dim); margin-top: 2px;
   background: var(--bg-card-2); border-radius: 4px;
@@ -165,16 +254,23 @@
 .mn-ops-row:last-child { border-bottom: none; }
 .mn-ops-row-ic { flex-shrink: 0; width: 32px; height: 32px; color: var(--accent); }
 .mn-ops-row-ic svg { width: 32px; height: 32px; }
+.mn-ops-row--invest .mn-ops-row-ic { color: var(--accent); }
 .mn-ops-row-body { flex: 1; min-width: 0; }
 .mn-ops-row-t { display: block; font-size: 14px; font-weight: 600; color: var(--text); }
 .mn-ops-row-c { display: block; font-size: 12px; color: var(--text-dim); }
+.mn-ops-row-c--invest { color: var(--accent); }
 .mn-ops-row-amt { flex-shrink: 0; font-size: 14px; font-weight: 600; color: var(--text); }
+.mn-ops-row-amt--invest { color: var(--accent); }
 
 .mn-ops-hint { font-size: 13px; color: var(--text-dim); text-align: center; padding: 24px 0; margin: 0; }
 
-/* ─── BOTTOM SHEET ────────────────────────────────────────────────────────── */
-#mn-add-sheet { display: none; position: fixed; inset: 0; z-index: 400; }
-#mn-add-sheet.mn-sheet--open { display: block; }
+/* ─── BOTTOM SHEET (shared) ───────────────────────────────────────────────── */
+#mn-add-sheet,
+#mn-plan-sheet,
+#mn-record-sheet { display: none; position: fixed; inset: 0; z-index: 400; }
+#mn-add-sheet.mn-sheet--open,
+#mn-plan-sheet.mn-sheet--open,
+#mn-record-sheet.mn-sheet--open { display: block; }
 
 .mn-sheet-bd { position: absolute; inset: 0; background: rgba(0,0,0,.48); animation: mnBdIn .2s; }
 @keyframes mnBdIn { from { opacity: 0; } to { opacity: 1; } }
@@ -222,7 +318,6 @@
 }
 .mn-sheet-inp:focus,
 .mn-sheet-sel:focus { border-color: var(--accent); }
-/* hide spinner on number input */
 .mn-sheet-inp[type=number]::-webkit-inner-spin-button,
 .mn-sheet-inp[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
@@ -236,6 +331,19 @@
 }
 .mn-sheet-save:disabled { opacity: .4; cursor: default; }
 .mn-sheet-save:not(:disabled):active { opacity: .85; }
+
+.mn-sheet-cancel {
+  display: block; width: 100%; min-height: 44px; margin-top: 8px;
+  background: none; color: var(--text-dim);
+  border: none; border-radius: 12px; font-size: 15px; font-weight: 500;
+  cursor: pointer; font-family: inherit; transition: opacity .15s;
+}
+.mn-sheet-cancel:active { opacity: .7; }
+
+/* date display in record sheet */
+.mn-ri-date {
+  display: block; font-size: 15px; color: var(--text); padding: 4px 0;
+}
 
 /* ─── TOAST ───────────────────────────────────────────────────────────────── */
 #mn-toast {

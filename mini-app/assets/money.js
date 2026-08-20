@@ -1,11 +1,11 @@
-/* assets/money.js v2 — Мои деньги: Stage 2A (Quick Expenses) */
+/* assets/money.js v3 — Мои деньги: Stage 2B (Investment Block + UX) */
 (function () {
   'use strict';
 
   // ─── Storage ───────────────────────────────────────────────────────────────
   var STORAGE_KEY = 'money_state_v1';
   var STORAGE_VERSION = 1;
-  var _state = { version: STORAGE_VERSION, templates: [], operations: [] };
+  var _state = { version: STORAGE_VERSION, templates: [], operations: [], investmentPlans: {} };
 
   function loadState() {
     try {
@@ -15,8 +15,13 @@
       if (!p || p.version !== STORAGE_VERSION ||
           !Array.isArray(p.templates) || !Array.isArray(p.operations)) return;
       _state = p;
+      // safe migration: add investmentPlans if missing in existing v1 data
+      if (!_state.investmentPlans || typeof _state.investmentPlans !== 'object' ||
+          Array.isArray(_state.investmentPlans)) {
+        _state.investmentPlans = {};
+      }
     } catch (e) {
-      _state = { version: STORAGE_VERSION, templates: [], operations: [] };
+      _state = { version: STORAGE_VERSION, templates: [], operations: [], investmentPlans: {} };
     }
   }
 
@@ -46,6 +51,13 @@
     return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2);
   }
 
+  var _MONTHS_NOM = ['январь','февраль','март','апрель','май','июнь',
+                     'июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+
+  function thisMonthName() {
+    return _MONTHS_NOM[new Date().getMonth()];
+  }
+
   function todayCount(templateId) {
     var t = localDate(), n = 0;
     for (var i = 0; i < _state.operations.length; i++) {
@@ -64,6 +76,21 @@
       }
     }
     return total;
+  }
+
+  function monthInvested() {
+    var m = thisMonth(), total = 0;
+    for (var i = 0; i < _state.operations.length; i++) {
+      var op = _state.operations[i];
+      if (op.type === 'investment' && op.localDate && op.localDate.slice(0, 7) === m) {
+        total += op.amountMinor;
+      }
+    }
+    return total;
+  }
+
+  function currentPlan() {
+    return _state.investmentPlans[thisMonth()] || null;
   }
 
   function activeTemplates() {
@@ -87,6 +114,9 @@
   // ─── Icons ─────────────────────────────────────────────────────────────────
   var _WIC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,72H56a8,8,0,0,1,0-16H192a8,8,0,0,0,0-16H56A24,24,0,0,0,32,64V192a24,24,0,0,0,24,24H216a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72Zm0,128H56a8,8,0,0,1,0-16H216Zm0-32H56V88H216Zm-28-36a12,12,0,1,1-12-12A12,12,0,0,1,188,132Z"/></svg>';
   var _CIC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>';
+
+  // Phosphor ChartLine — used for investment operations in history
+  var _INVEST_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31,40,179.31V200H224A8,8,0,0,1,232,208Z"/></svg>';
 
   var CATS = ['Продукты','Кафе и рестораны','Транспорт','Бензин','ЖКХ','Здоровье','Покупки','Другое'];
 
@@ -114,14 +144,15 @@
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="' + p + '"/></svg>';
   }
 
-  // ─── Template button HTML ──────────────────────────────────────────────────
+  // ─── Template button HTML (v3: action-style CTA) ───────────────────────────
   function tmplHtml(t) {
     var cnt = todayCount(t.id);
     return '<button class="mn-tmpl-btn" type="button" data-tid="' + esc(t.id) + '"'
-      + ' aria-label="Записать: ' + esc(t.title) + ' ' + fmtRub(t.amountMinor) + '">'
+      + ' aria-label="Добавить расход ' + esc(t.title) + ', '
+      + Math.round(t.amountMinor / 100).toLocaleString('ru-RU') + ' рублей">'
       + '<span class="mn-tmpl-ic">' + catSvg(t.category) + '</span>'
       + '<span class="mn-tmpl-name">' + esc(t.title) + '</span>'
-      + '<span class="mn-tmpl-amt">' + fmtRub(t.amountMinor) + '</span>'
+      + '<span class="mn-tmpl-cta">+ Добавить ' + fmtRub(t.amountMinor) + '</span>'
       + (cnt > 0
         ? '<span class="mn-tmpl-today">Сегодня:&nbsp;' + cnt + '&nbsp;' + nraz(cnt) + '</span>'
         : '')
@@ -146,7 +177,72 @@
     };
   }
 
-  // ─── Quick expenses block (overview page) ──────────────────────────────────
+  // ─── Investment block ──────────────────────────────────────────────────────
+  function renderInvestBlock() {
+    var wrap = document.getElementById('mn-invest-wrap');
+    if (!wrap) return;
+    var plan = currentPlan();
+    var invested = monthInvested();
+    var html = '<div class="mn-invest-block">'
+      + '<div class="mn-invest-label">ИНВЕСТИРОВАНИЕ</div>';
+
+    if (!plan) {
+      html += '<div class="mn-invest-empty-h">Запланируйте инвестиции на&nbsp;этот&nbsp;месяц</div>'
+        + '<p class="mn-invest-empty-p">Укажите сумму, которую планируете направить на формирование капитала</p>'
+        + '<button class="mn-invest-plan-btn" type="button" id="mn-invest-open-plan">Запланировать сумму</button>';
+    } else {
+      var planAmt = plan.amountMinor;
+      var remaining = Math.max(0, planAmt - invested);
+      var pct = planAmt > 0 ? Math.min(Math.round(invested * 100 / planAmt), 100) : 0;
+      html += '<div class="mn-invest-plan-row">'
+        + '<span class="mn-invest-plan-lbl">План на ' + esc(thisMonthName()) + '</span>'
+        + '<span class="mn-invest-plan-val">' + fmtRub(planAmt) + '</span>'
+        + '</div>'
+        + '<div class="mn-invest-progress-wrap">'
+        + '<div class="mn-invest-progress-fill" style="width:' + pct + '%"></div>'
+        + '</div>'
+        + '<div class="mn-invest-stats">'
+        + '<div class="mn-invest-stat">'
+        + '<span class="mn-invest-stat-lbl">Инвестировано</span>'
+        + '<span class="mn-invest-stat-val">' + (invested > 0 ? fmtRub(invested) : '—') + '</span>'
+        + '</div>'
+        + '<div class="mn-invest-stat mn-invest-stat--right">'
+        + '<span class="mn-invest-stat-lbl">Осталось</span>'
+        + '<span class="mn-invest-stat-val' + (remaining === 0 && invested > 0 ? ' mn-invest-stat-val--done' : '') + '">'
+        + (remaining > 0 ? fmtRub(remaining) : (invested > 0 ? '0 ₽' : '—'))
+        + '</span>'
+        + '</div>'
+        + '</div>'
+        + '<button class="mn-invest-record-btn" type="button" id="mn-invest-open-record">Зафиксировать инвестирование</button>'
+        + '<button class="mn-invest-change-btn" type="button" id="mn-invest-open-change">Изменить план</button>';
+    }
+
+    html += '</div>';
+    wrap.innerHTML = html;
+
+    var btnPlan = wrap.querySelector('#mn-invest-open-plan');
+    if (btnPlan) btnPlan.addEventListener('click', openPlanSheet);
+    var btnChange = wrap.querySelector('#mn-invest-open-change');
+    if (btnChange) btnChange.addEventListener('click', openPlanSheet);
+    var btnRecord = wrap.querySelector('#mn-invest-open-record');
+    if (btnRecord) {
+      btnRecord.addEventListener('click', function () {
+        var p2 = currentPlan();
+        var rem = p2 ? Math.max(0, p2.amountMinor - monthInvested()) : 0;
+        openRecordSheet(rem);
+      });
+    }
+  }
+
+  // ─── Invest metric ─────────────────────────────────────────────────────────
+  function updateInvestMetric() {
+    var el = document.getElementById('mn-month-invest');
+    if (!el) return;
+    var total = monthInvested();
+    el.textContent = total > 0 ? fmtRub(total) : '—';
+  }
+
+  // ─── Quick expenses block ──────────────────────────────────────────────────
   function renderQuickExpenses() {
     var wrap = document.getElementById('mn-quick-wrap');
     if (!wrap) return;
@@ -160,7 +256,8 @@
         + '<button class="mn-quick-add-btn" type="button" id="mn-add-first">Добавить быстрый расход</button>'
         + '</div>';
     } else {
-      html += '<div class="mn-quick-grid">';
+      html += '<p class="mn-quick-hint">Нажмите на карточку, чтобы добавить расход</p>'
+        + '<div class="mn-quick-grid">';
       for (var i = 0; i < shown.length; i++) html += tmplHtml(shown[i]);
       html += '</div>';
       html += '<button class="mn-quick-link" type="button" id="mn-add-more">+ Добавить расход</button>';
@@ -176,7 +273,7 @@
     if (grid) grid.addEventListener('click', onGridClick);
   }
 
-  // ─── Month expenses metric ─────────────────────────────────────────────────
+  // ─── Month metrics ─────────────────────────────────────────────────────────
   function updateExpensesMetric() {
     var el = document.getElementById('mn-month-expenses');
     if (!el) return;
@@ -199,7 +296,8 @@
         + '<button class="mn-quick-add-btn" type="button" id="mn-ops-add">Добавить быстрый расход</button>'
         + '</div>';
     } else {
-      html += '<div class="mn-quick-grid mn-ops-grid">';
+      html += '<p class="mn-quick-hint">Нажмите на карточку, чтобы добавить расход</p>'
+        + '<div class="mn-quick-grid mn-ops-grid">';
       for (var i = 0; i < tmpls.length; i++) html += tmplHtml(tmpls[i]);
       html += '</div>';
       html += '<button class="mn-quick-link" type="button" id="mn-ops-add-more">+ Добавить расход</button>';
@@ -221,13 +319,20 @@
         html += '<div class="mn-ops-group">';
         for (var k = 0; k < grp.items.length; k++) {
           var op = grp.items[k];
-          html += '<div class="mn-ops-row">'
-            + '<span class="mn-ops-row-ic">' + catSvg(op.category) + '</span>'
+          var isInvest = op.type === 'investment';
+          html += '<div class="mn-ops-row' + (isInvest ? ' mn-ops-row--invest' : '') + '">'
+            + '<span class="mn-ops-row-ic">'
+            + (isInvest ? _INVEST_IC : catSvg(op.category))
+            + '</span>'
             + '<span class="mn-ops-row-body">'
             + '<span class="mn-ops-row-t">' + esc(op.title) + '</span>'
-            + '<span class="mn-ops-row-c">' + esc(op.category) + '</span>'
+            + (isInvest
+              ? '<span class="mn-ops-row-c mn-ops-row-c--invest">Инвестиции</span>'
+              : '<span class="mn-ops-row-c">' + esc(op.category) + '</span>')
             + '</span>'
-            + '<span class="mn-ops-row-amt">−' + fmtRub(op.amountMinor) + '</span>'
+            + '<span class="mn-ops-row-amt' + (isInvest ? ' mn-ops-row-amt--invest' : '') + '">'
+            + (isInvest ? '' : '−') + fmtRub(op.amountMinor)
+            + '</span>'
             + '</div>';
         }
         html += '</div>';
@@ -265,7 +370,7 @@
     return parseInt(parts[2], 10) + ' ' + (MONTHS[parseInt(parts[1], 10) - 1] || '');
   }
 
-  // ─── Add operation ─────────────────────────────────────────────────────────
+  // ─── Add expense operation ─────────────────────────────────────────────────
   var _busy = false;
 
   function onGridClick(e) {
@@ -297,11 +402,32 @@
     saveState();
     _lastOpId = op.id;
     refresh();
-    showToast(tmpl.title, tmpl.amountMinor);
+    showToast(tmpl.title + ', ' + fmtRub(tmpl.amountMinor) + ' добавлено');
+  }
+
+  // ─── Add investment operation ──────────────────────────────────────────────
+  function addInvestmentOp(amountMinor) {
+    var now = new Date();
+    var op = {
+      id: genId(),
+      type: 'investment',
+      title: 'Инвестирование',
+      category: null,
+      amountMinor: amountMinor,
+      localDate: localDate(now),
+      createdAt: now.toISOString()
+    };
+    _state.operations.push(op);
+    saveState();
+    _lastOpId = op.id;
+    refresh();
+    showToast('В инвестиции добавлено ' + fmtRub(amountMinor));
   }
 
   function refresh() {
     updateExpensesMetric();
+    updateInvestMetric();
+    renderInvestBlock();
     renderQuickExpenses();
     renderOpsPage();
   }
@@ -325,9 +451,9 @@
     return el;
   }
 
-  function showToast(title, amountMinor) {
+  function showToast(msg) {
     var el = ensureToast();
-    el.querySelector('#mn-toast-msg').textContent = title + ', ' + fmtRub(amountMinor) + ' добавлено';
+    el.querySelector('#mn-toast-msg').textContent = msg;
     el.classList.add('mn-toast--show');
     clearTimeout(_toastTimer);
     _toastTimer = setTimeout(hideToast, 5000);
@@ -352,7 +478,7 @@
     refresh();
   }
 
-  // ─── Bottom sheet ──────────────────────────────────────────────────────────
+  // ─── Expense template sheet ────────────────────────────────────────────────
   var _sheetEl = null;
 
   function openSheet() {
@@ -474,6 +600,160 @@
     return el;
   }
 
+  // ─── Investment plan sheet ─────────────────────────────────────────────────
+  var _planSheetEl = null;
+
+  function openPlanSheet() {
+    var el = ensurePlanSheet();
+    var plan = currentPlan();
+    var inp = el.querySelector('#mn-pi-amt');
+    inp.value = plan ? Math.round(plan.amountMinor / 100) : '';
+    el.querySelector('#mn-pi-err').textContent = '';
+    var v = parseInt(inp.value, 10);
+    el.querySelector('#mn-pi-save').disabled = isNaN(v) || v < 1;
+    el.classList.add('mn-sheet--open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { inp.focus(); }, 80);
+  }
+
+  function closePlanSheet() {
+    if (!_planSheetEl) return;
+    _planSheetEl.classList.remove('mn-sheet--open');
+    document.body.style.overflow = '';
+  }
+
+  function ensurePlanSheet() {
+    if (_planSheetEl) return _planSheetEl;
+
+    var el = document.createElement('div');
+    el.id = 'mn-plan-sheet';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.innerHTML =
+      '<div class="mn-sheet-bd"></div>'
+      + '<div class="mn-sheet-panel">'
+      + '<button class="mn-sheet-x" type="button" aria-label="Закрыть">'
+      + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="20" height="20" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>'
+      + '</button>'
+      + '<h2 class="mn-sheet-h">План инвестирования</h2>'
+      + '<div class="mn-sheet-row">'
+      + '<label class="mn-sheet-lbl" for="mn-pi-amt">Сумма на месяц, ₽</label>'
+      + '<input class="mn-sheet-inp" id="mn-pi-amt" type="number" inputmode="numeric" min="1" max="99999999" step="1" placeholder="0">'
+      + '<span class="mn-sheet-err" id="mn-pi-err"></span>'
+      + '</div>'
+      + '<button class="mn-sheet-save" type="button" id="mn-pi-save" disabled>Сохранить</button>'
+      + '<button class="mn-sheet-cancel" type="button" id="mn-pi-cancel">Отмена</button>'
+      + '</div>';
+
+    document.body.appendChild(el);
+    _planSheetEl = el;
+
+    var amtInp = el.querySelector('#mn-pi-amt');
+    var saveBtn = el.querySelector('#mn-pi-save');
+
+    el.querySelector('.mn-sheet-bd').addEventListener('click', closePlanSheet);
+    el.querySelector('.mn-sheet-x').addEventListener('click', closePlanSheet);
+    el.querySelector('#mn-pi-cancel').addEventListener('click', closePlanSheet);
+    el.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') closePlanSheet(); });
+
+    amtInp.addEventListener('input', function () {
+      var v = parseInt(amtInp.value, 10);
+      saveBtn.disabled = isNaN(v) || v < 1;
+      el.querySelector('#mn-pi-err').textContent = '';
+    });
+
+    saveBtn.addEventListener('click', function () {
+      var v = parseInt(amtInp.value, 10);
+      if (isNaN(v) || v < 1) {
+        el.querySelector('#mn-pi-err').textContent = 'Введите сумму больше 0';
+        return;
+      }
+      _state.investmentPlans[thisMonth()] = { month: thisMonth(), amountMinor: v * 100 };
+      saveState();
+      closePlanSheet();
+      refresh();
+    });
+
+    return el;
+  }
+
+  // ─── Investment record sheet ───────────────────────────────────────────────
+  var _recordSheetEl = null;
+
+  function openRecordSheet(prefillMinor) {
+    var el = ensureRecordSheet();
+    var inp = el.querySelector('#mn-ri-amt');
+    inp.value = prefillMinor > 0 ? Math.round(prefillMinor / 100) : '';
+    el.querySelector('#mn-ri-err').textContent = '';
+    var v = parseInt(inp.value, 10);
+    el.querySelector('#mn-ri-save').disabled = isNaN(v) || v < 1;
+    el.querySelector('#mn-ri-date').textContent = fmtGroupDate(localDate());
+    el.classList.add('mn-sheet--open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { inp.focus(); }, 80);
+  }
+
+  function closeRecordSheet() {
+    if (!_recordSheetEl) return;
+    _recordSheetEl.classList.remove('mn-sheet--open');
+    document.body.style.overflow = '';
+  }
+
+  function ensureRecordSheet() {
+    if (_recordSheetEl) return _recordSheetEl;
+
+    var el = document.createElement('div');
+    el.id = 'mn-record-sheet';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    el.innerHTML =
+      '<div class="mn-sheet-bd"></div>'
+      + '<div class="mn-sheet-panel">'
+      + '<button class="mn-sheet-x" type="button" aria-label="Закрыть">'
+      + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="20" height="20" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>'
+      + '</button>'
+      + '<h2 class="mn-sheet-h">Зафиксировать инвестирование</h2>'
+      + '<div class="mn-sheet-row">'
+      + '<label class="mn-sheet-lbl" for="mn-ri-amt">Сумма, ₽</label>'
+      + '<input class="mn-sheet-inp" id="mn-ri-amt" type="number" inputmode="numeric" min="1" max="99999999" step="1" placeholder="0">'
+      + '<span class="mn-sheet-err" id="mn-ri-err"></span>'
+      + '</div>'
+      + '<div class="mn-sheet-row">'
+      + '<span class="mn-sheet-lbl">Дата</span>'
+      + '<span class="mn-ri-date" id="mn-ri-date"></span>'
+      + '</div>'
+      + '<button class="mn-sheet-save" type="button" id="mn-ri-save" disabled>Сохранить</button>'
+      + '</div>';
+
+    document.body.appendChild(el);
+    _recordSheetEl = el;
+
+    var amtInp = el.querySelector('#mn-ri-amt');
+    var saveBtn = el.querySelector('#mn-ri-save');
+
+    el.querySelector('.mn-sheet-bd').addEventListener('click', closeRecordSheet);
+    el.querySelector('.mn-sheet-x').addEventListener('click', closeRecordSheet);
+    el.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') closeRecordSheet(); });
+
+    amtInp.addEventListener('input', function () {
+      var v = parseInt(amtInp.value, 10);
+      saveBtn.disabled = isNaN(v) || v < 1;
+      el.querySelector('#mn-ri-err').textContent = '';
+    });
+
+    saveBtn.addEventListener('click', function () {
+      var v = parseInt(amtInp.value, 10);
+      if (isNaN(v) || v < 1) {
+        el.querySelector('#mn-ri-err').textContent = 'Введите сумму больше 0';
+        return;
+      }
+      closeRecordSheet();
+      addInvestmentOp(v * 100);
+    });
+
+    return el;
+  }
+
   // ─── Re-render on page activation ─────────────────────────────────────────
   function observeMoneyPage() {
     var page = document.querySelector('[data-page="money"]');
@@ -481,6 +761,8 @@
     new MutationObserver(function () {
       if (page.classList.contains('active')) {
         updateExpensesMetric();
+        updateInvestMetric();
+        renderInvestBlock();
         renderQuickExpenses();
       }
     }).observe(page, { attributes: true, attributeFilter: ['class'] });
@@ -490,8 +772,10 @@
   function init() {
     loadState();
     renderMoneyCard();
+    renderInvestBlock();
     renderQuickExpenses();
     updateExpensesMetric();
+    updateInvestMetric();
     renderOpsPage();
     observeMoneyPage();
   }
