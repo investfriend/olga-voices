@@ -1,4 +1,4 @@
-// assets/chat.js v1 — Экран «Общение»
+// assets/chat.js v4 — Раздел «Клуб»: Лента + Общение
 (function () {
   'use strict';
 
@@ -18,7 +18,91 @@
     arrow: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="14" height="14" aria-hidden="true"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>',
   };
 
-  // ── Конфигурация ─────────────────────────────────────────────────────────────
+  // ── Иконки Phosphor для Ленты (36×36) ────────────────────────────────────────
+  var _FIC = {
+    // Newspaper / NewspaperClipping — все публикации
+    newsp: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,48H40A16,16,0,0,0,24,64V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,144H40V64H216ZM88,96a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H96A8,8,0,0,1,88,96Zm0,32a8,8,0,0,1,8-8H168a8,8,0,0,1,0,16H96A8,8,0,0,1,88,128Zm96,32H96a8,8,0,0,1,0-16H184a8,8,0,0,1,0,16ZM152,96h24a8,8,0,0,1,0,16H152a8,8,0,0,1,0-16Z"/></svg>',
+    // Trophy — результаты участников
+    trophy: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,40H176V32a8,8,0,0,0-8-8H88a8,8,0,0,0-8,8v8H40A16,16,0,0,0,24,56V80c0,29.52,12.32,56.07,33.79,73.79A96.18,96.18,0,0,0,120,184.51V208H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16H136V184.51a96.18,96.18,0,0,0,62.21-30.72C219.68,136.07,232,109.52,232,80V56A16,16,0,0,0,216,40ZM40,80V56H80v64.45C57.23,108.13,40,95.12,40,80Zm111.34,82.55A80.22,80.22,0,0,1,128,168a80.22,80.22,0,0,1-23.34-5.45A80,80,0,0,1,48,80V56H208V80A80,80,0,0,1,151.34,162.55ZM216,80c0,15.12-17.23,28.13-40,40.45V56h40Z"/></svg>',
+    // CalendarDots — анонсы и расписание
+    calendar: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V80H208ZM48,64V48H72v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V64Zm40,84a12,12,0,1,1-12-12A12,12,0,0,1,88,148Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,128,148Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,168,148Z"/></svg>',
+    // Compass — правила и навигация
+    compass: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm54.36-137.23-48,23.23a8.05,8.05,0,0,0-3.9,3.9l-23.23,48a8,8,0,0,0,10.58,10.58l48-23.23a8.05,8.05,0,0,0,3.9-3.9l23.23-48a8,8,0,0,0-10.58-10.58ZM152,152,115.2,169.88l17.92-37.08L169.92,115Z"/></svg>',
+    // Microphone — весточка от Оли
+    micro: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,176a48.05,48.05,0,0,0,48-48V88a48,48,0,0,0-96,0v40A48.05,48.05,0,0,0,128,176ZM96,88a32,32,0,0,1,64,0v40a32,32,0,0,1-64,0Zm40,144H136V208a80.09,80.09,0,0,0,80-80,8,8,0,0,0-16,0,64,64,0,0,1-128,0,8,8,0,0,0-16,0,80.09,80.09,0,0,0,80,80v24H120a8,8,0,0,0,0,16Z"/></svg>',
+    // ChartBar — разборы компаний
+    chartbar: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,200h-8V88a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8v24H104a8,8,0,0,0-8,8v24H48a8,8,0,0,0-8,8V200H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,96h40V200H160ZM112,128h40V200H112ZM56,152h48v48H56Z"/></svg>',
+    // Newspaper (plain) — дайджест и новости
+    news2: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,48H40A16,16,0,0,0,24,64V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,144H40V64H216ZM80,104a8,8,0,0,1,8-8H168a8,8,0,0,1,0,16H88A8,8,0,0,1,80,104Zm0,32a8,8,0,0,1,8-8H168a8,8,0,0,1,0,16H88A8,8,0,0,1,80,136Zm96,32H80a8,8,0,0,1,0-16H176a8,8,0,0,1,0,16Z"/></svg>',
+    // VideoCamera — ответы на вопросы
+    video: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M251.77,73a8,8,0,0,0-8.21.39L208,97.05V72a16,16,0,0,0-16-16H32A16,16,0,0,0,16,72V184a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V158.95l35.56,23.71A8,8,0,0,0,248,184a8,8,0,0,0,8-8V80A8,8,0,0,0,251.77,73ZM192,184H32V72H192V184Zm48-22.95-32-21.33V116.28L240,95Z"/></svg>',
+    // Lightning — идеи РФ высокий риск
+    lightning: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.85,125.23l-112,120a8,8,0,0,1-13.69-7l14.66-73.34L48.15,138.77a8,8,0,0,1-1.38-14.69l112-72a8,8,0,0,1,12.4,9.15L155.48,134.6l58.37,14.59A8,8,0,0,1,213.85,125.23Z"/></svg>',
+    // Globe — зарубежный рынок
+    globe: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-8,191.63V184a8,8,0,0,0-16,0v31.63A88.21,88.21,0,0,1,40.37,136H72a8,8,0,0,0,0-16H40.37A88.21,88.21,0,0,1,120,40.37V72a8,8,0,0,0,16,0V40.37A88.21,88.21,0,0,1,215.63,120H184a8,8,0,0,0,0,16h31.63A88.21,88.21,0,0,1,136,215.63Z"/></svg>',
+    // Briefcase — портфель клуба
+    briefcase: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,72H180V60a28,28,0,0,0-28-28H104A28,28,0,0,0,76,60V72H40A16,16,0,0,0,24,88V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72ZM104,48h48a12,12,0,0,1,12,12V72H92V60A12,12,0,0,1,104,48ZM216,200H40V88H216V200Z"/></svg>',
+    // House — недвижимость
+    house: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H152V160H104v48H48V120l80-80,80,80Z"/></svg>',
+    // CurrencyBtc — криптовалюта
+    btc: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M176,120.06A40,40,0,0,0,144,48H80a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8h72a44,44,0,0,0,24-81.94ZM88,64h56a24,24,0,0,1,0,48H88Zm64,128H88V128h64a28,28,0,0,1,0,56Z"/></svg>',
+    // PresentationChart — интенсив
+    pres: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,40H136V24a8,8,0,0,0-16,0V40H40A16,16,0,0,0,24,56V176a16,16,0,0,0,16,16H79l-27.35,42.6a8,8,0,0,0,13.7,8.8L96,208h64l30.65,35.4a8,8,0,0,0,13.7-8.8L177,192h39a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,136H40V56H216V176Zm-80-96v64a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0Zm-48,32v32a8,8,0,0,1-16,0V112a8,8,0,0,1,16,0Zm96-16v48a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Z"/></svg>',
+    // Scales — ИИС, налоги, законы
+    scales: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M239.73,208l-32-128a8,8,0,0,0-7.79-6H128V56h32a8,8,0,0,0,0-16H128V32a8,8,0,0,0-16,0V40H96a8,8,0,0,0,0,16h32V74H56a8,8,0,0,0-7.73,5.94l-32,128A8,8,0,0,0,24,216H104a8,8,0,0,0,7.8-6.24L128,135.57l16.2,74.19A8,8,0,0,0,152,216h80a8,8,0,0,0,7.73-8ZM38.72,200,63.12,102l24.4,98Zm88.56,0H129L113,132Zm18.44,0L128,135.57,113,200Zm2-65.43L128,135.57l16.2-74.19L164,100,160,152Zm18.44,0,4-52h-8l5.56-22.22L167.72,88l19.4,77.6Zm19.84,65.43-24.4-98,24.4,98Z"/></svg>',
+    // CaretRight — стрелка-разделитель
+    caret: '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>',
+  };
+
+  // ── Каталог тем «Лента» ───────────────────────────────────────────────────────
+  var FEED_CATALOG = [
+    {
+      type: 'all',
+      icon: 'newsp',
+      title: 'Все публикации',
+      sub: 'Последние материалы из всех веток клуба',
+    },
+    {
+      type: 'group',
+      label: 'Главное',
+      items: [
+        { icon: 'trophy',    title: 'Ваши результаты',       sub: 'Портфели и достижения участников' },
+        { icon: 'calendar',  title: 'Анонсы и расписание',   sub: 'Предстоящие эфиры и мероприятия' },
+        { icon: 'compass',   title: 'Правила и навигация',   sub: 'Как пользоваться клубом' },
+        { icon: 'micro',     title: 'Весточка от Оли',       sub: 'Личные сообщения от Ольги' },
+      ],
+    },
+    {
+      type: 'group',
+      label: 'Аналитика',
+      items: [
+        { icon: 'chartbar',  title: 'Разборы компаний',      sub: 'Детальный анализ эмитентов' },
+        { icon: 'news2',     title: 'Дайджест и новости',    sub: 'Важные события рынка и клуба' },
+        { icon: 'video',     title: 'Ответы на вопросы',     sub: 'Записи эфиров и разборов' },
+      ],
+    },
+    {
+      type: 'group',
+      label: 'Инвестиционные идеи',
+      items: [
+        { icon: 'lightning', title: 'Идеи РФ: высокий риск', sub: 'Высокодоходные истории с повышенным риском' },
+        { icon: 'globe',     title: 'Зарубежный рынок',      sub: 'Идеи по иностранным активам' },
+        { icon: 'briefcase', title: 'Портфель клуба',        sub: 'Модельные позиции и изменения' },
+        { icon: 'house',     title: 'Инвестиции в недвижимость', sub: 'ЗПИФ, объекты и стратегии' },
+        { icon: 'btc',       title: 'Криптовалюта',          sub: 'Крипторынок, идеи и аналитика' },
+      ],
+    },
+    {
+      type: 'group',
+      label: 'Специальные разделы',
+      items: [
+        { icon: 'pres',      title: 'Интенсив «Криптовалюта»', sub: 'Материалы и записи крипто-интенсива' },
+        { icon: 'scales',    title: 'ИИС, налоги и законы',  sub: 'Правовые и налоговые вопросы инвестора' },
+      ],
+    },
+  ];
+
+  // ── Конфигурация раздела «Общение» ───────────────────────────────────────────
   var CHAT_CFG = {
     sections: [
       {
@@ -169,7 +253,43 @@
 
   window.CHAT_CFG = CHAT_CFG;
 
-  // ── Утилиты ──────────────────────────────────────────────────────────────────
+  // ── Лента: HTML ──────────────────────────────────────────────────────────────
+  function _feedItemHTML(entry) {
+    return '<button class="club-feed-item" type="button" aria-label="' + entry.title + '">'
+      + '<span class="club-feed-icon">' + (_FIC[entry.icon] || _FIC.newsp) + '</span>'
+      + '<span class="club-feed-text">'
+      + '<span class="club-feed-title">' + entry.title + '</span>'
+      + '<span class="club-feed-sub">' + entry.sub + '</span>'
+      + '</span>'
+      + '<span class="club-feed-caret">' + _FIC.caret + '</span>'
+      + '</button>';
+  }
+
+  function _feedHTML() {
+    var html = '';
+    FEED_CATALOG.forEach(function (block) {
+      if (block.type === 'all') {
+        html += '<div class="club-feed-all">'
+          + '<span class="club-feed-icon">' + (_FIC[block.icon] || _FIC.newsp) + '</span>'
+          + '<span class="club-feed-text">'
+          + '<span class="club-feed-title">' + block.title + '</span>'
+          + '<span class="club-feed-sub">' + block.sub + '</span>'
+          + '</span>'
+          + '<span class="club-feed-caret">' + _FIC.caret + '</span>'
+          + '</div>';
+      } else if (block.type === 'group') {
+        html += '<div class="club-feed-group">'
+          + '<div class="club-feed-group-label">' + block.label + '</div>';
+        block.items.forEach(function (item) {
+          html += _feedItemHTML(item);
+        });
+        html += '</div>';
+      }
+    });
+    return '<div class="club-feed">' + html + '</div>';
+  }
+
+  // ── Общение: утилиты ──────────────────────────────────────────────────────────
   function _findItem(id) {
     var found = null;
     CHAT_CFG.sections.forEach(function (sec) {
@@ -180,7 +300,6 @@
     return found;
   }
 
-  // ── Бейдж доступа ────────────────────────────────────────────────────────────
   function _badgeHTML(item) {
     var cls = item.access === 'public' ? 'ch-badge--open'
       : item.access === 'coming_soon' ? 'ch-badge--soon'
@@ -188,7 +307,6 @@
     return '<span class="ch-badge ' + cls + '">' + item.badge + '</span>';
   }
 
-  // ── Карточка ─────────────────────────────────────────────────────────────────
   function _cardHTML(item, favKey) {
     var isSoon = item.access === 'coming_soon';
     var btnIcon = item.external ? _IC.ext : _IC.arrow;
@@ -225,7 +343,6 @@
       + '</div>';
   }
 
-  // ── Секция ───────────────────────────────────────────────────────────────────
   function _sectionHTML(sec) {
     return '<div class="ch-section">'
       + '<h3 class="ch-section-title">' + sec.title + '</h3>'
@@ -254,7 +371,6 @@
     if (item.access === 'public') {
       openExternal(item.url);
     } else if (item.access === 'getcourse_protected') {
-      // Для Telegram используем connectionLessonUrl пока directUrl не задан
       var target = item.url || (item.directUrl || item.connectionLessonUrl);
       _showModal(target);
     }
@@ -299,16 +415,69 @@
     });
   }
 
+  // ── Переключатель вкладок ────────────────────────────────────────────────────
+  function _initTabs(root) {
+    var tabs = root.querySelectorAll('[role="tab"]');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        _selectTab(root, tab.id);
+      });
+    });
+    root.addEventListener('keydown', function (e) {
+      var focused = root.querySelector('[role="tab"]:focus');
+      if (!focused) return;
+      var allTabs = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
+      var idx = allTabs.indexOf(focused);
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        allTabs[(idx + 1) % allTabs.length].focus();
+        _selectTab(root, allTabs[(idx + 1) % allTabs.length].id);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        allTabs[(idx - 1 + allTabs.length) % allTabs.length].focus();
+        _selectTab(root, allTabs[(idx - 1 + allTabs.length) % allTabs.length].id);
+      }
+    });
+  }
+
+  function _selectTab(root, tabId) {
+    var tabs   = root.querySelectorAll('[role="tab"]');
+    var panels = root.querySelectorAll('[role="tabpanel"]');
+    tabs.forEach(function (t) {
+      var active = t.id === tabId;
+      t.setAttribute('aria-selected', active ? 'true' : 'false');
+      t.setAttribute('tabindex', active ? '0' : '-1');
+    });
+    panels.forEach(function (p) {
+      var controlled = p.getAttribute('aria-labelledby') === tabId;
+      if (controlled) { p.removeAttribute('hidden'); }
+      else             { p.setAttribute('hidden', ''); }
+    });
+  }
+
   // ── Рендер страницы ──────────────────────────────────────────────────────────
   function renderChat() {
     var root = document.getElementById('ch-root');
     if (!root) return;
     root.innerHTML =
       '<div class="ch-page-head">'
-      + '<h2 class="ch-page-title">Общение</h2>'
-      + '<p class="ch-page-sub">Выберите удобные площадки для общения, получения анонсов и связи с командой клуба. Можно выбрать все.</p>'
+      + '<h2 class="ch-page-title">Клуб</h2>'
+      + '<p class="ch-page-sub">Публикации, площадки общения и ресурсы клуба</p>'
       + '</div>'
-      + CHAT_CFG.sections.map(_sectionHTML).join('');
+      + '<div class="club-seg" role="tablist" aria-label="Разделы клуба">'
+      + '<button class="club-seg-btn" role="tab" id="club-tab-feed"'
+      + ' aria-selected="true" aria-controls="club-panel-feed" tabindex="0">Лента</button>'
+      + '<button class="club-seg-btn" role="tab" id="club-tab-chat"'
+      + ' aria-selected="false" aria-controls="club-panel-chat" tabindex="-1">Общение</button>'
+      + '</div>'
+      + '<div id="club-panel-feed" class="club-panel" role="tabpanel" aria-labelledby="club-tab-feed">'
+      + _feedHTML()
+      + '</div>'
+      + '<div id="club-panel-chat" class="club-panel" role="tabpanel" aria-labelledby="club-tab-chat" hidden>'
+      + CHAT_CFG.sections.map(_sectionHTML).join('')
+      + '</div>';
+
+    _initTabs(root);
     root.addEventListener('click', _handleClick);
   }
 
