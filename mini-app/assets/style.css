@@ -2535,6 +2535,16 @@ html[data-theme="light"] .ch-badge--soon  { color: var(--warning); background: r
   flex-direction: column;
   gap: 4px;
 }
+.lrn-course-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.lrn-course-row .lrn-row-btn {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
 .lrn-row-btn {
   width: 100%;
   display: flex;

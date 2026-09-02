@@ -1,4 +1,4 @@
-/* assets/learning.js v2 — иерархический навигатор обучения */
+/* assets/learning.js v3 — иерархический навигатор обучения + избранное для курсов */
 (function () {
   'use strict';
 
@@ -54,10 +54,19 @@
     html += '<div class="lrn-section-hdr">Курсы ступени</div>'
       + '<div class="lrn-list">';
     step.courses.forEach(function (c) {
-      html += '<button class="lrn-row-btn lrn-course-btn" data-stream="' + c.streamId + '">'
+      var fk = 'course/' + c.streamId;
+      var isFav = window.FAV ? FAV.isFav(fk) : false;
+      var se = window.FAV ? FAV.starEmpty : '';
+      var sf = window.FAV ? FAV.starFill : '';
+      html += '<div class="lrn-course-row">'
+        + '<button class="lrn-row-btn lrn-course-btn" data-stream="' + c.streamId + '">'
         + '<span class="lrn-row-title">' + _title('stream', c.streamId) + '</span>'
         + ARROW_SVG
-        + '</button>';
+        + '</button>'
+        + '<button class="fav-star-btn' + (isFav ? ' is-fav' : '') + '" data-fav-key="' + fk + '" aria-label="' + (isFav ? 'Убрать из избранного' : 'Добавить в избранное') + '">'
+        + (isFav ? sf : se)
+        + '</button>'
+        + '</div>';
     });
     html += '</div>';
 
@@ -241,6 +250,13 @@
 
   // ── Global click delegation ──────────────────────────────────────────────────
   document.addEventListener('click', function (e) {
+    // fav-star-btn inside a course row — must precede lrn-course-btn check
+    var favBtn = e.target.closest('.fav-star-btn');
+    if (favBtn && favBtn.closest('.lrn-course-row') && window.FAV) {
+      FAV.toggle(favBtn.dataset.favKey, favBtn);
+      return;
+    }
+
     var courseBtn = e.target.closest('.lrn-course-btn');
     if (courseBtn) {
       openCourse(parseInt(courseBtn.dataset.stream, 10));

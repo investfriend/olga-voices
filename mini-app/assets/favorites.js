@@ -1,4 +1,4 @@
-// assets/favorites.js v1 — Unified favorites system
+// assets/favorites.js v3 — Unified favorites system + course-level favorites
 (function () {
   'use strict';
 
@@ -14,6 +14,7 @@
     efiry:    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M208,40H48A24,24,0,0,0,24,64V168a24,24,0,0,0,24,24h68.92L104.19,216H88a8,8,0,0,0,0,16h80a8,8,0,0,0,0-16H151.81l-12.72-24H208a24,24,0,0,0,24-24V64A24,24,0,0,0,208,40Zm8,128a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V64a8,8,0,0,1,8-8H208a8,8,0,0,1,8,8Z"/></svg>',
     faq:      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z" opacity="0.2"/><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>',
     resource: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M224,104a8,8,0,0,1-16,0V79.32l-82.34,82.34a8,8,0,0,1-11.32-11.32L196.68,68H172a8,8,0,0,1,0-16h44a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/></svg>',
+    courses:  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm40.37-84.12-56-32A8,8,0,0,0,100,108v64a8,8,0,0,0,12.37,6.67l56-32a8,8,0,0,0,0-13.79Z"/></svg>',
   };
 
   function _esc(s) {
@@ -113,6 +114,32 @@
         }
       }
       return null;
+    }
+
+    if (prefix === 'course') {
+      var cc = window.COURSE_CATALOG;
+      if (!cc || !cc.stepCatalog) return null;
+      var sid = parseInt(id, 10);
+      if (!sid) return null;
+      var fcourse = null, fstep = null;
+      for (var ci2 = 0; ci2 < cc.stepCatalog.length; ci2++) {
+        var sc = cc.stepCatalog[ci2];
+        for (var cj = 0; cj < sc.courses.length; cj++) {
+          if (sc.courses[cj].streamId === sid) { fcourse = sc.courses[cj]; fstep = sc; break; }
+        }
+        if (fcourse) break;
+      }
+      if (!fcourse) return null;
+      return (function (streamId, step) {
+        return {
+          group: 'courses', groupLabel: 'Курсы', groupOrder: 1.5,
+          typLabel: 'Курс',
+          title: cc.title('stream', streamId),
+          short: step.label + ' · ' + step.sub,
+          key: key,
+          open: function () { if (typeof openCourse === 'function') openCourse(streamId); },
+        };
+      }(sid, fstep));
     }
 
     // DATA.categories items (legacy catId/itemId keys)
