@@ -1,0 +1,210 @@
+/* assets/money-accounts.css v1 — Мои деньги: Счета */
+
+/* ─── Sheet overlay (reuses .mn-sheet-* from money.css) ─────────────────── */
+#ac-sheet { display: none; position: fixed; inset: 0; z-index: 400; }
+#ac-sheet.mn-sheet--open { display: block; }
+
+/* ─── Negative value (shared utility) ───────────────────────────────────── */
+.ac-neg { color: #e05252; }
+html[data-theme="light"] .ac-neg { color: #c0392b; }
+
+/* ─── Total available bar ────────────────────────────────────────────────── */
+.ac-total-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.ac-total-label { font-size: 13px; color: var(--text-dim); }
+.ac-total-val   { font-size: 20px; font-weight: 700; color: var(--text); }
+
+/* ─── Account card ───────────────────────────────────────────────────────── */
+.ac-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px 8px 13px 14px;
+  margin-bottom: 8px;
+}
+.ac-card--archived { opacity: .6; }
+
+.ac-card-ic {
+  flex-shrink: 0;
+  width: 40px; height: 40px;
+  background: var(--bg-card-2);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+}
+.ac-card-ic svg { width: 22px; height: 22px; }
+
+.ac-card-body { flex: 1; min-width: 0; }
+
+.ac-card-row1 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.ac-card-name {
+  font-size: 15px; font-weight: 600; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  flex: 1; min-width: 0;
+}
+.ac-card-balance {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.ac-card-row2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ac-card-type { font-size: 12px; color: var(--text-dim); }
+
+.ac-card-badge {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 6px; border-radius: 5px;
+  white-space: nowrap;
+}
+.ac-card-badge--excluded {
+  background: var(--bg-card-2);
+  color: var(--text-dim);
+}
+
+/* ─── Card action buttons ────────────────────────────────────────────────── */
+.ac-card-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0;
+}
+.ac-action-btn {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; border-radius: 10px;
+  color: var(--text-dim); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .12s;
+}
+.ac-action-btn:active { background: var(--bg-card-2); }
+.ac-action-btn svg { width: 20px; height: 20px; }
+.ac-action-delete { color: #e05252; }
+
+/* ─── Add button ─────────────────────────────────────────────────────────── */
+.ac-add-btn {
+  display: block; width: 100%; min-height: 48px;
+  background: none;
+  border: 1.5px dashed var(--border);
+  border-radius: 14px;
+  color: var(--accent);
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .12s;
+  margin-bottom: 16px;
+}
+.ac-add-btn:active { opacity: .7; }
+
+/* ─── Empty state ────────────────────────────────────────────────────────── */
+.ac-empty {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 56px 20px 32px; text-align: center;
+}
+.ac-empty-ic {
+  width: 52px; height: 52px;
+  color: var(--text-dim); opacity: .35;
+  margin-bottom: 16px;
+}
+.ac-empty-ic svg { width: 52px; height: 52px; }
+.ac-empty-text {
+  font-size: 14px; color: var(--text-dim);
+  line-height: 1.55; margin: 0 0 20px;
+}
+.ac-add-first-btn {
+  background: var(--accent); color: var(--btn-text);
+  border: none; border-radius: 12px;
+  padding: 12px 28px;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: inherit; min-height: 48px;
+  -webkit-tap-highlight-color: transparent; transition: opacity .15s;
+}
+.ac-add-first-btn:active { opacity: .85; }
+
+/* ─── Archive section ────────────────────────────────────────────────────── */
+.ac-archive-section { margin-top: 4px; }
+
+.ac-archive-toggle {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 11px 4px;
+  background: none; border: none;
+  cursor: pointer; font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.ac-archive-title {
+  flex: 1; text-align: left;
+  font-size: 13px; font-weight: 600; color: var(--text-dim);
+}
+.ac-archive-toggle svg {
+  width: 16px; height: 16px;
+  color: var(--text-dim);
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+.ac-archive-toggle--open svg { transform: rotate(180deg); }
+
+.ac-archive-list { padding-bottom: 16px; }
+
+/* ─── Toggle switch (includeInAvailable) ─────────────────────────────────── */
+.ac-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+}
+.ac-toggle-row > .mn-sheet-lbl { margin-bottom: 0; flex: 1; }
+
+.ac-toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px; height: 28px;
+  flex-shrink: 0; cursor: pointer;
+}
+.ac-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+.ac-toggle-track {
+  position: absolute; inset: 0;
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: background .2s, border-color .2s;
+}
+.ac-toggle-track::after {
+  content: '';
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,.22);
+  transition: transform .2s;
+}
+.ac-toggle input:checked + .ac-toggle-track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.ac-toggle input:checked + .ac-toggle-track::after {
+  transform: translateX(20px);
+}
+
+/* ─── Delete action in sheet ─────────────────────────────────────────────── */
+.ac-sheet-del-btn { color: #e05252 !important; }

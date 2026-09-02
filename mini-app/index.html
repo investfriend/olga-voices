@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="assets/market.css?v=12">
 <link rel="stylesheet" href="assets/investik.css?v=2">
 <link rel="stylesheet" href="assets/money.css?v=4">
+<link rel="stylesheet" href="assets/money-accounts.css?v=1">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -348,9 +349,7 @@
   <section class="page sub" data-page="money-accounts">
     <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
     <h2 class="page-title">Счета</h2>
-    <div class="mn-empty">
-      <p class="mn-empty-text">Счета не добавлены</p>
-    </div>
+    <div id="ac-content"></div>
   </section>
 
 </main>
@@ -407,6 +406,7 @@
 <script src="assets/chat.js?v=9"></script>
 <script src="assets/money-store.js?v=1"></script>
 <script src="assets/money.js?v=4"></script>
+<script src="assets/money-accounts.js?v=1"></script>
 <script>
 /* Инвестик — конфигурация (менять здесь, не в investik.js) */
 window.INVESTIK_CFG = {
