@@ -118,13 +118,13 @@
           {
             id: 'telegram-club',
             title: 'Telegram клуба',
-            badge: 'Настраиваем',
-            access: 'coming_soon',
+            badge: 'Для участников клуба',
+            access: 'getcourse_protected',
             icon: 'chat',
             desc: 'Основная площадка общения клуба. Здесь публикуются анонсы, обсуждения, инвестиционные идеи, комментарии аналитиков и сообщения участников.',
-            note: 'Прямой переход в Telegram настраивается',
-            btn: 'Скоро',
-            url: null,
+            external: true,
+            btn: 'Открыть вход в Telegram',
+            url: 'https://investfriend.ru/teach/control/lesson/view/id/346013705',
           },
           {
             id: 'max-channel',
