@@ -50,26 +50,57 @@
   function scoreItem(item, q) {
     if (!q) return item.popular ? 3 : 1;
     const nq = norm(q);
-    const tokens = [...new Set(
+
+    // Query tokens: only what the user typed (no synonym expansion)
+    const queryTokens = [...new Set(
+      nq.split(' ').filter(t => t.length > 2 && !STOP.has(t))
+    )];
+    // All tokens including synonyms (used for bonus scoring only)
+    const allTokens = [...new Set(
       expandQuery(q).split(' ').filter(t => t.length > 2 && !STOP.has(t))
     )];
+
     const qq = norm(item.question);
     const sh = norm(item.short || '');
     const kw = norm((item.keywords || []).join(' '));
     const bd = getBodyText(item.body || '');
-    let z = 0, m = 0, exact = false;
-    if (qq.includes(nq)) { z += 30; exact = true; }
-    if (kw.includes(nq)) { z += 22; exact = true; }
-    if (sh.includes(nq)) { z += 16; exact = true; }
-    if (bd.includes(nq)) { z += 10; exact = true; }
-    tokens.forEach(t => {
-      if (qq.includes(t))      { z += 7; m++; }
-      else if (kw.includes(t)) { z += 6; m++; }
-      else if (sh.includes(t)) { z += 4; m++; }
-      else if (bd.includes(t)) { z += 2; m++; }
+
+    let z = 0;
+    // exactSurface: full phrase found in question/keywords/short (NOT body)
+    // Body phrase match adds score but cannot anchor a multi-word result alone
+    let exactSurface = false;
+    if (qq.includes(nq)) { z += 30; exactSurface = true; }
+    if (kw.includes(nq)) { z += 22; exactSurface = true; }
+    if (sh.includes(nq)) { z += 16; exactSurface = true; }
+    if (bd.includes(nq)) { z +=  8; }
+
+    if (!queryTokens.length) return exactSurface ? z : 0;
+
+    // Score query tokens, tracking surface (qq/kw/sh) vs body matches separately
+    let mSurface = 0, mBody = 0;
+    queryTokens.forEach(t => {
+      if      (qq.includes(t)) { z += 7; mSurface++; }
+      else if (kw.includes(t)) { z += 6; mSurface++; }
+      else if (sh.includes(t)) { z += 4; mSurface++; }
+      else if (bd.includes(t)) { z += 2; mBody++; }
     });
-    if (!exact && m === 0) return 0;
-    if (!exact && tokens.length > 1 && m < Math.ceil(tokens.length * 0.6)) return 0;
+    // Bonus for synonym-expanded tokens (don't affect threshold)
+    allTokens.forEach(t => {
+      if (queryTokens.includes(t)) return;
+      if (qq.includes(t) || kw.includes(t) || sh.includes(t)) z += 3;
+      else if (bd.includes(t)) z += 1;
+    });
+
+    const mTotal = mSurface + mBody;
+
+    // Surface anchor: at least one query token (or exact phrase) must appear in
+    // question, keywords, or short — body-only never surfaces a result.
+    // This prevents entries whose body contains example phrases from matching.
+    if (mSurface === 0 && !exactSurface) return 0;
+
+    // Multi-word query: ALL query tokens must be found (surface + body combined)
+    if (queryTokens.length > 1 && mTotal < queryTokens.length) return 0;
+
     return z;
   }
 
