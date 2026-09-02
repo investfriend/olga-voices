@@ -540,6 +540,24 @@
     });
   }
 
+  // ── Render: Навигатор по клубу ────────────────────────────────────────────────
+  var _NAV_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="26" height="26" aria-hidden="true"><path d="M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,41.17a8,8,0,0,0-5.16,0L28.86,63.43A8,8,0,0,0,23.07,71V208a8,8,0,0,0,10.08,7.69l61.54-16.76L156,220.83a7.93,7.93,0,0,0,2.16.3,8,8,0,0,0,2.89-.54l65.56-24.27A8,8,0,0,0,232,188V56A8,8,0,0,0,228.92,49.69ZM104,55.37l48,17.82V200.63l-48-17.82ZM40,74.62l48-17.79V183.38L40,201.16Zm176,106.76-48,17.79V72.62l48-17.79Z"/></svg>';
+  var _NAV_URL = 'https://investfriend.ru/pl/teach/control/lesson/view?id=348724624&editMode=0';
+
+  function renderNavigator() {
+    var el = document.getElementById('hp-navigator');
+    if (!el) return;
+    el.innerHTML = '<div class="hp-portfolios-card" role="button" tabindex="0" aria-label="Открыть навигатор по инвестклубу">'
+      + '<div class="hp-portfolios-icon" aria-hidden="true">' + _NAV_IC + '</div>'
+      + '<div class="hp-portfolios-body">'
+      + '<div class="hp-portfolios-title">Ваш навигатор по инвестклубу</div>'
+      + '<div class="hp-portfolios-desc">Как устроен клуб, где всё найти и с чего начать</div>'
+      + '</div>'
+      + '<div class="hp-portfolios-arr" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="18" height="18"><path d="M224,104a8,8,0,0,1-16,0V79.32l-82.34,82.34a8,8,0,0,1-11.32-11.32L196.68,68H172a8,8,0,0,1,0-16h44a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/></svg></div>'
+      + '</div>';
+    el.querySelector('.hp-portfolios-card').addEventListener('click', function () { openUrl(_NAV_URL); });
+  }
+
   // ── Render: Портфели клуба (ссылка на GetCourse) ─────────────────────────────
   function renderPortfolios() {
     var el = document.getElementById('hp-portfolios');
@@ -757,6 +775,7 @@
   function initHome() {
     renderPortfolioCarousel();
     renderCryptoEvent();
+    renderNavigator();
     renderPortfolios();
     renderChatsBtn();
     renderLearning();
