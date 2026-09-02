@@ -1,37 +1,9 @@
-/* assets/money.js v3 — Мои деньги: Stage 2B (Investment Block + UX) */
+/* assets/money.js v4 — Мои деньги: Stage 1 (unified iv_money storage) */
 (function () {
   'use strict';
 
-  // ─── Storage ───────────────────────────────────────────────────────────────
-  var STORAGE_KEY = 'money_state_v1';
-  var STORAGE_VERSION = 1;
-  var _state = { version: STORAGE_VERSION, templates: [], operations: [], investmentPlans: {} };
-
-  function loadState() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      var p = JSON.parse(raw);
-      if (!p || p.version !== STORAGE_VERSION ||
-          !Array.isArray(p.templates) || !Array.isArray(p.operations)) return;
-      _state = p;
-      // safe migration: add investmentPlans if missing in existing v1 data
-      if (!_state.investmentPlans || typeof _state.investmentPlans !== 'object' ||
-          Array.isArray(_state.investmentPlans)) {
-        _state.investmentPlans = {};
-      }
-    } catch (e) {
-      _state = { version: STORAGE_VERSION, templates: [], operations: [], investmentPlans: {} };
-    }
-  }
-
-  function saveState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_state)); } catch (e) {}
-  }
-
-  function genId() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-  }
+  // ─── Storage — delegates to MONEY_STORE (money-store.js) ──────────────────
+  function genId() { return MONEY_STORE.createId(); }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
   function fmtRub(amountMinor) {
@@ -58,21 +30,23 @@
     return _MONTHS_NOM[new Date().getMonth()];
   }
 
-  function todayCount(templateId) {
+  function todayCount(quickExpenseId) {
     var t = localDate(), n = 0;
-    for (var i = 0; i < _state.operations.length; i++) {
-      var op = _state.operations[i];
-      if (op.templateId === templateId && op.localDate === t) n++;
+    var txns = MONEY_STORE.getState().transactions;
+    for (var i = 0; i < txns.length; i++) {
+      var tx = txns[i];
+      if (tx.quickExpenseId === quickExpenseId && tx.localDate === t) n++;
     }
     return n;
   }
 
   function monthExpenses() {
     var m = thisMonth(), total = 0;
-    for (var i = 0; i < _state.operations.length; i++) {
-      var op = _state.operations[i];
-      if (op.type === 'expense' && op.localDate && op.localDate.slice(0, 7) === m) {
-        total += op.amountMinor;
+    var txns = MONEY_STORE.getState().transactions;
+    for (var i = 0; i < txns.length; i++) {
+      var tx = txns[i];
+      if (tx.type === 'expense' && tx.localDate && tx.localDate.slice(0, 7) === m) {
+        total += tx.amountMinor;
       }
     }
     return total;
@@ -80,21 +54,27 @@
 
   function monthInvested() {
     var m = thisMonth(), total = 0;
-    for (var i = 0; i < _state.operations.length; i++) {
-      var op = _state.operations[i];
-      if (op.type === 'investment' && op.localDate && op.localDate.slice(0, 7) === m) {
-        total += op.amountMinor;
+    var txns = MONEY_STORE.getState().transactions;
+    for (var i = 0; i < txns.length; i++) {
+      var tx = txns[i];
+      if (tx.type === 'investment' && tx.localDate && tx.localDate.slice(0, 7) === m) {
+        total += tx.amountMinor;
       }
     }
     return total;
   }
 
   function currentPlan() {
-    return _state.investmentPlans[thisMonth()] || null;
+    var m = thisMonth();
+    var plans = MONEY_STORE.getState().monthlyPlans;
+    for (var i = 0; i < plans.length; i++) {
+      if (plans[i].month === m) return plans[i];
+    }
+    return null;
   }
 
   function activeTemplates() {
-    return _state.templates.filter(function (t) { return t.active !== false; });
+    return MONEY_STORE.getState().quickExpenses.filter(function (t) { return t.active !== false; });
   }
 
   function esc(s) {
@@ -144,14 +124,14 @@
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="' + p + '"/></svg>';
   }
 
-  // ─── Template button HTML (v3: action-style CTA) ───────────────────────────
+  // ─── Template button HTML ─────────────────────────────────────────────────
   function tmplHtml(t) {
     var cnt = todayCount(t.id);
     return '<button class="mn-tmpl-btn" type="button" data-tid="' + esc(t.id) + '"'
-      + ' aria-label="Добавить расход ' + esc(t.title) + ', '
+      + ' aria-label="Добавить расход ' + esc(t.name) + ', '
       + Math.round(t.amountMinor / 100).toLocaleString('ru-RU') + ' рублей">'
       + '<span class="mn-tmpl-ic">' + catSvg(t.category) + '</span>'
-      + '<span class="mn-tmpl-name">' + esc(t.title) + '</span>'
+      + '<span class="mn-tmpl-name">' + esc(t.name) + '</span>'
       + '<span class="mn-tmpl-cta">+ Добавить ' + fmtRub(t.amountMinor) + '</span>'
       + (cnt > 0
         ? '<span class="mn-tmpl-today">Сегодня:&nbsp;' + cnt + '&nbsp;' + nraz(cnt) + '</span>'
@@ -191,7 +171,7 @@
         + '<p class="mn-invest-empty-p">Укажите сумму, которую планируете направить на формирование капитала</p>'
         + '<button class="mn-invest-plan-btn" type="button" id="mn-invest-open-plan">Запланировать сумму</button>';
     } else {
-      var planAmt = plan.amountMinor;
+      var planAmt = plan.plannedInvestmentMinor;
       var remaining = Math.max(0, planAmt - invested);
       var pct = planAmt > 0 ? Math.min(Math.round(invested * 100 / planAmt), 100) : 0;
       html += '<div class="mn-invest-plan-row">'
@@ -286,7 +266,7 @@
     var wrap = document.getElementById('mn-ops-content');
     if (!wrap) return;
     var tmpls = activeTemplates();
-    var ops = _state.operations.slice().reverse();
+    var ops = MONEY_STORE.getState().transactions.slice().reverse();
     var html = '';
 
     html += '<div class="mn-block-title">Быстрые расходы</div>';
@@ -382,44 +362,54 @@
 
     var tid = btn.dataset.tid;
     var tmpl = null;
-    for (var i = 0; i < _state.templates.length; i++) {
-      if (_state.templates[i].id === tid) { tmpl = _state.templates[i]; break; }
+    var qe = MONEY_STORE.getState().quickExpenses;
+    for (var i = 0; i < qe.length; i++) {
+      if (qe[i].id === tid) { tmpl = qe[i]; break; }
     }
     if (!tmpl) return;
 
     var now = new Date();
-    var op = {
+    var tx = {
       id: genId(),
       type: 'expense',
-      templateId: tmpl.id,
-      title: tmpl.title,
+      quickExpenseId: tmpl.id,
+      title: tmpl.name,
       category: tmpl.category,
       amountMinor: tmpl.amountMinor,
       localDate: localDate(now),
-      createdAt: now.toISOString()
+      accountId: null,
+      toAccountId: null,
+      note: '',
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString()
     };
-    _state.operations.push(op);
-    saveState();
-    _lastOpId = op.id;
+    MONEY_STORE.update(function (s) { s.transactions.push(tx); });
+    MONEY_STORE.save();
+    _lastOpId = tx.id;
     refresh();
-    showToast(tmpl.title + ', ' + fmtRub(tmpl.amountMinor) + ' добавлено');
+    showToast(tmpl.name + ', ' + fmtRub(tmpl.amountMinor) + ' добавлено');
   }
 
   // ─── Add investment operation ──────────────────────────────────────────────
   function addInvestmentOp(amountMinor) {
     var now = new Date();
-    var op = {
+    var tx = {
       id: genId(),
       type: 'investment',
       title: 'Инвестирование',
       category: null,
       amountMinor: amountMinor,
       localDate: localDate(now),
-      createdAt: now.toISOString()
+      accountId: null,
+      toAccountId: null,
+      note: '',
+      quickExpenseId: null,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString()
     };
-    _state.operations.push(op);
-    saveState();
-    _lastOpId = op.id;
+    MONEY_STORE.update(function (s) { s.transactions.push(tx); });
+    MONEY_STORE.save();
+    _lastOpId = tx.id;
     refresh();
     showToast('В инвестиции добавлено ' + fmtRub(amountMinor));
   }
@@ -465,13 +455,15 @@
 
   function undoLast() {
     if (!_lastOpId) return;
-    var idx = -1;
-    for (var i = 0; i < _state.operations.length; i++) {
-      if (_state.operations[i].id === _lastOpId) { idx = i; break; }
-    }
-    if (idx === -1) return;
-    _state.operations.splice(idx, 1);
-    saveState();
+    var oid = _lastOpId;
+    MONEY_STORE.update(function (s) {
+      var idx = -1;
+      for (var i = 0; i < s.transactions.length; i++) {
+        if (s.transactions[i].id === oid) { idx = i; break; }
+      }
+      if (idx !== -1) s.transactions.splice(idx, 1);
+    });
+    MONEY_STORE.save();
     _lastOpId = null;
     clearTimeout(_toastTimer);
     hideToast();
@@ -582,16 +574,19 @@
       if (!amtInp.value || isNaN(amt) || amt < 1) { el.querySelector('#mn-e-amt').textContent = 'Введите сумму больше 0'; err = true; }
       if (err) return false;
       var now = new Date();
-      _state.templates.push({
-        id: genId(),
-        title: name,
-        category: cat === 'Другое' ? cust : cat,
-        amountMinor: amt * 100,
-        createdAt: now.toISOString(),
-        updatedAt: now.toISOString(),
-        active: true
+      MONEY_STORE.update(function (s) {
+        s.quickExpenses.push({
+          id: genId(),
+          name: name,
+          category: cat === 'Другое' ? cust : cat,
+          amountMinor: amt * 100,
+          accountId: null,
+          active: true,
+          createdAt: now.toISOString(),
+          updatedAt: now.toISOString()
+        });
       });
-      saveState();
+      MONEY_STORE.save();
       renderQuickExpenses();
       renderOpsPage();
       return true;
@@ -668,8 +663,30 @@
         el.querySelector('#mn-pi-err').textContent = 'Введите сумму больше 0';
         return;
       }
-      _state.investmentPlans[thisMonth()] = { month: thisMonth(), amountMinor: v * 100 };
-      saveState();
+      var month = thisMonth();
+      MONEY_STORE.update(function (s) {
+        var existing = null;
+        for (var j = 0; j < s.monthlyPlans.length; j++) {
+          if (s.monthlyPlans[j].month === month) { existing = s.monthlyPlans[j]; break; }
+        }
+        var ts = new Date().toISOString();
+        if (existing) {
+          existing.plannedInvestmentMinor = v * 100;
+          existing.updatedAt = ts;
+        } else {
+          s.monthlyPlans.push({
+            id: 'mp_' + month.replace('-', ''),
+            month: month,
+            plannedIncomes: [],
+            mandatoryExpenses: [],
+            plannedInvestmentMinor: v * 100,
+            goalAllocations: [],
+            createdAt: ts,
+            updatedAt: ts
+          });
+        }
+      });
+      MONEY_STORE.save();
       closePlanSheet();
       refresh();
     });
@@ -770,7 +787,7 @@
 
   // ─── Init ─────────────────────────────────────────────────────────────────
   function init() {
-    loadState();
+    var result = MONEY_STORE.load();
     renderMoneyCard();
     renderInvestBlock();
     renderQuickExpenses();
@@ -778,6 +795,9 @@
     updateInvestMetric();
     renderOpsPage();
     observeMoneyPage();
+    if (result && !result.ok && result.error === 'storage_unavailable') {
+      showToast('Хранилище недоступно — данные сохраняются только в памяти');
+    }
   }
 
   if (document.readyState === 'loading') {
