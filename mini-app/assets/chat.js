@@ -426,9 +426,26 @@
 
     if (_feedCache) { render(_feedCache); return; }
 
-    fetch('assets/feed.json?' + Date.now())
-      .then(function (r) { return r.json(); })
-      .then(function (data) { _feedCache = data; render(data); })
+    var _tg = window.Telegram && window.Telegram.WebApp;
+    var _initData = _tg ? (_tg.initData || '') : '';
+    var _feedOpts = _initData ? { headers: { 'Authorization': 'tma ' + _initData } } : {};
+    fetch('https://7014487-jf659312.twc1.net/club-feed/feed', _feedOpts)
+      .then(function (r) {
+        if (r.status === 401) {
+          body.innerHTML = '<p class="fp-empty">Откройте приложение через Telegram для доступа к ленте.</p>';
+          return null;
+        }
+        if (r.status === 403) {
+          body.innerHTML = '<p class="fp-empty">Лента доступна только участникам клуба.</p>';
+          return null;
+        }
+        if (!r.ok) {
+          body.innerHTML = '<p class="fp-empty">Лента временно недоступна. Попробуйте позже.</p>';
+          return null;
+        }
+        return r.json();
+      })
+      .then(function (data) { if (data) { _feedCache = data; render(data); } })
       .catch(function () { body.innerHTML = '<p class="fp-empty">Не удалось загрузить данные. Попробуйте позже.</p>'; });
   }
 
