@@ -1430,6 +1430,74 @@ button, input, textarea, select { font-family: inherit; }
 .hp-portfolios-desc  { font-size: 13px; color: rgba(7,26,19,.72); }
 .hp-portfolios-arr   { color: rgba(7,26,19,.55); flex-shrink: 0; display: flex; pointer-events: none; }
 
+/* ── Группа внешних ссылок (Навигатор + Портфели) ───────────────────────── */
+.hp-ext-group {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.hp-ext-corner {
+  position: absolute;
+  pointer-events: none;
+  line-height: 0;
+  z-index: 1;
+}
+.hp-ext-corner--tl { top: 0;    left: 0;  }
+.hp-ext-corner--tr { top: 0;    right: 0; }
+.hp-ext-corner--bl { bottom: 0; left: 0;  }
+.hp-ext-corner--br { bottom: 0; right: 0; }
+.hp-ext-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 16px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .12s;
+}
+.hp-ext-row:active { background: rgba(39,201,138,.07); }
+.hp-ext-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: rgba(39,201,138,.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+.hp-ext-body { flex: 1; min-width: 0; }
+.hp-ext-title {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-ext-desc {
+  display: block;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.35;
+}
+.hp-ext-arr { color: var(--text-muted); flex-shrink: 0; display: flex; }
+.hp-ext-divider { height: 1px; background: var(--border); margin: 0 16px; }
+html[data-theme="light"] .hp-ext-row:active { background: rgba(28,156,106,.06); }
+html[data-theme="light"] .hp-ext-icon { background: rgba(28,156,106,.1); }
+
 /* Кнопка Общения */
 .hp-chats-btn {
   width: 100%;
@@ -1437,18 +1505,19 @@ button, input, textarea, select { font-family: inherit; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: rgba(39,201,138,.08);
-  border: 1.5px solid rgba(39,201,138,.28);
+  background: var(--bg-card);
+  border: 1.5px solid rgba(39,201,138,.32);
   color: var(--accent);
   font-family: inherit;
   font-size: 15px;
   font-weight: 600;
   padding: 14px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   margin-bottom: 24px;
+  -webkit-tap-highlight-color: transparent;
 }
-.hp-chats-btn:active { background: rgba(39,201,138,.15); }
+.hp-chats-btn:active { opacity: .78; }
 .hp-chats-btn svg { flex-shrink: 0; }
 
 /* Карточка интенсива (намеренно тёмная при любой теме) */

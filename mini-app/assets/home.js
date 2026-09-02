@@ -1,4 +1,4 @@
-// assets/home.js v10 — Home screen rendering
+// assets/home.js v12 — Home screen rendering
 // Depends on: script.js (STATE, setPage, showToast), data.js (DATA)
 
 (function () {
@@ -541,39 +541,45 @@
   }
 
   // ── Render: Навигатор по клубу ────────────────────────────────────────────────
-  var _NAV_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="26" height="26" aria-hidden="true"><path d="M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,41.17a8,8,0,0,0-5.16,0L28.86,63.43A8,8,0,0,0,23.07,71V208a8,8,0,0,0,10.08,7.69l61.54-16.76L156,220.83a7.93,7.93,0,0,0,2.16.3,8,8,0,0,0,2.89-.54l65.56-24.27A8,8,0,0,0,232,188V56A8,8,0,0,0,228.92,49.69ZM104,55.37l48,17.82V200.63l-48-17.82ZM40,74.62l48-17.79V183.38L40,201.16Zm176,106.76-48,17.79V72.62l48-17.79Z"/></svg>';
+  var _NAV_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,41.17a8,8,0,0,0-5.16,0L28.86,63.43A8,8,0,0,0,23.07,71V208a8,8,0,0,0,10.08,7.69l61.54-16.76L156,220.83a7.93,7.93,0,0,0,2.16.3,8,8,0,0,0,2.89-.54l65.56-24.27A8,8,0,0,0,232,188V56A8,8,0,0,0,228.92,49.69ZM104,55.37l48,17.82V200.63l-48-17.82ZM40,74.62l48-17.79V183.38L40,201.16Zm176,106.76-48,17.79V72.62l48-17.79Z"/></svg>';
   var _NAV_URL = 'https://investfriend.ru/pl/teach/control/lesson/view?id=348724624&editMode=0';
+  var _PORTFOLIO_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M216,72H180.92c.39-.33.79-.65,1.17-1A29.53,29.53,0,0,0,192,49.57,32.62,32.62,0,0,0,158.44,16,29.53,29.53,0,0,0,137,25.91a54.94,54.94,0,0,0-9,14.48,54.94,54.94,0,0,0-9-14.48A29.53,29.53,0,0,0,97.56,16,32.62,32.62,0,0,0,64,49.57,29.53,29.53,0,0,0,73.91,71c.38.33.78.65,1.17,1H40A16,16,0,0,0,24,88v32a16,16,0,0,0,16,16v64a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V136a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72ZM149,36.51a13.69,13.69,0,0,1,10-4.5h.49A16.62,16.62,0,0,1,176,49.08a13.69,13.69,0,0,1-4.5,10c-9.49,8.4-25.24,11.36-35,12.4C137.7,60.89,141,45.5,149,36.51Zm-64.09.36A16.63,16.63,0,0,1,96.59,32h.49a13.69,13.69,0,0,1,10,4.5c8.39,9.48,11.35,25.2,12.39,34.92-9.72-1-25.44-4-34.92-12.39a13.69,13.69,0,0,1-4.5-10A16.6,16.6,0,0,1,84.87,36.87ZM40,88h80v32H40Zm16,48h64v64H56Zm144,64H136V136h64Zm16-80H136V88h80v32Z"/></svg>';
+  var _EXT_LNK_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="16" height="16" aria-hidden="true"><path d="M224,104a8,8,0,0,1-16,0V79.32l-82.34,82.34a8,8,0,0,1-11.32-11.32L196.68,68H172a8,8,0,0,1,0-16h44a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/></svg>';
 
-  function renderNavigator() {
-    var el = document.getElementById('hp-navigator');
-    if (!el) return;
-    el.innerHTML = '<div class="hp-portfolios-card" role="button" tabindex="0" aria-label="Открыть навигатор по инвестклубу">'
-      + '<div class="hp-portfolios-icon" aria-hidden="true">' + _NAV_IC + '</div>'
-      + '<div class="hp-portfolios-body">'
-      + '<div class="hp-portfolios-title">Ваш навигатор по инвестклубу</div>'
-      + '<div class="hp-portfolios-desc">Как устроен клуб, где всё найти и с чего начать</div>'
-      + '</div>'
-      + '<div class="hp-portfolios-arr" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="18" height="18"><path d="M224,104a8,8,0,0,1-16,0V79.32l-82.34,82.34a8,8,0,0,1-11.32-11.32L196.68,68H172a8,8,0,0,1,0-16h44a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/></svg></div>'
-      + '</div>';
-    el.querySelector('.hp-portfolios-card').addEventListener('click', function () { openUrl(_NAV_URL); });
-  }
-
-  // ── Render: Портфели клуба (ссылка на GetCourse) ─────────────────────────────
-  function renderPortfolios() {
-    var el = document.getElementById('hp-portfolios');
+  // ── Render: Внешние материалы (Навигатор + Портфели) ─────────────────────────
+  function renderExternalGroup() {
+    var el = document.getElementById('hp-ext-group');
     if (!el) return;
     var c = HOME_CFG.portfolios;
-    el.innerHTML = '<div class="hp-portfolios-card" role="button" tabindex="0" aria-label="Открыть на GetCourse">'
-      + '<div class="hp-portfolios-icon" aria-hidden="true">'
-      + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="26" height="26"><path d="M216,72H180.92c.39-.33.79-.65,1.17-1A29.53,29.53,0,0,0,192,49.57,32.62,32.62,0,0,0,158.44,16,29.53,29.53,0,0,0,137,25.91a54.94,54.94,0,0,0-9,14.48,54.94,54.94,0,0,0-9-14.48A29.53,29.53,0,0,0,97.56,16,32.62,32.62,0,0,0,64,49.57,29.53,29.53,0,0,0,73.91,71c.38.33.78.65,1.17,1H40A16,16,0,0,0,24,88v32a16,16,0,0,0,16,16v64a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V136a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72ZM149,36.51a13.69,13.69,0,0,1,10-4.5h.49A16.62,16.62,0,0,1,176,49.08a13.69,13.69,0,0,1-4.5,10c-9.49,8.4-25.24,11.36-35,12.4C137.7,60.89,141,45.5,149,36.51Zm-64.09.36A16.63,16.63,0,0,1,96.59,32h.49a13.69,13.69,0,0,1,10,4.5c8.39,9.48,11.35,25.2,12.39,34.92-9.72-1-25.44-4-34.92-12.39a13.69,13.69,0,0,1-4.5-10A16.6,16.6,0,0,1,84.87,36.87ZM40,88h80v32H40Zm16,48h64v64H56Zm144,64H136V136h64Zm16-80H136V88h80v32Z"/></svg>'
-      + '</div>'
-      + '<div class="hp-portfolios-body">'
-      + '<div class="hp-portfolios-title">' + c.title + '</div>'
-      + '<div class="hp-portfolios-desc">' + c.desc + '</div>'
-      + '</div>'
-      + '<div class="hp-portfolios-arr" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" width="18" height="18"><path d="M224,104a8,8,0,0,1-16,0V79.32l-82.34,82.34a8,8,0,0,1-11.32-11.32L196.68,68H172a8,8,0,0,1,0-16h44a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/></svg></div>'
-      + '</div>';
-    el.querySelector('.hp-portfolios-card').addEventListener('click', function () { openUrl(c.url); });
+    function _corner(d) {
+      return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
+        + '<path d="' + d + '" stroke="#27C98A" stroke-opacity=".5" stroke-width="1.5" stroke-linecap="round" fill="none"/>'
+        + '</svg>';
+    }
+    el.innerHTML =
+      '<span class="hp-ext-corner hp-ext-corner--tl" aria-hidden="true">' + _corner('M1 15 L1 1 L15 1') + '</span>'
+      + '<span class="hp-ext-corner hp-ext-corner--tr" aria-hidden="true">' + _corner('M15 15 L15 1 L1 1') + '</span>'
+      + '<span class="hp-ext-corner hp-ext-corner--bl" aria-hidden="true">' + _corner('M1 1 L1 15 L15 15') + '</span>'
+      + '<span class="hp-ext-corner hp-ext-corner--br" aria-hidden="true">' + _corner('M15 1 L15 15 L1 15') + '</span>'
+      + '<button class="hp-ext-row hp-ext-nav-btn" type="button" aria-label="Ваш навигатор по инвестклубу — откроется в браузере">'
+      + '<span class="hp-ext-icon" aria-hidden="true">' + _NAV_IC + '</span>'
+      + '<span class="hp-ext-body">'
+      + '<span class="hp-ext-title">Ваш навигатор по инвестклубу</span>'
+      + '<span class="hp-ext-desc">Как устроен клуб, где всё найти и с чего начать</span>'
+      + '</span>'
+      + '<span class="hp-ext-arr" aria-hidden="true">' + _EXT_LNK_IC + '</span>'
+      + '</button>'
+      + '<div class="hp-ext-divider" role="separator"></div>'
+      + '<button class="hp-ext-row hp-ext-port-btn" type="button" aria-label="Открыть материалы по портфелям">'
+      + '<span class="hp-ext-icon" aria-hidden="true">' + _PORTFOLIO_IC + '</span>'
+      + '<span class="hp-ext-body">'
+      + '<span class="hp-ext-title">' + c.title + '</span>'
+      + '<span class="hp-ext-desc">' + c.desc + '</span>'
+      + '</span>'
+      + '<span class="hp-ext-arr" aria-hidden="true">' + _EXT_LNK_IC + '</span>'
+      + '</button>';
+    el.querySelector('.hp-ext-nav-btn').addEventListener('click', function () { openUrl(_NAV_URL); });
+    el.querySelector('.hp-ext-port-btn').addEventListener('click', function () { openUrl(c.url); });
   }
 
   // ── Render: кнопка «Общение» ──────────────────────────────────────────────────
@@ -775,8 +781,7 @@
   function initHome() {
     renderPortfolioCarousel();
     renderCryptoEvent();
-    renderNavigator();
-    renderPortfolios();
+    renderExternalGroup();
     renderChatsBtn();
     renderLearning();
     loadAllPortfolioData(); // async; перерисовывает карусель при успехе
