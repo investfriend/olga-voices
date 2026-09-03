@@ -1,0 +1,201 @@
+/* assets/money-ops.css v1 — Мои деньги: Операции */
+
+/* ─── Sheet overlays ─────────────────────────────────────────────────────── */
+#tx-sheet        { display:none; position:fixed; inset:0; z-index:400; }
+#tx-sheet.mn-sheet--open { display:block; }
+
+#qe-acct-picker  { display:none; position:fixed; inset:0; z-index:410; }
+#qe-acct-picker.mn-sheet--open { display:block; }
+
+#tpl-manager     { display:none; position:fixed; inset:0; z-index:405; }
+#tpl-manager.mn-sheet--open { display:block; }
+
+/* ─── Month nav ──────────────────────────────────────────────────────────── */
+.ops-month-nav {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px;
+}
+.ops-month-btn {
+  width:44px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:none; border-radius:10px;
+  color:var(--text-dim); cursor:pointer; font-family:inherit;
+  font-size:18px; -webkit-tap-highlight-color:transparent;
+}
+.ops-month-btn:active { background:var(--bg-card-2); }
+.ops-month-lbl  { font-size:16px; font-weight:700; color:var(--text); }
+
+/* ─── Summary bar ────────────────────────────────────────────────────────── */
+.ops-summary { display:flex; gap:6px; margin-bottom:12px; }
+.ops-sum-item {
+  flex:1; background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:10px 6px; text-align:center;
+}
+.ops-sum-lbl {
+  display:block; font-size:10px; font-weight:600; text-transform:uppercase;
+  letter-spacing:.4px; color:var(--text-dim); margin-bottom:4px;
+}
+.ops-sum-val        { display:block; font-size:13px; font-weight:700; color:var(--text); }
+.ops-sum-val--inc   { color:var(--accent); }
+.ops-sum-val--exp   { color:#e05252; }
+html[data-theme="light"] .ops-sum-val--exp { color:#c0392b; }
+
+/* ─── Filter chips ───────────────────────────────────────────────────────── */
+.ops-filters {
+  display:flex; gap:6px; overflow-x:auto;
+  padding-bottom:4px; margin-bottom:12px; scrollbar-width:none;
+}
+.ops-filters::-webkit-scrollbar { display:none; }
+.ops-chip {
+  flex-shrink:0; padding:6px 12px; min-height:32px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:100px; font-size:13px; font-weight:500;
+  color:var(--text-dim); cursor:pointer; font-family:inherit;
+  white-space:nowrap; -webkit-tap-highlight-color:transparent;
+}
+.ops-chip--active { background:var(--accent); border-color:var(--accent); color:var(--btn-text); }
+.ops-chip:active  { opacity:.8; }
+
+/* ─── Add button ─────────────────────────────────────────────────────────── */
+.ops-add-btn {
+  display:block; width:100%; min-height:48px;
+  background:var(--accent); color:var(--btn-text);
+  border:none; border-radius:14px;
+  font-size:15px; font-weight:600; cursor:pointer;
+  font-family:inherit; margin-bottom:14px;
+  -webkit-tap-highlight-color:transparent;
+}
+.ops-add-btn:active { opacity:.85; }
+
+/* ─── Transaction list ───────────────────────────────────────────────────── */
+.ops-date-lbl {
+  font-size:12px; font-weight:600; color:var(--text-dim);
+  margin:14px 0 4px; padding:0 2px;
+}
+.ops-group {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden; margin-bottom:4px;
+}
+.ops-row {
+  display:flex; align-items:center; gap:10px;
+  padding:11px 14px; border-bottom:1px solid var(--border);
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.ops-row:last-child { border-bottom:none; }
+.ops-row:active     { background:var(--bg-card-2); }
+
+.ops-row-ic {
+  flex-shrink:0; width:34px; height:34px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+}
+.ops-row-ic svg { width:18px; height:18px; }
+.ops-row-ic--income     { background:rgba(39,201,138,.12); color:var(--accent); }
+.ops-row-ic--expense    { background:rgba(220,80,80,.10); color:#e05252; }
+.ops-row-ic--transfer   { background:rgba(100,160,240,.12); color:#5599ee; }
+.ops-row-ic--investment { background:rgba(39,201,138,.12); color:var(--accent); }
+html[data-theme="light"] .ops-row-ic--expense { color:#c0392b; }
+
+.ops-row-body  { flex:1; min-width:0; }
+.ops-row-title {
+  display:block; font-size:14px; font-weight:600; color:var(--text);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.ops-row-meta  {
+  display:block; font-size:12px; color:var(--text-dim); margin-top:2px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.ops-row-right { flex-shrink:0; text-align:right; }
+.ops-row-amt   { display:block; font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; }
+.ops-row-amt--income { color:var(--accent); }
+
+.ops-no-acct-badge {
+  display:inline-block; font-size:10px; font-weight:600;
+  background:rgba(220,180,30,.15); color:#b8960f;
+  border-radius:4px; padding:1px 5px; margin-left:4px; vertical-align:middle;
+}
+html[data-theme="light"] .ops-no-acct-badge { color:#8a6f00; }
+
+.ops-empty { font-size:13px; color:var(--text-dim); text-align:center; padding:32px 0 16px; }
+
+/* ─── Type bar inside tx sheet ───────────────────────────────────────────── */
+.tx-type-bar {
+  display:flex; gap:3px; margin-bottom:16px;
+  background:var(--bg-card-2); border-radius:10px; padding:3px;
+}
+.tx-type-btn {
+  flex:1; padding:7px 2px; min-height:34px;
+  background:none; border:none; border-radius:8px;
+  font-size:11px; font-weight:600; color:var(--text-dim);
+  cursor:pointer; font-family:inherit; white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+}
+.tx-type-btn--active {
+  background:var(--bg-card); color:var(--text);
+  box-shadow:0 1px 3px rgba(0,0,0,.12);
+}
+.tx-type-btn:active:not(.tx-type-btn--active) { opacity:.75; }
+
+/* ─── Delete button in tx sheet ──────────────────────────────────────────── */
+.tx-del-btn { color:#e05252 !important; }
+
+/* ─── Add income button on main money screen ─────────────────────────────── */
+.mn-add-income-btn {
+  display:block; width:100%; min-height:46px;
+  background:none; border:1.5px solid var(--border);
+  border-radius:12px; color:var(--accent);
+  font-size:14px; font-weight:600; cursor:pointer;
+  font-family:inherit; margin-bottom:4px;
+  -webkit-tap-highlight-color:transparent;
+}
+.mn-add-income-btn:active { opacity:.7; }
+
+/* ─── Account picker (quick expense without account) ─────────────────────── */
+.qe-acct-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:13px 0; border-bottom:1px solid var(--border);
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.qe-acct-item:last-child { border-bottom:none; }
+.qe-acct-item:active { opacity:.7; }
+.qe-acct-name { font-size:15px; font-weight:600; color:var(--text); }
+.qe-acct-bal  { font-size:13px; color:var(--text-dim); }
+.qe-no-accts  { font-size:13px; color:var(--text-dim); padding:16px 0; text-align:center; }
+.qe-save-default {
+  display:flex; align-items:center; gap:10px;
+  padding:14px 0 0; font-size:13px; color:var(--text-dim); cursor:pointer;
+}
+.qe-save-default input { width:18px; height:18px; flex-shrink:0; cursor:pointer; }
+
+/* ─── Template manager ───────────────────────────────────────────────────── */
+.tpl-mgr-row {
+  display:flex; align-items:center; gap:10px;
+  padding:11px 0; border-bottom:1px solid var(--border);
+}
+.tpl-mgr-row:last-child { border-bottom:none; }
+.tpl-mgr-body  { flex:1; min-width:0; }
+.tpl-mgr-name  { display:block; font-size:14px; font-weight:600; color:var(--text); }
+.tpl-mgr-meta  { display:block; font-size:12px; color:var(--text-dim); margin-top:2px; }
+.tpl-mgr-actions { display:flex; flex-shrink:0; }
+.tpl-mgr-btn {
+  width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+  background:none; border:none; border-radius:8px;
+  color:var(--text-dim); cursor:pointer; font-family:inherit;
+  -webkit-tap-highlight-color:transparent;
+}
+.tpl-mgr-btn:active { background:var(--bg-card-2); }
+.tpl-mgr-btn svg { width:18px; height:18px; }
+.tpl-mgr-btn--del { color:#e05252; }
+.tpl-mgr-sect-lbl {
+  font-size:11px; font-weight:600; color:var(--text-dim); text-transform:uppercase;
+  letter-spacing:.5px; margin:14px 0 4px;
+}
+.tpl-mgr-empty { font-size:13px; color:var(--text-dim); padding:8px 0; }
+
+/* ─── Manage link below quick expenses ───────────────────────────────────── */
+.mn-manage-tpl-btn {
+  display:inline-block; font-size:12px; color:var(--text-dim);
+  background:none; border:none; font-family:inherit; padding:4px 0;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+  margin-top:2px;
+}
+.mn-manage-tpl-btn:active { opacity:.6; }

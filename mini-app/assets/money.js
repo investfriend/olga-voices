@@ -208,7 +208,7 @@
     if (btnRecord) {
       btnRecord.addEventListener('click', function () {
         var p2 = currentPlan();
-        var rem = p2 ? Math.max(0, p2.amountMinor - monthInvested()) : 0;
+        var rem = p2 ? Math.max(0, p2.plannedInvestmentMinor - monthInvested()) : 0;
         openRecordSheet(rem);
       });
     }
@@ -240,15 +240,18 @@
         + '<div class="mn-quick-grid">';
       for (var i = 0; i < shown.length; i++) html += tmplHtml(shown[i]);
       html += '</div>';
-      html += '<button class="mn-quick-link" type="button" id="mn-add-more">+ Добавить расход</button>';
+      html += '<button class="mn-quick-link" type="button" id="mn-add-more">+ Добавить расход</button>'
+        + '<button class="mn-manage-tpl-btn" type="button" id="mn-manage-tpl">Управлять шаблонами</button>';
     }
 
     wrap.innerHTML = html;
 
     var btn1 = wrap.querySelector('#mn-add-first');
-    if (btn1) btn1.addEventListener('click', openSheet);
+    if (btn1) btn1.addEventListener('click', function(){ openSheet(null); });
     var btn2 = wrap.querySelector('#mn-add-more');
-    if (btn2) btn2.addEventListener('click', openSheet);
+    if (btn2) btn2.addEventListener('click', function(){ openSheet(null); });
+    var btnMgr = wrap.querySelector('#mn-manage-tpl');
+    if (btnMgr) btnMgr.addEventListener('click', openTplManager);
     var grid = wrap.querySelector('.mn-quick-grid');
     if (grid) grid.addEventListener('click', onGridClick);
   }
@@ -261,84 +264,7 @@
     el.textContent = total > 0 ? fmtRub(total) : '—';
   }
 
-  // ─── Operations sub-page ──────────────────────────────────────────────────
-  function renderOpsPage() {
-    var wrap = document.getElementById('mn-ops-content');
-    if (!wrap) return;
-    var tmpls = activeTemplates();
-    var ops = MONEY_STORE.getState().transactions.slice().reverse();
-    var html = '';
 
-    html += '<div class="mn-block-title">Быстрые расходы</div>';
-    if (tmpls.length === 0) {
-      html += '<div class="mn-quick-empty">'
-        + '<p class="mn-quick-empty-text">Добавьте регулярные расходы,<br>чтобы записывать их одним нажатием</p>'
-        + '<button class="mn-quick-add-btn" type="button" id="mn-ops-add">Добавить быстрый расход</button>'
-        + '</div>';
-    } else {
-      html += '<p class="mn-quick-hint">Нажмите на карточку, чтобы добавить расход</p>'
-        + '<div class="mn-quick-grid mn-ops-grid">';
-      for (var i = 0; i < tmpls.length; i++) html += tmplHtml(tmpls[i]);
-      html += '</div>';
-      html += '<button class="mn-quick-link" type="button" id="mn-ops-add-more">+ Добавить расход</button>';
-    }
-
-    var total = monthExpenses();
-    html += '<div class="mn-ops-month-row">'
-      + '<span class="mn-ops-month-lbl">Расходы за месяц</span>'
-      + '<span class="mn-ops-month-val">' + (total > 0 ? fmtRub(total) : '—') + '</span>'
-      + '</div>';
-
-    if (ops.length === 0) {
-      html += '<p class="mn-ops-hint">Нажмите на расход выше — он появится здесь</p>';
-    } else {
-      var groups = groupByDate(ops);
-      for (var g = 0; g < groups.length; g++) {
-        var grp = groups[g];
-        html += '<div class="mn-ops-date">' + esc(fmtGroupDate(grp.date)) + '</div>';
-        html += '<div class="mn-ops-group">';
-        for (var k = 0; k < grp.items.length; k++) {
-          var op = grp.items[k];
-          var isInvest = op.type === 'investment';
-          html += '<div class="mn-ops-row' + (isInvest ? ' mn-ops-row--invest' : '') + '">'
-            + '<span class="mn-ops-row-ic">'
-            + (isInvest ? _INVEST_IC : catSvg(op.category))
-            + '</span>'
-            + '<span class="mn-ops-row-body">'
-            + '<span class="mn-ops-row-t">' + esc(op.title) + '</span>'
-            + (isInvest
-              ? '<span class="mn-ops-row-c mn-ops-row-c--invest">Инвестиции</span>'
-              : '<span class="mn-ops-row-c">' + esc(op.category) + '</span>')
-            + '</span>'
-            + '<span class="mn-ops-row-amt' + (isInvest ? ' mn-ops-row-amt--invest' : '') + '">'
-            + (isInvest ? '' : '−') + fmtRub(op.amountMinor)
-            + '</span>'
-            + '</div>';
-        }
-        html += '</div>';
-      }
-    }
-
-    wrap.innerHTML = html;
-
-    var a1 = wrap.querySelector('#mn-ops-add');
-    if (a1) a1.addEventListener('click', openSheet);
-    var a2 = wrap.querySelector('#mn-ops-add-more');
-    if (a2) a2.addEventListener('click', openSheet);
-    var grid = wrap.querySelector('.mn-ops-grid');
-    if (grid) grid.addEventListener('click', onGridClick);
-  }
-
-  function groupByDate(ops) {
-    var groups = [], map = {};
-    for (var i = 0; i < ops.length; i++) {
-      var op = ops[i];
-      var key = op.localDate || '?';
-      if (!map[key]) { map[key] = []; groups.push({ date: key, items: map[key] }); }
-      map[key].push(op);
-    }
-    return groups;
-  }
 
   function fmtGroupDate(dateStr) {
     if (dateStr === localDate()) return 'Сегодня';
@@ -368,26 +294,12 @@
     }
     if (!tmpl) return;
 
-    var now = new Date();
-    var tx = {
-      id: genId(),
-      type: 'expense',
-      quickExpenseId: tmpl.id,
-      title: tmpl.name,
-      category: tmpl.category,
-      amountMinor: tmpl.amountMinor,
-      localDate: localDate(now),
-      accountId: null,
-      toAccountId: null,
-      note: '',
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString()
-    };
-    MONEY_STORE.update(function (s) { s.transactions.push(tx); });
-    MONEY_STORE.save();
-    _lastOpId = tx.id;
-    refresh();
-    showToast(tmpl.name + ', ' + fmtRub(tmpl.amountMinor) + ' добавлено');
+    if (!tmpl.accountId) {
+      openAcctPicker(tmpl);
+      return;
+    }
+
+    _createQuickExpenseTx(tmpl, tmpl.accountId);
   }
 
   // ─── Add investment operation ──────────────────────────────────────────────
@@ -419,7 +331,6 @@
     updateInvestMetric();
     renderInvestBlock();
     renderQuickExpenses();
-    renderOpsPage();
   }
 
   // ─── Toast ─────────────────────────────────────────────────────────────────
@@ -473,15 +384,36 @@
   // ─── Expense template sheet ────────────────────────────────────────────────
   var _sheetEl = null;
 
-  function openSheet() {
+  function openSheet(tmpl) {
     var el = ensureSheet();
-    el.querySelector('#mn-f-name').value = '';
-    el.querySelector('#mn-f-cat').value = CATS[0];
-    el.querySelector('#mn-f-custom').value = '';
-    el.querySelector('#mn-f-custom-row').style.display = 'none';
-    el.querySelector('#mn-f-amt').value = '';
     el.querySelectorAll('.mn-sheet-err').forEach(function (e) { e.textContent = ''; });
-    el.querySelector('#mn-sheet-save').disabled = true;
+    var editMode = !!(tmpl && tmpl.id);
+    el.dataset.editId = editMode ? tmpl.id : '';
+    el.querySelector('.mn-sheet-h').textContent = editMode ? 'Редактировать шаблон' : 'Новый быстрый расход';
+
+    if (editMode) {
+      el.querySelector('#mn-f-name').value = tmpl.name;
+      var catInCats = CATS.indexOf(tmpl.category) !== -1;
+      if (catInCats) {
+        el.querySelector('#mn-f-cat').value = tmpl.category;
+        el.querySelector('#mn-f-custom').value = '';
+        el.querySelector('#mn-f-custom-row').style.display = 'none';
+      } else {
+        el.querySelector('#mn-f-cat').value = 'Другое';
+        el.querySelector('#mn-f-custom').value = tmpl.category || '';
+        el.querySelector('#mn-f-custom-row').style.display = '';
+      }
+      el.querySelector('#mn-f-amt').value = Math.round(tmpl.amountMinor / 100);
+    } else {
+      el.querySelector('#mn-f-name').value = '';
+      el.querySelector('#mn-f-cat').value = CATS[0];
+      el.querySelector('#mn-f-custom').value = '';
+      el.querySelector('#mn-f-custom-row').style.display = 'none';
+      el.querySelector('#mn-f-amt').value = '';
+    }
+
+    _populateSheetAcct(el, editMode ? tmpl.accountId : null);
+    el.querySelector('#mn-sheet-save').disabled = false;
     el.classList.add('mn-sheet--open');
     document.body.style.overflow = 'hidden';
     setTimeout(function () { el.querySelector('#mn-f-name').focus(); }, 80);
@@ -529,7 +461,11 @@
       + '<input class="mn-sheet-inp" id="mn-f-amt" type="number" inputmode="numeric" min="1" max="999999" step="1" placeholder="0">'
       + '<span class="mn-sheet-err" id="mn-e-amt"></span>'
       + '</div>'
-      + '<button class="mn-sheet-save" type="button" id="mn-sheet-save" disabled>Сохранить</button>'
+      + '<div class="mn-sheet-row">'
+      + '<label class="mn-sheet-lbl" for="mn-f-acct">Счёт по умолчанию</label>'
+      + '<select class="mn-sheet-sel" id="mn-f-acct"></select>'
+      + '</div>'
+      + '<button class="mn-sheet-save" type="button" id="mn-sheet-save">Сохранить</button>'
       + '</div>';
 
     document.body.appendChild(el);
@@ -540,6 +476,7 @@
     var customRow = el.querySelector('#mn-f-custom-row');
     var customInp = el.querySelector('#mn-f-custom');
     var amtInp    = el.querySelector('#mn-f-amt');
+    var acctSel   = el.querySelector('#mn-f-acct');
     var saveBtn   = el.querySelector('#mn-sheet-save');
 
     el.querySelector('.mn-sheet-bd').addEventListener('click', closeSheet);
@@ -548,47 +485,47 @@
 
     catSel.addEventListener('change', function () {
       customRow.style.display = catSel.value === 'Другое' ? '' : 'none';
-      validate();
     });
-    [nameInp, amtInp, customInp].forEach(function (inp) { inp.addEventListener('input', validate); });
     saveBtn.addEventListener('click', function () { if (doSave()) closeSheet(); });
-
-    function validate() {
-      var name = nameInp.value.trim();
-      var amt  = parseInt(amtInp.value, 10);
-      var cust = customInp.value.trim();
-      var ok = name.length > 0 && !isNaN(amt) && amt >= 1;
-      if (catSel.value === 'Другое') ok = ok && cust.length > 0;
-      saveBtn.disabled = !ok;
-    }
 
     function doSave() {
       el.querySelectorAll('.mn-sheet-err').forEach(function (e) { e.textContent = ''; });
-      var name  = nameInp.value.trim();
-      var cat   = catSel.value;
-      var cust  = customInp.value.trim();
-      var amt   = parseInt(amtInp.value, 10);
+      var name     = nameInp.value.trim();
+      var cat      = catSel.value;
+      var cust     = customInp.value.trim();
+      var amt      = parseInt(amtInp.value, 10);
+      var accountId = acctSel.value || null;
       var err = false;
       if (!name) { el.querySelector('#mn-e-name').textContent = 'Укажите название'; err = true; }
       if (cat === 'Другое' && !cust) { el.querySelector('#mn-e-custom').textContent = 'Укажите название'; err = true; }
       if (!amtInp.value || isNaN(amt) || amt < 1) { el.querySelector('#mn-e-amt').textContent = 'Введите сумму больше 0'; err = true; }
       if (err) return false;
-      var now = new Date();
+      var finalCat = cat === 'Другое' ? cust : cat;
+      var editId   = el.dataset.editId || '';
+      var now      = new Date();
+      var snap     = MONEY_STORE.exportData();
       MONEY_STORE.update(function (s) {
-        s.quickExpenses.push({
-          id: genId(),
-          name: name,
-          category: cat === 'Другое' ? cust : cat,
-          amountMinor: amt * 100,
-          accountId: null,
-          active: true,
-          createdAt: now.toISOString(),
-          updatedAt: now.toISOString()
-        });
+        if (editId) {
+          for (var i = 0; i < s.quickExpenses.length; i++) {
+            if (s.quickExpenses[i].id === editId) {
+              s.quickExpenses[i].name = name;
+              s.quickExpenses[i].category = finalCat;
+              s.quickExpenses[i].amountMinor = amt * 100;
+              s.quickExpenses[i].accountId = accountId;
+              s.quickExpenses[i].updatedAt = now.toISOString();
+              break;
+            }
+          }
+        } else {
+          s.quickExpenses.push({
+            id: genId(), name: name, category: finalCat,
+            amountMinor: amt * 100, accountId: accountId, active: true,
+            createdAt: now.toISOString(), updatedAt: now.toISOString()
+          });
+        }
       });
-      MONEY_STORE.save();
+      if (!MONEY_STORE.save()) { MONEY_STORE.importData(snap); return false; }
       renderQuickExpenses();
-      renderOpsPage();
       return true;
     }
 
@@ -602,7 +539,7 @@
     var el = ensurePlanSheet();
     var plan = currentPlan();
     var inp = el.querySelector('#mn-pi-amt');
-    inp.value = plan ? Math.round(plan.amountMinor / 100) : '';
+    inp.value = plan ? Math.round(plan.plannedInvestmentMinor / 100) : '';
     el.querySelector('#mn-pi-err').textContent = '';
     var v = parseInt(inp.value, 10);
     el.querySelector('#mn-pi-save').disabled = isNaN(v) || v < 1;
@@ -785,15 +722,248 @@
     }).observe(page, { attributes: true, attributeFilter: ['class'] });
   }
 
+  // ─── Populate account selector in template form ───────────────────────────
+  function _populateSheetAcct(el, currentId) {
+    var sel = el.querySelector('#mn-f-acct');
+    if (!sel) return;
+    var accts = MONEY_STORE.getState().accounts.filter(function(a){ return !a.archived; });
+    var opts = '<option value="">— не указывать —</option>';
+    accts.forEach(function(a){
+      opts += '<option value="'+esc(a.id)+'"'+(a.id===currentId?' selected':'')+'>'+esc(a.name)+'</option>';
+    });
+    sel.innerHTML = opts;
+  }
+
+  // ─── Create quick expense transaction ─────────────────────────────────────
+  function _createQuickExpenseTx(tmpl, accountId) {
+    var now = new Date();
+    var tx = {
+      id: genId(), type: 'expense', quickExpenseId: tmpl.id,
+      title: tmpl.name, category: tmpl.category, amountMinor: tmpl.amountMinor,
+      localDate: localDate(now), accountId: accountId || null, toAccountId: null,
+      note: '', createdAt: now.toISOString(), updatedAt: now.toISOString()
+    };
+    MONEY_STORE.update(function(s){ s.transactions.push(tx); });
+    MONEY_STORE.save();
+    _lastOpId = tx.id;
+    refresh();
+    showToast(tmpl.name + ', ' + fmtRub(tmpl.amountMinor) + ' · Отменить');
+  }
+
+  // ─── Account picker for templates without default account ─────────────────
+  var _acctPickerEl = null;
+  var _pickerTpl    = null;
+
+  function openAcctPicker(tmpl) {
+    _pickerTpl = tmpl;
+    var el = _ensureAcctPicker();
+    var accts = MONEY_STORE.getState().accounts.filter(function(a){ return !a.archived; });
+    var listEl = el.querySelector('#qe-acct-list');
+    if (accts.length === 0) {
+      listEl.innerHTML = '<p class="qe-no-accts">Нет активных счетов. Сначала добавьте счёт.</p>';
+    } else {
+      listEl.innerHTML = accts.map(function(a){
+        return '<div class="qe-acct-item" data-aid="'+esc(a.id)+'">'
+          +'<span class="qe-acct-name">'+esc(a.name)+'</span>'
+          +'</div>';
+      }).join('');
+    }
+    el.querySelector('#qe-save-chk').checked = false;
+    el.classList.add('mn-sheet--open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function _closeAcctPicker() {
+    if (_acctPickerEl) _acctPickerEl.classList.remove('mn-sheet--open');
+    document.body.style.overflow = '';
+    _pickerTpl = null;
+  }
+
+  function _ensureAcctPicker() {
+    if (_acctPickerEl) return _acctPickerEl;
+    var CLOSE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="20" height="20" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>';
+    var el = document.createElement('div');
+    el.id = 'qe-acct-picker';
+    el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true');
+    el.innerHTML = '<div class="mn-sheet-bd"></div>'
+      +'<div class="mn-sheet-panel">'
+      +'<button class="mn-sheet-x" type="button" aria-label="Закрыть">'+CLOSE+'</button>'
+      +'<h2 class="mn-sheet-h">Выберите счёт</h2>'
+      +'<div id="qe-acct-list"></div>'
+      +'<label class="qe-save-default">'
+      +'<input type="checkbox" id="qe-save-chk"> Запомнить счёт для этого шаблона'
+      +'</label>'
+      +'</div>';
+    document.body.appendChild(el);
+    _acctPickerEl = el;
+
+    el.querySelector('.mn-sheet-bd').addEventListener('click', _closeAcctPicker);
+    el.querySelector('.mn-sheet-x').addEventListener('click', _closeAcctPicker);
+    el.addEventListener('keydown', function(ev){ if (ev.key==='Escape') _closeAcctPicker(); });
+
+    el.querySelector('#qe-acct-list').addEventListener('click', function(e){
+      var item = e.target.closest('.qe-acct-item');
+      if (!item||!_pickerTpl) return;
+      var aid = item.dataset.aid;
+      var saveDefault = el.querySelector('#qe-save-chk').checked;
+      var tpl = _pickerTpl;
+      _closeAcctPicker();
+      if (saveDefault) {
+        var snap = MONEY_STORE.exportData();
+        MONEY_STORE.update(function(s){
+          for (var i=0;i<s.quickExpenses.length;i++) {
+            if (s.quickExpenses[i].id===tpl.id) {
+              s.quickExpenses[i].accountId = aid;
+              s.quickExpenses[i].updatedAt = new Date().toISOString();
+              break;
+            }
+          }
+        });
+        if (!MONEY_STORE.save()) MONEY_STORE.importData(snap);
+      }
+      _createQuickExpenseTx(tpl, aid);
+    });
+    return el;
+  }
+
+  // ─── Template manager ─────────────────────────────────────────────────────
+  var _tplMgrEl = null;
+
+  function openTplManager() {
+    var el = _ensureTplMgr();
+    _renderTplMgr(el);
+    el.classList.add('mn-sheet--open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function _closeTplMgr() {
+    if (_tplMgrEl) _tplMgrEl.classList.remove('mn-sheet--open');
+    document.body.style.overflow = '';
+  }
+
+  function _renderTplMgr(el) {
+    var qe = MONEY_STORE.getState().quickExpenses;
+    var accts = MONEY_STORE.getState().accounts;
+    var active   = qe.filter(function(t){ return t.active!==false; });
+    var archived = qe.filter(function(t){ return t.active===false; });
+    var html = '';
+    if (active.length===0) html += '<p class="tpl-mgr-empty">Нет активных шаблонов</p>';
+    active.forEach(function(t){ html += _tplMgrRowHtml(t, false, accts); });
+    if (archived.length>0) {
+      html += '<div class="tpl-mgr-sect-lbl">Архив</div>';
+      archived.forEach(function(t){ html += _tplMgrRowHtml(t, true, accts); });
+    }
+    el.querySelector('#tpl-mgr-list').innerHTML = html;
+  }
+
+  function _tplMgrRowHtml(t, isArchived, accts) {
+    var acctName = '';
+    if (t.accountId) { var a=accts.find(function(x){return x.id===t.accountId;}); acctName=a?a.name:''; }
+    var meta = t.category + (acctName?' · '+acctName:'') + ' · ' + fmtRub(t.amountMinor);
+    var hasTx = MONEY_STORE.getState().transactions.some(function(tx){ return tx.quickExpenseId===t.id; });
+    var EDIT_IC  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>';
+    var ARCH_IC  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V88a16,16,0,0,0,8,13.83V200a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V101.83A16,16,0,0,0,240,88V64A16,16,0,0,0,224,48ZM32,64H224V88H32Zm176,136a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V104H208ZM96,152a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,152Z"/></svg>';
+    var TRASH_IC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>';
+    return '<div class="tpl-mgr-row">'
+      +'<div class="tpl-mgr-body"><span class="tpl-mgr-name">'+esc(t.name)+'</span>'
+      +'<span class="tpl-mgr-meta">'+esc(meta)+'</span></div>'
+      +'<div class="tpl-mgr-actions">'
+      +'<button class="tpl-mgr-btn" type="button" data-act="edit" data-tid="'+esc(t.id)+'" aria-label="Редактировать">'+EDIT_IC+'</button>'
+      +(isArchived
+        ? '<button class="tpl-mgr-btn" type="button" data-act="restore" data-tid="'+esc(t.id)+'" aria-label="Восстановить">'+ARCH_IC+'</button>'
+        : '<button class="tpl-mgr-btn" type="button" data-act="archive" data-tid="'+esc(t.id)+'" aria-label="Архивировать">'+ARCH_IC+'</button>'
+      )
+      +(!hasTx ? '<button class="tpl-mgr-btn tpl-mgr-btn--del" type="button" data-act="delete" data-tid="'+esc(t.id)+'" aria-label="Удалить">'+TRASH_IC+'</button>' : '')
+      +'</div></div>';
+  }
+
+  function _ensureTplMgr() {
+    if (_tplMgrEl) return _tplMgrEl;
+    var CLOSE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="20" height="20" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>';
+    var el = document.createElement('div');
+    el.id = 'tpl-manager';
+    el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true');
+    el.innerHTML = '<div class="mn-sheet-bd"></div>'
+      +'<div class="mn-sheet-panel">'
+      +'<button class="mn-sheet-x" type="button" aria-label="Закрыть">'+CLOSE+'</button>'
+      +'<h2 class="mn-sheet-h">Шаблоны быстрых расходов</h2>'
+      +'<div id="tpl-mgr-list"></div>'
+      +'</div>';
+    document.body.appendChild(el);
+    _tplMgrEl = el;
+
+    el.querySelector('.mn-sheet-bd').addEventListener('click', _closeTplMgr);
+    el.querySelector('.mn-sheet-x').addEventListener('click', _closeTplMgr);
+    el.addEventListener('keydown', function(ev){ if (ev.key==='Escape') _closeTplMgr(); });
+
+    el.querySelector('#tpl-mgr-list').addEventListener('click', function(e){
+      var btn = e.target.closest('[data-act]');
+      if (!btn) return;
+      var act = btn.dataset.act, tid = btn.dataset.tid;
+      var qe = MONEY_STORE.getState().quickExpenses;
+      var tmpl = null;
+      for (var i=0;i<qe.length;i++) if (qe[i].id===tid){tmpl=qe[i];break;}
+      if (!tmpl) return;
+
+      if (act==='edit') {
+        _closeTplMgr();
+        openSheet(tmpl);
+      } else if (act==='archive'||act==='restore') {
+        var snap = MONEY_STORE.exportData();
+        MONEY_STORE.update(function(s){
+          for (var j=0;j<s.quickExpenses.length;j++) {
+            if (s.quickExpenses[j].id===tid) {
+              s.quickExpenses[j].active = act==='restore';
+              s.quickExpenses[j].updatedAt = new Date().toISOString();
+              break;
+            }
+          }
+        });
+        if (!MONEY_STORE.save()) { MONEY_STORE.importData(snap); return; }
+        renderQuickExpenses();
+        _renderTplMgr(el);
+      } else if (act==='delete') {
+        var hasTx = MONEY_STORE.getState().transactions.some(function(tx){ return tx.quickExpenseId===tid; });
+        if (hasTx) { alert('Нельзя удалить — есть операции. Можно только архивировать.'); return; }
+        if (!confirm('Удалить шаблон «'+esc(tmpl.name)+'»?')) return;
+        var snap2 = MONEY_STORE.exportData();
+        MONEY_STORE.update(function(s){
+          var idx=-1;
+          for (var k=0;k<s.quickExpenses.length;k++) if (s.quickExpenses[k].id===tid){idx=k;break;}
+          if (idx!==-1) s.quickExpenses.splice(idx,1);
+        });
+        if (!MONEY_STORE.save()) { MONEY_STORE.importData(snap2); return; }
+        renderQuickExpenses();
+        _renderTplMgr(el);
+      }
+    });
+    return el;
+  }
+
+  // ─── Add income button on main screen ─────────────────────────────────────
+  function renderAddIncomeBtn() {
+    var wrap = document.getElementById('mn-income-wrap');
+    if (!wrap) return;
+    if (wrap.querySelector('.mn-add-income-btn')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'mn-add-income-btn';
+    btn.textContent = '+ Записать доход';
+    btn.addEventListener('click', function(){
+      if (window.MONEY_OPS) MONEY_OPS.openAdd('income');
+    });
+    wrap.appendChild(btn);
+  }
+
   // ─── Init ─────────────────────────────────────────────────────────────────
   function init() {
     var result = MONEY_STORE.load();
     renderMoneyCard();
     renderInvestBlock();
     renderQuickExpenses();
+    renderAddIncomeBtn();
     updateExpensesMetric();
     updateInvestMetric();
-    renderOpsPage();
     observeMoneyPage();
     if (result && !result.ok && result.error === 'storage_unavailable') {
       showToast('Хранилище недоступно — данные сохраняются только в памяти');
