@@ -747,7 +747,7 @@
     MONEY_STORE.save();
     _lastOpId = tx.id;
     refresh();
-    showToast(tmpl.name + ', ' + fmtRub(tmpl.amountMinor) + ' · Отменить');
+    showToast(tmpl.name + ', ' + fmtRub(tmpl.amountMinor));
   }
 
   // ─── Account picker for templates without default account ─────────────────

@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="assets/money.css?v=4">
 <link rel="stylesheet" href="assets/money-accounts.css?v=1">
 <link rel="stylesheet" href="assets/money-ops.css?v=1">
+<link rel="stylesheet" href="assets/money-plan.css?v=1">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -342,9 +343,7 @@
   <section class="page sub" data-page="money-plan">
     <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
     <h2 class="page-title">План месяца</h2>
-    <div class="mn-empty">
-      <p class="mn-empty-text">План месяца не настроен</p>
-    </div>
+    <div id="mn-plan-content"></div>
   </section>
 
   <!-- МОИ ДЕНЬГИ — Счета -->
@@ -410,6 +409,7 @@
 <script src="assets/money.js?v=4"></script>
 <script src="assets/money-accounts.js?v=1"></script>
 <script src="assets/money-ops.js?v=1"></script>
+<script src="assets/money-plan.js?v=1"></script>
 <script>
 /* Инвестик — конфигурация (менять здесь, не в investik.js) */
 window.INVESTIK_CFG = {

@@ -1,0 +1,195 @@
+/* assets/money-plan.css v1 — Мои деньги: План месяца */
+
+/* ─── Sheet overlays ─────────────────────────────────────────────────────── */
+#plan-inc-sheet,
+#plan-exp-sheet,
+#plan-inv-sheet  { display:none; position:fixed; inset:0; z-index:420; }
+#plan-inc-sheet.mn-sheet--open,
+#plan-exp-sheet.mn-sheet--open,
+#plan-inv-sheet.mn-sheet--open { display:block; }
+
+/* ─── Month nav ──────────────────────────────────────────────────────────── */
+.plan-month-nav {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px;
+}
+.plan-month-btn {
+  width:44px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:none; border-radius:10px;
+  color:var(--text-dim); cursor:pointer; font-family:inherit;
+  font-size:20px; -webkit-tap-highlight-color:transparent;
+}
+.plan-month-btn:active { background:var(--bg-card-2); }
+.plan-month-lbl  { font-size:16px; font-weight:700; color:var(--text); }
+
+/* ─── Transfer recurring banner ──────────────────────────────────────────── */
+.plan-transfer-banner {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  background:rgba(39,201,138,.08); border:1px solid rgba(39,201,138,.25);
+  border-radius:12px; padding:11px 14px; margin-bottom:14px;
+}
+.plan-transfer-txt { font-size:13px; color:var(--text-dim); flex:1; }
+.plan-transfer-btn {
+  flex-shrink:0; background:var(--accent); color:var(--btn-text);
+  border:none; border-radius:8px; font-size:13px; font-weight:600;
+  padding:7px 12px; cursor:pointer; font-family:inherit;
+  -webkit-tap-highlight-color:transparent; white-space:nowrap;
+}
+.plan-transfer-btn:active { opacity:.85; }
+
+/* ─── Summary card ───────────────────────────────────────────────────────── */
+.plan-sum-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:14px; padding:14px; margin-bottom:14px;
+}
+.plan-sum-row   { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.plan-sum-lbl   { font-size:12px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:.4px; }
+.plan-sum-val   { font-size:20px; font-weight:800; color:var(--text); }
+.plan-sum-val--pos { color:var(--accent); }
+.plan-sum-val--neg { color:#e05252; }
+html[data-theme="light"] .plan-sum-val--neg { color:#c0392b; }
+
+.plan-sum-details { display:flex; gap:0; border-top:1px solid var(--border); padding-top:10px; }
+.plan-sum-det { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.plan-sum-det + .plan-sum-det { border-left:1px solid var(--border); }
+.plan-sum-det-lbl { font-size:10px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:.3px; }
+.plan-sum-det-val { font-size:13px; font-weight:700; color:var(--text); }
+.plan-sum-det-val--inc { color:var(--accent); }
+.plan-sum-det-val--exp { color:#e05252; }
+html[data-theme="light"] .plan-sum-det-val--exp { color:#c0392b; }
+
+/* ─── Section ────────────────────────────────────────────────────────────── */
+.plan-section {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:14px; padding:12px 14px; margin-bottom:12px;
+  overflow:hidden;
+}
+.plan-section-hd {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.plan-section-ttl { font-size:14px; font-weight:700; color:var(--text); }
+.plan-add-btn {
+  background:none; border:none; color:var(--accent);
+  font-size:13px; font-weight:600; cursor:pointer;
+  font-family:inherit; padding:4px 0;
+  -webkit-tap-highlight-color:transparent;
+}
+.plan-add-btn:active { opacity:.7; }
+.plan-empty { font-size:13px; color:var(--text-dim); padding:4px 0 6px; margin:0; }
+
+/* ─── Plan item row ──────────────────────────────────────────────────────── */
+.plan-item-row {
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.plan-item-row:last-child { border-bottom:none; }
+.plan-item-row:first-child { padding-top:2px; }
+
+.plan-item-main {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  gap:8px; margin-bottom:4px;
+}
+.plan-item-title {
+  font-size:14px; font-weight:600; color:var(--text);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  flex:1; min-width:0;
+}
+.plan-item-amt { font-size:14px; font-weight:700; color:var(--accent); white-space:nowrap; flex-shrink:0; }
+.plan-item-amt--exp { color:#e05252; }
+html[data-theme="light"] .plan-item-amt--exp { color:#c0392b; }
+
+.plan-item-sub  { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.plan-item-meta { font-size:12px; color:var(--text-dim); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.plan-item-actions { display:flex; align-items:center; gap:5px; flex-shrink:0; }
+
+/* Status badges */
+.plan-item-status {
+  display:inline-block; font-size:10px; font-weight:700;
+  padding:2px 7px; border-radius:100px; white-space:nowrap;
+}
+.plan-item-status--expected  { background:var(--bg-card-2); color:var(--text-dim); }
+.plan-item-status--completed { background:rgba(39,201,138,.14); color:var(--accent); }
+.plan-item-status--overdue   { background:rgba(220,80,80,.12); color:#e05252; }
+html[data-theme="light"] .plan-item-status--overdue { color:#c0392b; }
+
+/* Action buttons */
+.plan-item-do-btn {
+  background:var(--accent); color:var(--btn-text);
+  border:none; border-radius:7px; font-size:11px; font-weight:600;
+  padding:4px 9px; cursor:pointer; font-family:inherit;
+  -webkit-tap-highlight-color:transparent; white-space:nowrap;
+}
+.plan-item-do-btn:active { opacity:.85; }
+
+.plan-item-edit-btn {
+  background:none; border:none; color:var(--text-dim);
+  font-size:15px; cursor:pointer; padding:3px 5px;
+  border-radius:6px; -webkit-tap-highlight-color:transparent;
+  line-height:1;
+}
+.plan-item-edit-btn:active { background:var(--bg-card-2); }
+
+/* ─── Nearest payment ────────────────────────────────────────────────────── */
+.plan-next-payment {
+  background:rgba(220,180,30,.10); border:1px solid rgba(220,180,30,.30);
+  border-radius:12px; padding:12px 14px; margin-bottom:12px;
+  display:flex; flex-direction:column; gap:3px;
+}
+.plan-next-lbl   { font-size:10px; font-weight:700; color:#b8960f; text-transform:uppercase; letter-spacing:.4px; }
+.plan-next-title { font-size:14px; font-weight:700; color:var(--text); }
+.plan-next-meta  { font-size:12px; color:var(--text-dim); }
+html[data-theme="light"] .plan-next-lbl { color:#8a6f00; }
+
+/* ─── Investment grid ────────────────────────────────────────────────────── */
+.plan-invest-grid {
+  display:flex; gap:0; border:1px solid var(--border);
+  border-radius:10px; overflow:hidden; margin-bottom:10px;
+}
+.plan-invest-item { flex:1; padding:9px 6px; text-align:center; border-right:1px solid var(--border); }
+.plan-invest-item:last-child { border-right:none; }
+.plan-invest-lbl { display:block; font-size:10px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:.3px; margin-bottom:3px; }
+.plan-invest-val { display:block; font-size:13px; font-weight:700; color:var(--text); }
+.plan-invest-val--fact { color:var(--accent); }
+.plan-invest-val--done { color:var(--accent); }
+
+.plan-record-invest-btn {
+  display:block; width:100%; min-height:42px;
+  background:none; border:1.5px solid var(--accent);
+  border-radius:10px; color:var(--accent);
+  font-size:14px; font-weight:600; cursor:pointer;
+  font-family:inherit; -webkit-tap-highlight-color:transparent;
+}
+.plan-record-invest-btn:active { opacity:.75; }
+
+/* ─── Fact section ───────────────────────────────────────────────────────── */
+.plan-section--fact { background:var(--bg-card-2); }
+
+.plan-fact-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:7px 0; border-bottom:1px solid var(--border);
+}
+.plan-fact-row:last-child { border-bottom:none; }
+.plan-fact-lbl { font-size:13px; color:var(--text-dim); }
+.plan-fact-val { font-size:13px; font-weight:700; color:var(--text); }
+.plan-fact-val--inc  { color:var(--accent); }
+.plan-fact-val--exp  { color:#e05252; }
+.plan-fact-val--warn { color:#e05252; }
+html[data-theme="light"] .plan-fact-val--exp,
+html[data-theme="light"] .plan-fact-val--warn { color:#c0392b; }
+
+.plan-fact-row--warn .plan-fact-lbl { color:#e05252; }
+html[data-theme="light"] .plan-fact-row--warn .plan-fact-lbl { color:#c0392b; }
+
+/* ─── Recurring checkbox row ─────────────────────────────────────────────── */
+.plan-recur-row {
+  display:flex; align-items:center; gap:10px;
+  font-size:14px; color:var(--text-dim); cursor:pointer;
+  padding:8px 0; margin-bottom:4px;
+}
+.plan-recur-row input { width:18px; height:18px; cursor:pointer; accent-color:var(--accent); flex-shrink:0; }
+
+/* ─── Delete button in plan forms ────────────────────────────────────────── */
+.plan-del-btn { color:#e05252 !important; margin-top:4px; }
