@@ -564,6 +564,12 @@
         var s = document.createElement('script');
         s.id  = scriptId || '';
         s.src = src;
+        // DOMContentLoaded already fired — trigger the custom event the widget registers
+        s.onload = function () {
+          if (scriptId) {
+            document.dispatchEvent(new Event('StartWidget' + scriptId));
+          }
+        };
         container.appendChild(s);
       }
     }
