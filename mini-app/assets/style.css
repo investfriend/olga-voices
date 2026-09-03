@@ -2377,6 +2377,51 @@ html[data-theme="light"] .ch-badge--soon  { color: var(--warning); background: r
 /* Блокировка скролла при открытой модалке */
 .ch-no-scroll { overflow: hidden; }
 
+/* Виджет авторизации — Telegram клуба */
+#ch-widget-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0,0,0,0);
+  pointer-events: none;
+  transition: background .25s;
+}
+#ch-widget-modal.ch-modal--visible {
+  background: rgba(0,0,0,.52);
+  pointer-events: auto;
+}
+#ch-widget-modal.ch-modal--visible .ch-widget-sheet {
+  transform: translateY(0);
+}
+.ch-widget-sheet {
+  max-height: 85vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.ch-widget-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.ch-widget-x {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+  font-family: inherit;
+}
+.ch-widget-x:active { background: var(--bg-card-2); }
+#gc-widget-container { min-height: 60px; }
+
 /* ═══════════════════════════════════════════════════════
    УНИВЕРСАЛЬНАЯ КНОПКА-ЗВЁЗДОЧКА
 ═══════════════════════════════════════════════════════ */

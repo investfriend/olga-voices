@@ -119,12 +119,13 @@
             id: 'telegram-club',
             title: 'Telegram клуба',
             badge: 'Для участников клуба',
-            access: 'getcourse_protected',
+            access: 'widget',
             icon: 'chat',
             desc: 'Основная площадка общения клуба. Здесь публикуются анонсы, обсуждения, инвестиционные идеи, комментарии аналитиков и сообщения участников.',
             external: true,
             btn: 'Открыть вход в Telegram',
-            url: 'https://investfriend.ru/teach/control/lesson/view/id/346013705',
+            widgetSrc: 'https://investfriend.ru/pl/lite/widget/script?id=1651748',
+            widgetScriptId: '993f2477ab56f509cfb7b1e051c5c946b7dd235d',
           },
           {
             id: 'max-channel',
@@ -537,12 +538,56 @@
     var item = _findItem(btn.dataset.action);
     if (!item) return;
 
-    if (item.access === 'public') {
+    if (item.access === 'widget') {
+      _showWidgetModal(item.widgetSrc, item.widgetScriptId);
+    } else if (item.access === 'public') {
       openExternal(item.url);
     } else if (item.access === 'getcourse_protected') {
       var target = item.url || (item.directUrl || item.connectionLessonUrl);
       _showModal(target);
     }
+  }
+
+  // ── Виджет авторизации (Telegram клуба) ─────────────────────────────────────
+  var _widgetLoaded = false;
+
+  function _showWidgetModal(src, scriptId) {
+    var overlay = document.getElementById('ch-widget-modal');
+    if (!overlay) return;
+    overlay.removeAttribute('aria-hidden');
+    overlay.classList.add('ch-modal--visible');
+    document.body.classList.add('ch-no-scroll');
+    if (!_widgetLoaded) {
+      _widgetLoaded = true;
+      var container = document.getElementById('gc-widget-container');
+      if (container && src) {
+        var s = document.createElement('script');
+        s.id  = scriptId || '';
+        s.src = src;
+        container.appendChild(s);
+      }
+    }
+  }
+
+  function _hideWidgetModal() {
+    var overlay = document.getElementById('ch-widget-modal');
+    if (!overlay) return;
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.classList.remove('ch-modal--visible');
+    document.body.classList.remove('ch-no-scroll');
+  }
+
+  function _initWidgetModal() {
+    var overlay  = document.getElementById('ch-widget-modal');
+    var closeBtn = document.getElementById('ch-widget-close');
+    if (!overlay) return;
+    closeBtn && closeBtn.addEventListener('click', _hideWidgetModal);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) _hideWidgetModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') _hideWidgetModal();
+    });
   }
 
   // ── Модальное окно GetCourse ─────────────────────────────────────────────────
@@ -654,6 +699,7 @@
   function initChat() {
     renderChat();
     _initModal();
+    _initWidgetModal();
     _createFeedModal();
   }
 
