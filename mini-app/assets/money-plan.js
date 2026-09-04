@@ -102,17 +102,23 @@
     return null;
   }
 
-  function _txExists(id) {
-    if (!id) return false;
+  function _findTx(id) {
+    if (!id) return null;
     var txns = MONEY_STORE.getState().transactions;
     for (var i = 0; i < txns.length; i++) {
-      if (txns[i].id === id) return true;
+      if (txns[i].id === id) return txns[i];
     }
-    return false;
+    return null;
   }
 
-  function _getItemStatus(item) {
-    if (item.completedTransactionId && _txExists(item.completedTransactionId)) return 'completed';
+  // Completed only if linked tx exists, has correct type, AND belongs to the same month
+  function _getItemStatus(item, expectedType, month) {
+    if (item.completedTransactionId) {
+      var tx = _findTx(item.completedTransactionId);
+      if (tx && tx.type === expectedType && tx.localDate && tx.localDate.slice(0, 7) === month) {
+        return 'completed';
+      }
+    }
     if (item.dueDate && item.dueDate < _localDate()) return 'overdue';
     return 'expected';
   }
@@ -170,26 +176,45 @@
     return total;
   }
 
-  function _calcFact(plan) {
+  function _calcFact(plan, month) {
+    // Total actual income/expense from all transactions this month
+    var totalIncome = 0, totalExpense = 0;
+    var txns = MONEY_STORE.getState().transactions;
+    for (var i = 0; i < txns.length; i++) {
+      var tx = txns[i];
+      if (!tx.localDate || tx.localDate.slice(0, 7) !== month) continue;
+      if (tx.type === 'income')  totalIncome  += tx.amountMinor;
+      if (tx.type === 'expense') totalExpense += tx.amountMinor;
+      // transfer and investment are excluded
+    }
+    // Linked plan items: sum the ACTUAL transaction amounts (not planned)
     var receivedIncome = 0, paidExpense = 0;
     var overdueItems = [];
     if (plan) {
       (plan.plannedIncomes || []).forEach(function (x) {
-        if (_getItemStatus(x) === 'completed') receivedIncome += x.amountMinor;
+        if (_getItemStatus(x, 'income', month) === 'completed') {
+          var linked = _findTx(x.completedTransactionId);
+          receivedIncome += linked ? linked.amountMinor : 0;
+        }
       });
       (plan.mandatoryExpenses || []).forEach(function (x) {
-        var st = _getItemStatus(x);
-        if (st === 'completed') paidExpense += x.amountMinor;
-        if (st === 'overdue')   overdueItems.push(x);
+        var st = _getItemStatus(x, 'expense', month);
+        if (st === 'completed') {
+          var linked = _findTx(x.completedTransactionId);
+          paidExpense += linked ? linked.amountMinor : 0;
+        }
+        if (st === 'overdue') overdueItems.push(x);
       });
     }
-    return { receivedIncome: receivedIncome, paidExpense: paidExpense, overdueItems: overdueItems };
+    return { totalIncome: totalIncome, totalExpense: totalExpense,
+             receivedIncome: receivedIncome, paidExpense: paidExpense,
+             overdueItems: overdueItems };
   }
 
   function _getNextUnpaidExpense(plan) {
     if (!plan) return null;
     var unpaid = (plan.mandatoryExpenses || []).filter(function (x) {
-      return _getItemStatus(x) !== 'completed';
+      return _getItemStatus(x, 'expense', _currentMonth) !== 'completed';
     });
     if (!unpaid.length) return null;
     unpaid.sort(function (a, b) {
@@ -232,7 +257,7 @@
 
     var plan    = _getPlan(_currentMonth);
     var planned = _calcPlanned(plan);
-    var fact    = _calcFact(plan);
+    var fact    = _calcFact(plan, _currentMonth);
     var invested = _getActualInvested(_currentMonth);
     var balance  = planned.income - planned.expense - planned.invest;
     var remaining = Math.max(0, planned.invest - invested);
@@ -336,9 +361,17 @@
     html += '<div class="plan-section plan-section--fact">'
       + '<div class="plan-section-hd"><span class="plan-section-ttl">Факт месяца</span></div>'
       + '<div class="plan-fact-row"><span class="plan-fact-lbl">Доходов получено</span>'
-      + '<span class="plan-fact-val plan-fact-val--inc">' + fmtRub(fact.receivedIncome) + '</span></div>'
+      + '<span class="plan-fact-val plan-fact-val--inc">' + fmtRub(fact.totalIncome) + '</span></div>'
+      + (fact.receivedIncome > 0
+          ? '<div class="plan-fact-row"><span class="plan-fact-lbl">&nbsp;&nbsp;в т.ч. плановых</span>'
+            + '<span class="plan-fact-val plan-fact-val--inc">' + fmtRub(fact.receivedIncome) + '</span></div>'
+          : '')
       + '<div class="plan-fact-row"><span class="plan-fact-lbl">Расходов оплачено</span>'
-      + '<span class="plan-fact-val">' + fmtRub(fact.paidExpense) + '</span></div>'
+      + '<span class="plan-fact-val">' + fmtRub(fact.totalExpense) + '</span></div>'
+      + (fact.paidExpense > 0
+          ? '<div class="plan-fact-row"><span class="plan-fact-lbl">&nbsp;&nbsp;в т.ч. обязательных</span>'
+            + '<span class="plan-fact-val">' + fmtRub(fact.paidExpense) + '</span></div>'
+          : '')
       + '<div class="plan-fact-row"><span class="plan-fact-lbl">Инвестировано</span>'
       + '<span class="plan-fact-val">' + fmtRub(invested) + '</span></div>';
     if (fact.overdueItems.length > 0) {
@@ -363,7 +396,7 @@
 
   // ─── Row renderers ─────────────────────────────────────────────────────────
   function _incRowHtml(item) {
-    var st = _getItemStatus(item);
+    var st = _getItemStatus(item, 'income', _currentMonth);
     var stLabel = st === 'completed' ? 'Получен' : st === 'overdue' ? 'Просрочен' : 'Ожидается';
     var acctName = _findAcctName(item.accountId);
     var metaParts = [_fmtDate(item.dueDate)];
@@ -386,7 +419,7 @@
   }
 
   function _expRowHtml(item) {
-    var st = _getItemStatus(item);
+    var st = _getItemStatus(item, 'expense', _currentMonth);
     var stLabel = st === 'completed' ? 'Оплачен' : st === 'overdue' ? 'Просрочен' : 'Ожидается';
     var acctName = _findAcctName(item.accountId);
     var metaParts = [_fmtDate(item.dueDate)];
