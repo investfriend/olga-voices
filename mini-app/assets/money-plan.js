@@ -1,4 +1,4 @@
-/* assets/money-plan.js v1 — Мои деньги: План месяца */
+/* assets/money-plan.js v3 — Мои деньги: План месяца */
 (function () {
   'use strict';
 
@@ -87,11 +87,12 @@
 
   // ─── State ─────────────────────────────────────────────────────────────────
   var _currentMonth = _thisMonth();
-  var _incSheetEl   = null;
-  var _expSheetEl   = null;
-  var _invSheetEl   = null;
-  var _clickBound   = false;
-  var _busy         = false;
+  var _incSheetEl        = null;
+  var _expSheetEl        = null;
+  var _invSheetEl        = null;
+  var _goalAllocSheetEl  = null;
+  var _clickBound        = false;
+  var _busy              = false;
 
   // ─── Data helpers ──────────────────────────────────────────────────────────
   function _getPlan(month) {
@@ -155,13 +156,54 @@
   }
 
   function _calcPlanned(plan) {
-    var income = 0, expense = 0, invest = 0;
+    var income = 0, expense = 0, invest = 0, goalSum = 0;
     if (plan) {
       (plan.plannedIncomes || []).forEach(function (x) { income += x.amountMinor; });
       (plan.mandatoryExpenses || []).forEach(function (x) { expense += x.amountMinor; });
       invest = plan.plannedInvestmentMinor || 0;
+      (plan.goalAllocations || []).forEach(function (x) { goalSum += x.amountMinor; });
     }
-    return { income: income, expense: expense, invest: invest };
+    return { income: income, expense: expense, invest: invest, goalSum: goalSum };
+  }
+
+  function _findGoalById(id) {
+    var goals = MONEY_STORE.getState().goals || [];
+    for (var i = 0; i < goals.length; i++) {
+      if (goals[i].id === id) return goals[i];
+    }
+    return null;
+  }
+
+  function _verifyTransferContribInPlan(c) {
+    if (!c) return false;
+    if (c.mode !== 'transfer') return true; // manual always confirmed
+    var txns = MONEY_STORE.getState().transactions;
+    for (var i = 0; i < txns.length; i++) {
+      var tx = txns[i];
+      if (tx.id === c.transferTransactionId
+          && tx.type === 'transfer'
+          && tx.accountId   === c.sourceAccountId
+          && tx.toAccountId === c.destinationAccountId
+          && tx.amountMinor === c.amountMinor
+          && tx.localDate   === c.localDate) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Sum confirmed goal contributions (manual + verified transfer) for a goal in a month
+  function _calcGoalContribFact(goalId, month) {
+    var goal = _findGoalById(goalId);
+    if (!goal) return 0;
+    var total = 0;
+    var cs = goal.contributions || [];
+    for (var i = 0; i < cs.length; i++) {
+      var c = cs[i];
+      if (!c.localDate || c.localDate.slice(0, 7) !== month) continue;
+      if (_verifyTransferContribInPlan(c)) total += c.amountMinor || 0;
+    }
+    return total;
   }
 
   function _getActualInvested(month) {
@@ -259,7 +301,7 @@
     var planned = _calcPlanned(plan);
     var fact    = _calcFact(plan, _currentMonth);
     var invested = _getActualInvested(_currentMonth);
-    var balance  = planned.income - planned.expense - planned.invest;
+    var balance  = planned.income - planned.expense - planned.invest - planned.goalSum;
     var remaining = Math.max(0, planned.invest - invested);
     var nextPayment = _getNextUnpaidExpense(plan);
     var recurr = _getRecurringFromPrev(_currentMonth);
@@ -301,6 +343,10 @@
       + '<span class="plan-sum-det-val plan-sum-det-val--exp">' + fmtRub(planned.expense) + '</span></span>'
       + '<span class="plan-sum-det"><span class="plan-sum-det-lbl">Инвест.</span>'
       + '<span class="plan-sum-det-val">' + fmtRub(planned.invest) + '</span></span>'
+      + (planned.goalSum > 0
+          ? '<span class="plan-sum-det"><span class="plan-sum-det-lbl">На цели</span>'
+            + '<span class="plan-sum-det-val plan-sum-det-val--exp">' + fmtRub(planned.goalSum) + '</span></span>'
+          : '')
       + '</div></div>';
 
     // ── Planned incomes
@@ -356,6 +402,23 @@
       + '<button class="plan-record-invest-btn" type="button" data-action="record-invest">Записать инвестицию</button>'
       + '</div>';
 
+    // ── Goal allocations section
+    var allGoals = MONEY_STORE.getState().goals || [];
+    var planGoalAllocs = plan ? (plan.goalAllocations || []) : [];
+    html += '<div class="plan-section">'
+      + '<div class="plan-section-hd">'
+      + '<span class="plan-section-ttl">На цели</span>'
+      + '<button class="plan-add-btn" type="button" data-action="add-goal-alloc">+ Добавить</button>'
+      + '</div>';
+    if (!planGoalAllocs.length) {
+      html += '<p class="plan-empty">Нет плановых взносов на цели</p>';
+    } else {
+      for (var gi = 0; gi < planGoalAllocs.length; gi++) {
+        html += _goalAllocRowHtml(planGoalAllocs[gi], allGoals, _currentMonth);
+      }
+    }
+    html += '</div>';
+
     // ── Fact section
     var overdueSum = fact.overdueItems.reduce(function (s, x) { return s + x.amountMinor; }, 0);
     html += '<div class="plan-section plan-section--fact">'
@@ -374,18 +437,23 @@
           : '')
       + '<div class="plan-fact-row"><span class="plan-fact-lbl">Инвестировано</span>'
       + '<span class="plan-fact-val">' + fmtRub(invested) + '</span></div>';
+    if (planGoalAllocs.length) {
+      var goalFactTotal = 0;
+      planGoalAllocs.forEach(function (ga) { goalFactTotal += _calcGoalContribFact(ga.goalId, _currentMonth); });
+      html += '<div class="plan-fact-row"><span class="plan-fact-lbl">На цели внесено</span>'
+        + '<span class="plan-fact-val">' + fmtRub(goalFactTotal) + '</span></div>';
+    }
     if (fact.overdueItems.length > 0) {
       html += '<div class="plan-fact-row plan-fact-row--warn">'
         + '<span class="plan-fact-lbl">Просроченных платежей</span>'
         + '<span class="plan-fact-val plan-fact-val--warn">'
-        + fact.overdueItems.length + ' на ' + fmtRub(overdueSum) + '</span></div>';
+        + fact.overdueItems.length + ' на ' + fmtRub(overdueSum) + '</span></div>';
     }
     if (planned.invest > 0) {
       html += '<div class="plan-fact-row"><span class="plan-fact-lbl">До плана инвестиций</span>'
         + '<span class="plan-fact-val">' + fmtRub(remaining) + '</span></div>';
     }
     html += '</div>';
-
     wrap.innerHTML = html;
 
     if (!_clickBound) {
@@ -442,6 +510,48 @@
       + '</div></div></div>';
   }
 
+  function _goalAllocRowHtml(alloc, allGoals, month) {
+    var goal = null;
+    for (var i = 0; i < allGoals.length; i++) {
+      if (allGoals[i].id === alloc.goalId) { goal = allGoals[i]; break; }
+    }
+    var goalName = goal ? goal.name : '(Удалена)';
+    var fact = _calcGoalContribFact(alloc.goalId, month);
+    var planAmt = alloc.amountMinor;
+    var remaining = planAmt - fact;
+    var isOver = fact > planAmt;
+    var isArchived = goal && (goal.status === 'archived' || goal.status === 'completed');
+
+    var html = '<div class="plan-goal-alloc-row">'
+      + '<div class="plan-goal-alloc-head">'
+      + '<span class="plan-goal-alloc-name">' + esc(goalName)
+      + (isArchived ? '&nbsp;<span class="plan-goal-alloc-badge plan-goal-alloc-badge--archive">'
+          + (goal.status === 'archived' ? 'В архиве' : 'Завершена') + '</span>' : '')
+      + '</span>'
+      + '<span class="plan-goal-alloc-planned">' + fmtRub(planAmt) + '</span>'
+      + '</div>'
+      + '<div class="plan-goal-alloc-grid">'
+      + '<div class="plan-goal-alloc-item"><span class="plan-goal-alloc-lbl">Факт</span>'
+      + '<span class="plan-goal-alloc-val' + (isOver ? ' plan-goal-alloc-val--over' : '') + '">' + fmtRub(fact) + '</span></div>'
+      + '<div class="plan-goal-alloc-item"><span class="plan-goal-alloc-lbl">' + (isOver ? 'Перевыпол.' : 'Осталось') + '</span>'
+      + '<span class="plan-goal-alloc-val' + (isOver ? ' plan-goal-alloc-val--over' : '') + '">'
+      + (isOver ? '+' : '') + fmtRub(Math.abs(remaining)) + '</span></div>'
+      + '</div>'
+      + '<div class="plan-goal-alloc-actions">';
+    if (goal && goal.status === 'active') {
+      html += '<button class="plan-item-do-btn" type="button"'
+        + ' data-action="contrib-goal-plan" data-goal-id="' + esc(alloc.goalId) + '" data-amt="' + alloc.amountMinor + '">Внести</button>'
+        + '<button class="plan-item-edit-btn" type="button"'
+        + ' data-action="open-goal-plan" data-goal-id="' + esc(alloc.goalId) + '" aria-label="Открыть цель">↗</button>';
+    }
+    html += '<button class="plan-item-edit-btn" type="button"'
+      + ' data-action="edit-goal-alloc" data-id="' + esc(alloc.id) + '" aria-label="Редактировать">✎</button>'
+      + '<button class="plan-item-edit-btn" type="button" style="color:#e05252"'
+      + ' data-action="del-goal-alloc" data-id="' + esc(alloc.id) + '" aria-label="Удалить">✕</button>'
+      + '</div></div>';
+    return html;
+  }
+
   // ─── Click delegation ──────────────────────────────────────────────────────
   function _onPlanClick(e) {
     var btn = e.target.closest('[data-action]');
@@ -463,6 +573,17 @@
         if (window.MONEY_OPS) MONEY_OPS.openAdd('investment'); break;
       case 'transfer-recurring':
         if (!_busy) { _busy = true; _doTransferRecurring(); setTimeout(function () { _busy = false; }, 500); }
+        break;
+      case 'add-goal-alloc':  openGoalAllocSheet(null); break;
+      case 'edit-goal-alloc': openGoalAllocSheet(btn.dataset.id); break;
+      case 'del-goal-alloc':  _doDeleteGoalAlloc(btn.dataset.id); break;
+      case 'contrib-goal-plan':
+        if (window.MONEY_GOALS) {
+          MONEY_GOALS.openContrib(btn.dataset.goalId, parseInt(btn.dataset.amt, 10) || 0);
+        }
+        break;
+      case 'open-goal-plan':
+        if (window.MONEY_GOALS) MONEY_GOALS.openDetail(btn.dataset.goalId);
         break;
     }
   }
@@ -603,7 +724,7 @@
     var plan = _getPlan(_currentMonth);
     var item = _findIncomeItem(plan, itemId);
     if (!item) return;
-    if (item.completedTransactionId && _txExists(item.completedTransactionId)) return;
+    if (item.completedTransactionId && _findTx(item.completedTransactionId)) return;
     var snap = MONEY_STORE.exportData();
     var now = new Date(); var txId = MONEY_STORE.createId();
     MONEY_STORE.update(function (s) {
@@ -755,7 +876,7 @@
     var plan = _getPlan(_currentMonth);
     var item = _findExpenseItem(plan, itemId);
     if (!item) return;
-    if (item.completedTransactionId && _txExists(item.completedTransactionId)) return;
+    if (item.completedTransactionId && _findTx(item.completedTransactionId)) return;
     var snap = MONEY_STORE.exportData();
     var now = new Date(); var txId = MONEY_STORE.createId();
     MONEY_STORE.update(function (s) {
@@ -872,6 +993,142 @@
         });
       });
       plan.updatedAt = now;
+    });
+    if (!MONEY_STORE.save()) MONEY_STORE.importData(snap);
+  }
+
+  // ─── Goal allocation sheet ─────────────────────────────────────────────────
+  function openGoalAllocSheet(allocId) {
+    var el = _ensureGoalAllocSheet();
+    var plan = _getPlan(_currentMonth);
+    var alloc = null;
+    if (allocId && plan) {
+      var gas = plan.goalAllocations || [];
+      for (var i = 0; i < gas.length; i++) { if (gas[i].id === allocId) { alloc = gas[i]; break; } }
+    }
+    el.dataset.editId = alloc ? alloc.id : '';
+    el.querySelector('#pga-h').textContent = alloc ? 'Редактировать взнос на цель' : 'Плановый взнос на цель';
+    el.querySelectorAll('.mn-sheet-err').forEach(function (e) { e.textContent = ''; });
+
+    var goalSel = el.querySelector('#pga-f-goal');
+    var goals = MONEY_STORE.getState().goals || [];
+    var existingGoalIds = {};
+    if (plan && !alloc) {
+      (plan.goalAllocations || []).forEach(function (ga) { existingGoalIds[ga.goalId] = true; });
+    }
+    var opts = '<option value="">— выберите цель —</option>';
+    // If editing and goal is no longer active, include it
+    if (alloc && alloc.goalId) {
+      var allocGoal = _findGoalById(alloc.goalId);
+      if (allocGoal && allocGoal.status !== 'active') {
+        opts += '<option value="' + esc(allocGoal.id) + '" selected>' + esc(allocGoal.name)
+          + (allocGoal.status === 'archived' ? ' (В архиве)' : ' (Завершена)') + '</option>';
+      }
+    }
+    for (var j = 0; j < goals.length; j++) {
+      var g = goals[j];
+      if (g.status !== 'active') continue;
+      if (!alloc && existingGoalIds[g.id]) continue;
+      opts += '<option value="' + esc(g.id) + '"' + (alloc && alloc.goalId === g.id ? ' selected' : '') + '>'
+        + esc(g.name) + '</option>';
+    }
+    goalSel.innerHTML = opts;
+    if (alloc) goalSel.value = alloc.goalId;
+    goalSel.disabled = !!alloc;
+
+    el.querySelector('#pga-f-amt').value = alloc ? String(Math.round(alloc.amountMinor / 100)) : '';
+    el.querySelector('#pga-del-btn').style.display = alloc ? '' : 'none';
+    el.classList.add('mn-sheet--open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { el.querySelector('#pga-f-amt').focus(); }, 80);
+  }
+
+  function _closeGoalAllocSheet() {
+    if (_goalAllocSheetEl) _goalAllocSheetEl.classList.remove('mn-sheet--open');
+    document.body.style.overflow = '';
+  }
+
+  function _ensureGoalAllocSheet() {
+    if (_goalAllocSheetEl) return _goalAllocSheetEl;
+    var el = document.createElement('div');
+    el.id = 'plan-goal-alloc-sheet';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+    el.innerHTML = '<div class="mn-sheet-bd"></div>'
+      + '<div class="mn-sheet-panel">'
+      + '<button class="mn-sheet-x" type="button" aria-label="Закрыть">' + CLOSE_SVG + '</button>'
+      + '<h2 class="mn-sheet-h" id="pga-h">Плановый взнос на цель</h2>'
+      + '<div class="mn-sheet-row"><label class="mn-sheet-lbl" for="pga-f-goal">Цель</label>'
+      + '<select class="mn-sheet-sel" id="pga-f-goal"></select>'
+      + '<span class="mn-sheet-err" id="pga-e-goal"></span></div>'
+      + '<div class="mn-sheet-row"><label class="mn-sheet-lbl" for="pga-f-amt">Плановая сумма, ₽</label>'
+      + '<input class="mn-sheet-inp" id="pga-f-amt" type="text" inputmode="decimal" placeholder="0" autocomplete="off">'
+      + '<span class="mn-sheet-err" id="pga-e-amt"></span></div>'
+      + '<button class="mn-sheet-save" type="button" id="pga-save-btn">Сохранить</button>'
+      + '<button class="mn-sheet-save plan-del-btn" type="button" id="pga-del-btn" style="display:none">Убрать из плана</button>'
+      + '<button class="mn-sheet-cancel" type="button" id="pga-cancel-btn">Отмена</button>'
+      + '</div>';
+    document.body.appendChild(el);
+    _goalAllocSheetEl = el;
+    el.querySelector('.mn-sheet-bd').addEventListener('click', _closeGoalAllocSheet);
+    el.querySelector('.mn-sheet-x').addEventListener('click', _closeGoalAllocSheet);
+    el.querySelector('#pga-cancel-btn').addEventListener('click', _closeGoalAllocSheet);
+    el.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') _closeGoalAllocSheet(); });
+    el.querySelector('#pga-save-btn').addEventListener('click', function () { _doSaveGoalAlloc(el); });
+    el.querySelector('#pga-del-btn').addEventListener('click', function () {
+      var id = el.dataset.editId;
+      if (id) { _closeGoalAllocSheet(); _doDeleteGoalAlloc(id); }
+    });
+    return el;
+  }
+
+  function _doSaveGoalAlloc(el) {
+    el.querySelectorAll('.mn-sheet-err').forEach(function (e) { e.textContent = ''; });
+    var goalId = el.querySelector('#pga-f-goal').value;
+    var amt = parseAmount(el.querySelector('#pga-f-amt').value);
+    var editId = el.dataset.editId || '';
+    var ok = true;
+    if (!goalId) { el.querySelector('#pga-e-goal').textContent = 'Выберите цель'; ok = false; }
+    if (amt === null) { el.querySelector('#pga-e-amt').textContent = 'Введите сумму больше 0'; ok = false; }
+    if (!ok) return;
+    var snap = MONEY_STORE.exportData();
+    var now = new Date().toISOString();
+    MONEY_STORE.update(function (s) {
+      var plan = _ensurePlanInState(s, _currentMonth);
+      if (!plan.goalAllocations) plan.goalAllocations = [];
+      if (editId) {
+        for (var i = 0; i < plan.goalAllocations.length; i++) {
+          if (plan.goalAllocations[i].id === editId) {
+            plan.goalAllocations[i].amountMinor = amt;
+            plan.goalAllocations[i].updatedAt = now;
+            break;
+          }
+        }
+      } else {
+        plan.goalAllocations.push({
+          id: MONEY_STORE.createId(), goalId: goalId,
+          amountMinor: amt, createdAt: now, updatedAt: now
+        });
+      }
+      plan.updatedAt = now;
+    });
+    if (!MONEY_STORE.save()) {
+      MONEY_STORE.importData(snap);
+      el.querySelector('#pga-e-amt').textContent = 'Ошибка сохранения';
+      return;
+    }
+    _closeGoalAllocSheet();
+  }
+
+  function _doDeleteGoalAlloc(allocId) {
+    if (!confirm('Убрать цель из плана месяца?')) return;
+    var snap = MONEY_STORE.exportData();
+    MONEY_STORE.update(function (s) {
+      for (var i = 0; i < s.monthlyPlans.length; i++) {
+        if (s.monthlyPlans[i].month !== _currentMonth) continue;
+        s.monthlyPlans[i].goalAllocations = (s.monthlyPlans[i].goalAllocations || [])
+          .filter(function (ga) { return ga.id !== allocId; });
+        break;
+      }
     });
     if (!MONEY_STORE.save()) MONEY_STORE.importData(snap);
   }
