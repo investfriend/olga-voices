@@ -1,4 +1,4 @@
-// assets/chat.js v4 — Раздел «Клуб»: Лента + Общение
+// assets/chat.js v5 — Раздел «Клуб»: Лента + Общение
 (function () {
   'use strict';
 
@@ -72,19 +72,19 @@
       type: 'group',
       label: 'Главное',
       items: [
-        { icon: 'trophy',    title: 'Ваши результаты',       sub: 'Портфели и достижения участников' },
+        { icon: 'trophy',    title: 'Ваши результаты',       sub: 'Портфели и достижения участников',            topicId: 6907 },
         { icon: 'calendar',  title: 'Анонсы и расписание',   sub: 'Предстоящие эфиры и мероприятия' },
-        { icon: 'compass',   title: 'Правила и навигация',   sub: 'Как пользоваться клубом' },
-        { icon: 'micro',     title: 'Весточка от Оли',       sub: 'Личные сообщения от Ольги' },
+        { icon: 'compass',   title: 'Правила и навигация',   sub: 'Как пользоваться клубом',                     topicId: 944 },
+        { icon: 'micro',     title: 'Весточка от Оли',       sub: 'Личные сообщения от Ольги',                   topicId: 5022 },
       ],
     },
     {
       type: 'group',
       label: 'Аналитика',
       items: [
-        { icon: 'chartbar',  title: 'Разборы компаний',      sub: 'Детальный анализ эмитентов',    topicId: 20 },
-        { icon: 'news2',     title: 'Дайджест и новости',    sub: 'Важные события рынка и клуба',  topicId: 18 },
-        { icon: 'video',     title: 'Ответы на вопросы',     sub: 'Записи эфиров и разборов' },
+        { icon: 'chartbar',  title: 'Разборы компаний',      sub: 'Детальный анализ эмитентов',                  topicId: 20 },
+        { icon: 'news2',     title: 'Дайджест и новости',    sub: 'Важные события рынка и клуба',                topicId: 18 },
+        { icon: 'video',     title: 'Ответы на вопросы',     sub: 'Записи эфиров и разборов',                    topicId: 22 },
       ],
     },
     {
@@ -92,9 +92,9 @@
       label: 'Инвестиционные идеи',
       items: [
         { icon: 'lightning', title: 'Идеи РФ: высокий риск', sub: 'Высокодоходные истории с повышенным риском', topicId: 10 },
-        { icon: 'globe',     title: 'Зарубежный рынок',      sub: 'Идеи по иностранным активам' },
+        { icon: 'globe',     title: 'Зарубежный рынок',      sub: 'Идеи по иностранным активам',                topicId: 5504 },
         { icon: 'briefcase', title: 'Портфель клуба',        sub: 'Модельные позиции и изменения',               topicId: 8 },
-        { icon: 'house',     title: 'Инвестиции в недвижимость', sub: 'ЗПИФ, объекты и стратегии' },
+        { icon: 'house',     title: 'Инвестиции в недвижимость', sub: 'ЗПИФ, объекты и стратегии',              topicId: 7013 },
         { icon: 'btc',       title: 'Криптовалюта',          sub: 'Крипторынок, идеи и аналитика' },
       ],
     },
@@ -102,8 +102,8 @@
       type: 'group',
       label: 'Специальные разделы',
       items: [
-        { icon: 'pres',      title: 'Интенсив «Криптовалюта»', sub: 'Материалы и записи крипто-интенсива' },
-        { icon: 'scales',    title: 'ИИС, налоги и законы',  sub: 'Правовые и налоговые вопросы инвестора' },
+        { icon: 'pres',      title: 'Интенсив «Портфель с 0»', sub: 'Материалы и записи интенсива',             topicId: 6181 },
+        { icon: 'scales',    title: 'ИИС, налоги и законы',  sub: 'Правовые и налоговые вопросы инвестора',     topicId: 16 },
       ],
     },
   ];
@@ -394,50 +394,78 @@
     document.body.classList.add('ch-no-scroll');
 
     var render = function (feed) {
-      var topic = feed.topics && feed.topics[String(topicId)];
-      if (!topic || !topic.posts || !topic.posts.length) {
+      var posts = [];
+      if (topicId === null) {
+        // Все публикации: собираем из всех тем и сортируем по дате
+        var topics = feed.topics || {};
+        Object.keys(topics).forEach(function (k) {
+          (topics[k].posts || []).forEach(function (p) { posts.push(p); });
+        });
+        posts.sort(function (a, b) {
+          return (b.datetime || b.date || '').localeCompare(a.datetime || a.date || '');
+        });
+        posts = posts.slice(0, 50);
+      } else {
+        var topic = feed.topics && feed.topics[String(topicId)];
+        posts = topic ? (topic.posts || []) : [];
+      }
+
+      if (!posts.length) {
         body.innerHTML = '<p class="fp-empty">Пока нет публикаций в этой теме.</p>';
         return;
       }
       var html = '';
-      topic.posts.forEach(function (p) {
+      posts.forEach(function (p) {
         var dateStr = p.date || '';
         var preview = _esc(p.preview || p.text || '');
         var link = p.link || '';
         html += '<div class="fp-post">'
           + '<div class="fp-post-date">' + _esc(dateStr) + '</div>'
-          + '<p class="fp-post-text">' + preview.replace(/\n/g,'<br>') + '</p>'
+          + '<p class="fp-post-text">' + preview.replace(/\n/g, '<br>') + '</p>'
           + (link ? '<a class="fp-post-link" href="' + _esc(link) + '" target="_blank" rel="noopener">Открыть в Telegram ↗</a>' : '')
           + '</div>';
       });
-      var upd = feed.updated_at ? feed.updated_at.slice(0,10) : '';
-      body.innerHTML = html
-        + (upd ? '<p class="fp-updated">Обновлено ' + _esc(upd) + '</p>' : '');
+      var upd = feed.updated_at ? feed.updated_at.slice(0, 10) : '';
+      body.innerHTML = html + (upd ? '<p class="fp-updated">Обновлено ' + _esc(upd) + '</p>' : '');
     };
 
     if (_feedCache) { render(_feedCache); return; }
 
-    var _tg = window.Telegram && window.Telegram.WebApp;
+    var _tg  = window.Telegram && window.Telegram.WebApp;
     var _initData = _tg ? (_tg.initData || '') : '';
-    var _feedOpts = _initData ? { headers: { 'Authorization': 'tma ' + _initData } } : {};
-    fetch('https://7014487-jf659312.twc1.net/club-feed/feed', _feedOpts)
+    var _apiUrl    = 'https://7014487-jf659312.twc1.net/club-feed/feed';
+    var _staticUrl = 'assets/feed.json';
+
+    var loadStatic = function () {
+      fetch(_staticUrl)
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (data) { _feedCache = data; render(data); }
+          else { body.innerHTML = '<p class="fp-empty">Не удалось загрузить данные. Попробуйте позже.</p>'; }
+        })
+        .catch(function () { body.innerHTML = '<p class="fp-empty">Не удалось загрузить данные. Попробуйте позже.</p>'; });
+    };
+
+    var opts = _initData ? { headers: { 'Authorization': 'tma ' + _initData } } : {};
+    fetch(_apiUrl, opts)
       .then(function (r) {
         if (r.status === 401) {
           body.innerHTML = '<p class="fp-empty">Откройте приложение через Telegram для доступа к ленте.</p>';
-          return null;
+          return undefined; // обработано — не переходить к fallback
         }
         if (r.status === 403) {
           body.innerHTML = '<p class="fp-empty">Лента доступна только участникам клуба.</p>';
-          return null;
+          return undefined;
         }
-        if (!r.ok) {
-          body.innerHTML = '<p class="fp-empty">Лента временно недоступна. Попробуйте позже.</p>';
-          return null;
-        }
+        if (!r.ok) return null; // сбой сервера → пробуем статику
         return r.json();
       })
-      .then(function (data) { if (data) { _feedCache = data; render(data); } })
-      .catch(function () { body.innerHTML = '<p class="fp-empty">Не удалось загрузить данные. Попробуйте позже.</p>'; });
+      .then(function (data) {
+        if (data === undefined) return;           // 401/403 обработано
+        if (data) { _feedCache = data; render(data); return; }
+        loadStatic();                             // null → статический fallback
+      })
+      .catch(function () { loadStatic(); });      // сетевая ошибка → статический fallback
   }
 
   function _closeFeedPosts() {
@@ -522,6 +550,8 @@
       var tid = feedBtn.dataset.feedTopicId;
       if (tid) {
         _openFeedPosts(parseInt(tid, 10), feedBtn.dataset.feedTopic, feedBtn);
+      } else if (feedBtn.classList.contains('club-feed-all')) {
+        _openFeedPosts(null, feedBtn.dataset.feedTopic, feedBtn);
       } else {
         _openFeedModal(feedBtn.dataset.feedTopic, feedBtn);
       }
