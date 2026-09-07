@@ -1,0 +1,142 @@
+/* assets/money-home.css v1 — Stage 6: главный экран расчётов */
+
+/* ─── Main card value states ─────────────────────────────────────────────── */
+.mn-main-value--neg { color: #e05252; }
+.mn-main-value--pos { color: var(--accent); }
+html[data-theme="light"] .mn-main-value--neg { color: #c0392b; }
+
+/* ─── CTA button (go to accounts / plan) ────────────────────────────────── */
+.mn-main-cta-btn {
+  display: block; width: 100%; padding: 12px;
+  background: var(--accent); color: var(--btn-text);
+  border: none; border-radius: 12px;
+  font-size: 14px; font-weight: 600; font-family: inherit;
+  cursor: pointer; margin-bottom: 16px;
+  -webkit-tap-highlight-color: transparent;
+}
+.mn-main-cta-btn:active { opacity: .85; }
+
+/* ─── Note variants ──────────────────────────────────────────────────────── */
+.mn-main-note--warn { color: #b8960f; }
+html[data-theme="light"] .mn-main-note--warn { color: #8a6f00; }
+
+/* ─── Breakdown button ───────────────────────────────────────────────────── */
+.mn-breakdown-btn {
+  display: block; width: 100%; padding: 10px; margin-top: 14px;
+  background: none; border: 1px solid var(--border);
+  border-radius: 10px; color: var(--accent);
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.mn-breakdown-btn:active { background: var(--bg-card-2); }
+
+/* ─── Today section ─────────────────────────────────────────────────────── */
+.mn-today-val--neg {
+  color: #e05252; font-size: 12px; font-weight: 600;
+}
+.mn-today-val--link {
+  background: none; border: none; color: var(--accent);
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  cursor: pointer; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+html[data-theme="light"] .mn-today-val--neg { color: #c0392b; }
+
+/* ─── Clickable today rows ───────────────────────────────────────────────── */
+.mn-today-row--btn {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; background: none; border: none; border-radius: 0;
+  border-bottom: 1px solid var(--border);
+  font-family: inherit; text-align: left; cursor: pointer;
+  padding: 12px 14px;
+  -webkit-tap-highlight-color: transparent;
+}
+.mn-today-row--btn:last-child { border-bottom: none; }
+.mn-today-row--btn:active { background: var(--bg-card-2); }
+
+/* ─── Payment info ───────────────────────────────────────────────────────── */
+.mn-today-pay-title { font-size: 13px; color: var(--text); font-weight: 600; }
+.mn-today-pay-amt   { font-size: 12px; color: var(--text-dim); }
+.mn-today-when {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 1px 6px; border-radius: 100px;
+  background: rgba(220,160,30,.12); color: #b8960f;
+  margin-left: 4px;
+}
+.mn-today-when--over { background: rgba(220,80,80,.10); color: #e05252; }
+html[data-theme="light"] .mn-today-when      { color: #8a6f00; }
+html[data-theme="light"] .mn-today-when--over { color: #c0392b; }
+
+/* ─── Main goal row ──────────────────────────────────────────────────────── */
+.mn-today-goal-row {
+  flex-direction: column; align-items: flex-start; gap: 6px;
+  padding: 12px 14px;
+}
+.mn-today-goal-head {
+  display: flex; justify-content: space-between;
+  width: 100%; align-items: baseline; gap: 8px;
+}
+.mn-today-goal-prog { width: 100%; }
+.mn-today-goal-bar {
+  height: 4px; background: var(--bg-card-2);
+  border-radius: 2px; overflow: hidden; margin-bottom: 4px;
+}
+.mn-today-goal-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+.mn-today-goal-nums { font-size: 12px; color: var(--text-dim); }
+.mn-today-goal-pct  { font-weight: 700; color: var(--accent); }
+
+/* ─── Add operation compact button ──────────────────────────────────────── */
+#mn-add-op-wrap { padding: 8px 0 0; }
+.mn-add-op-btn {
+  display: block; width: 100%; padding: 12px;
+  background: none; border: 1.5px solid var(--border);
+  border-radius: 12px; color: var(--text);
+  font-size: 14px; font-weight: 600; font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.mn-add-op-btn:active { background: var(--bg-card-2); }
+
+/* ─── Breakdown sheet overlay ────────────────────────────────────────────── */
+#mn-bk-sheet { display: none; position: fixed; inset: 0; z-index: 450; }
+#mn-bk-sheet.mn-sheet--open { display: block; }
+
+.mn-bk-panel {
+  max-height: 85vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mn-bk-body { padding: 0 0 16px; }
+
+.mn-bk-section {
+  font-size: 11px; font-weight: 700; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: .4px;
+  padding: 14px 0 6px;
+}
+.mn-bk-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 0; font-size: 14px; color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.mn-bk-row:last-of-type { border-bottom: none; }
+.mn-bk-subtotal {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; font-size: 14px; font-weight: 700; color: var(--text);
+  border-top: 1px solid var(--border); margin-top: 4px;
+}
+.mn-bk-val--neg { color: #e05252; }
+.mn-bk-val--pos { color: var(--accent); }
+html[data-theme="light"] .mn-bk-val--neg { color: #c0392b; }
+
+.mn-bk-note {
+  font-size: 12px; color: var(--text-dim); font-style: italic;
+  padding: 8px 0 4px;
+}
+.mn-bk-result {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0 4px; margin-top: 12px;
+  border-top: 2px solid var(--border);
+  font-size: 15px; font-weight: 700; color: var(--text);
+}
+.mn-bk-result-val { font-size: 18px; font-weight: 800; }

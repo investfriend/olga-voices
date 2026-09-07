@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="assets/money-ops.css?v=1">
 <link rel="stylesheet" href="assets/money-plan.css?v=1">
 <link rel="stylesheet" href="assets/money-goals.css?v=1">
+<link rel="stylesheet" href="assets/money-home.css?v=1">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -246,44 +247,30 @@
     <button class="back-btn" onclick="setPage('home')" aria-label="Назад на главную">← Назад</button>
     <h2 class="page-title">Мои деньги</h2>
 
-    <div class="mn-main-card">
+    <div id="mn-main-card" class="mn-main-card">
       <div class="mn-main-label">Доступно до конца месяца</div>
-      <div class="mn-main-value">Не рассчитано</div>
-      <div class="mn-main-note">Появится после настройки доходов, обязательных расходов и целей</div>
-      <div class="mn-metrics">
-        <div class="mn-metric">
-          <div class="mn-metric-label">Доходы</div>
-          <div class="mn-metric-value">—</div>
-        </div>
-        <div class="mn-metric">
-          <div class="mn-metric-label">Расходы</div>
-          <div class="mn-metric-value" id="mn-month-expenses">—</div>
-        </div>
-        <div class="mn-metric">
-          <div class="mn-metric-label">Инвестировано</div>
-          <div class="mn-metric-value" id="mn-month-invest">—</div>
-        </div>
-      </div>
+      <div class="mn-main-value" style="color:var(--text-dim)">—</div>
     </div>
 
     <div id="mn-invest-wrap"></div>
 
     <div id="mn-quick-wrap"></div>
     <div id="mn-income-wrap"></div>
+    <div id="mn-add-op-wrap"></div>
 
     <div class="mn-block-title">На сегодня</div>
-    <div class="mn-today">
+    <div id="mn-today-section" class="mn-today">
       <div class="mn-today-row">
         <span class="mn-today-label">Ориентир на день</span>
-        <span class="mn-today-val">Не рассчитан</span>
+        <span class="mn-today-val">—</span>
       </div>
       <div class="mn-today-row">
         <span class="mn-today-label">Ближайший платёж</span>
-        <span class="mn-today-val">Не добавлен</span>
+        <span class="mn-today-val">—</span>
       </div>
       <div class="mn-today-row">
         <span class="mn-today-label">Главная цель</span>
-        <span class="mn-today-val">Не выбрана</span>
+        <span class="mn-today-val">—</span>
       </div>
     </div>
 
@@ -422,6 +409,7 @@
 <script src="assets/money-ops.js?v=1"></script>
 <script src="assets/money-plan.js?v=3"></script>
 <script src="assets/money-goals.js?v=2"></script>
+<script src="assets/money-home.js?v=1"></script>
 <script>
 /* Инвестик — конфигурация (менять здесь, не в investik.js) */
 window.INVESTIK_CFG = {
