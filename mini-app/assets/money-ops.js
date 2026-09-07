@@ -610,7 +610,8 @@
 
   // ─── Public API: exposed so money.js income button can open the form ───────
   window.MONEY_OPS = {
-    openAdd: function(prefillType) { openTxSheet(null, prefillType||'expense'); }
+    openAdd:  function(prefillType) { openTxSheet(null, prefillType||'expense'); },
+    openEdit: function(id)          { if (id) openTxSheet(id); }
   };
 
   // ─── Reactivity ───────────────────────────────────────────────────────────

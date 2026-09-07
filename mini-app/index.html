@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="assets/money-plan.css?v=1">
 <link rel="stylesheet" href="assets/money-goals.css?v=1">
 <link rel="stylesheet" href="assets/money-home.css?v=1">
+<link rel="stylesheet" href="assets/money-analytics.css?v=1">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -308,6 +309,14 @@
         </span>
         <span class="mn-sec-caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
       </button>
+      <button class="mn-sec-btn" type="button" onclick="setPage('money-analytics')" aria-label="Аналитика">
+        <span class="mn-sec-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31,40,179.31V200H224A8,8,0,0,1,232,208Z"/></svg></span>
+        <span class="mn-sec-body">
+          <span class="mn-sec-label">Аналитика</span>
+          <span class="mn-sec-sub">Доходы, расходы и динамика по месяцам</span>
+        </span>
+        <span class="mn-sec-caret" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg></span>
+      </button>
     </div>
   </section>
 
@@ -337,6 +346,13 @@
     <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
     <h2 class="page-title">Счета</h2>
     <div id="ac-content"></div>
+  </section>
+
+  <!-- МОИ ДЕНЬГИ — Аналитика -->
+  <section class="page sub" data-page="money-analytics">
+    <button class="back-btn" onclick="setPage('money')" aria-label="Назад к Мои деньги">← Назад</button>
+    <h2 class="page-title">Аналитика</h2>
+    <div id="mn-analytics-content"></div>
   </section>
 
 </main>
@@ -410,6 +426,7 @@
 <script src="assets/money-plan.js?v=3"></script>
 <script src="assets/money-goals.js?v=2"></script>
 <script src="assets/money-home.js?v=1"></script>
+<script src="assets/money-analytics.js?v=1"></script>
 <script>
 /* Инвестик — конфигурация (менять здесь, не в investik.js) */
 window.INVESTIK_CFG = {
