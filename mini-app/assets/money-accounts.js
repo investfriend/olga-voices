@@ -151,7 +151,7 @@
     var negCls  = balance < 0 ? ' ac-neg' : '';
     var icKey   = a.type === 'cash' ? 'cash' : a.type === 'savings' ? 'savings' : 'card';
 
-    var html = '<div class="ac-card' + (a.archived ? ' ac-card--archived' : '') + '">'
+    var html = '<div class="ac-card ac-card--type-' + (a.type || 'card') + (a.archived ? ' ac-card--archived' : '') + '">'
       + '<div class="ac-card-ic">' + _svg(_P[icKey]) + '</div>'
       + '<div class="ac-card-body">'
       + '<div class="ac-card-row1">'

@@ -1,4 +1,4 @@
-/* assets/money-goals.css v1 — Мои деньги: Цели */
+/* assets/money-goals.css v2 — Мои деньги: Цели + Stage 8A */
 
 /* ─── Sheet overlays ─────────────────────────────────────────────────────── */
 #goal-form-sheet,
@@ -45,7 +45,7 @@
   background:var(--bg-card); border:1px solid var(--border);
   border-radius:14px; padding:14px; margin-bottom:10px; overflow:hidden;
 }
-.gl-card--main { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+.gl-card--main { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), 0 4px 16px rgba(39,201,138,.10); }
 .gl-card--completed { opacity:.75; }
 .gl-card--archived  { opacity:.6; }
 
@@ -74,8 +74,8 @@ html[data-theme="light"] .gl-badge--medium { color:#8a6f00; }
 
 /* ─── Progress bar ───────────────────────────────────────────────────────── */
 .gl-bar {
-  height:6px; background:var(--bg-card-2);
-  border-radius:3px; overflow:hidden; margin-bottom:8px;
+  height:8px; background:var(--bg-card-2);
+  border-radius:4px; overflow:hidden; margin-bottom:8px;
 }
 .gl-bar-fill {
   height:100%; background:var(--accent); border-radius:3px; transition:width .3s;
@@ -87,7 +87,7 @@ html[data-theme="light"] .gl-badge--medium { color:#8a6f00; }
   display:flex; align-items:baseline; gap:5px; margin-bottom:6px;
   flex-wrap:wrap;
 }
-.gl-card-acc    { font-size:17px; font-weight:800; color:var(--text); }
+.gl-card-acc    { font-size:19px; font-weight:800; color:var(--text); }
 .gl-card-sep    { font-size:13px; color:var(--text-dim); }
 .gl-card-target { font-size:13px; color:var(--text-dim); flex:1; min-width:0; }
 .gl-card-pct    { font-size:13px; font-weight:700; color:var(--accent); white-space:nowrap; }

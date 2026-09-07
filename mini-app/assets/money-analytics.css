@@ -1,4 +1,4 @@
-/* assets/money-analytics.css v1 — Stage 7: Аналитика */
+/* assets/money-analytics.css v2 — Stage 7 + Stage 8A */
 
 /* ─── Period switcher ────────────────────────────────────────────────────── */
 .an-period-sw {
@@ -12,7 +12,8 @@
 }
 .an-period-btn--on {
   border-color: var(--accent); color: var(--accent);
-  background: rgba(39,201,138,.08);
+  background: rgba(39,201,138,.10);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 .an-period-btn:active { opacity: .75; }
 

@@ -1,4 +1,4 @@
-/* assets/money-accounts.css v1 — Мои деньги: Счета */
+/* assets/money-accounts.css v2 — Мои деньги: Счета + Stage 8A */
 
 /* ─── Sheet overlay (reuses .mn-sheet-* from money.css) ─────────────────── */
 #ac-sheet { display: none; position: fixed; inset: 0; z-index: 400; }
@@ -7,6 +7,14 @@
 /* ─── Negative value (shared utility) ───────────────────────────────────── */
 .ac-neg { color: #e05252; }
 html[data-theme="light"] .ac-neg { color: #c0392b; }
+
+/* ─── Account type — icon accent colours ─────────────────────────────────── */
+.ac-card--type-card    .ac-card-ic { background: rgba(82,119,224,.12); color: #5277e0; }
+.ac-card--type-cash    .ac-card-ic { background: rgba(224,150,82,.12);  color: #e09652; }
+.ac-card--type-savings .ac-card-ic { background: rgba(39,201,138,.12);  color: var(--accent); }
+html[data-theme="light"] .ac-card--type-card    .ac-card-ic { background: rgba(82,119,224,.10); }
+html[data-theme="light"] .ac-card--type-cash    .ac-card-ic { background: rgba(224,150,82,.10); }
+html[data-theme="light"] .ac-card--type-savings .ac-card-ic { background: rgba(28,156,106,.10); }
 
 /* ─── Total available bar ────────────────────────────────────────────────── */
 .ac-total-bar {
@@ -60,7 +68,7 @@ html[data-theme="light"] .ac-neg { color: #c0392b; }
   flex: 1; min-width: 0;
 }
 .ac-card-balance {
-  font-size: 15px; font-weight: 700; color: var(--text);
+  font-size: 17px; font-weight: 700; color: var(--text);
   white-space: nowrap; flex-shrink: 0;
 }
 

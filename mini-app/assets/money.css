@@ -1,4 +1,4 @@
-/* assets/money.css v4 — Мои деньги */
+/* assets/money.css v5 — Мои деньги */
 
 /* ─── HOME ENTRY CARD ─────────────────────────────────────────────────────── */
 .mn-home-card {
@@ -59,18 +59,25 @@ html[data-theme="light"] .mn-home-arr   { color: var(--text-muted); }
 
 /* ─── OVERVIEW PAGE — main card ───────────────────────────────────────────── */
 .mn-main-card {
-  background: var(--bg-card); border: 1px solid var(--border);
+  background: linear-gradient(150deg, #182c20 0%, #1d3228 100%);
+  border: 1px solid rgba(39,201,138,.18);
   border-radius: 16px; padding: 20px; margin-bottom: 4px;
+}
+html[data-theme="light"] .mn-main-card {
+  background: linear-gradient(150deg, rgba(28,156,106,.08) 0%, rgba(28,156,106,.03) 100%);
+  border-color: rgba(28,156,106,.22);
 }
 .mn-main-label {
   font-size: 11px; font-weight: 600; text-transform: uppercase;
   letter-spacing: .6px; color: var(--text-dim); margin-bottom: 8px;
 }
-.mn-main-value  { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.mn-main-value  { font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
 .mn-main-note   { font-size: 12px; color: var(--text-dim); line-height: 1.45; margin-bottom: 18px; }
-.mn-metrics     { display: flex; border-top: 1px solid var(--border); padding-top: 14px; }
+.mn-metrics     { display: flex; border-top: 1px solid rgba(243,241,234,.08); padding-top: 14px; }
+html[data-theme="light"] .mn-metrics { border-top-color: var(--border); }
 .mn-metric      { flex: 1; text-align: center; }
-.mn-metric + .mn-metric { border-left: 1px solid var(--border); }
+.mn-metric + .mn-metric { border-left: 1px solid rgba(243,241,234,.08); }
+html[data-theme="light"] .mn-metric + .mn-metric { border-left-color: var(--border); }
 .mn-metric-label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
 .mn-metric-value { font-size: 18px; font-weight: 700; color: var(--text); }
 
@@ -91,25 +98,33 @@ html[data-theme="light"] .mn-home-arr   { color: var(--text-muted); }
 .mn-today-label { font-size: 14px; color: var(--text); }
 .mn-today-val   { font-size: 13px; color: var(--text-dim); white-space: nowrap; }
 
-/* ─── SECTION CARDS ───────────────────────────────────────────────────────── */
-.mn-sections    { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+/* ─── SECTION CARDS — horizontal tab strip ────────────────────────────────── */
+.mn-sections {
+  display: flex; flex-direction: row; gap: 6px;
+  margin-bottom: 20px; overflow-x: auto; padding-bottom: 2px;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.mn-sections::-webkit-scrollbar { display: none; }
 .mn-sec-btn {
-  display: flex; align-items: center; gap: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  flex: 0 0 auto; min-width: 76px;
   background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
-  padding: 14px 16px; cursor: pointer; text-align: left; width: 100%;
-  font-family: inherit; -webkit-tap-highlight-color: transparent; transition: opacity .12s;
+  padding: 12px 8px 10px; cursor: pointer; text-align: center;
+  font-family: inherit; -webkit-tap-highlight-color: transparent; transition: background .12s;
 }
-.mn-sec-btn:active { opacity: .8; }
+.mn-sec-btn:active { background: var(--bg-card-2); }
 .mn-sec-icon {
-  flex-shrink: 0; width: 40px; height: 40px; background: var(--bg-card-2);
-  border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent);
+  flex-shrink: 0; width: 36px; height: 36px; background: var(--bg-card-2);
+  border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--accent);
 }
-.mn-sec-icon svg { width: 22px; height: 22px; }
-.mn-sec-body   { flex: 1; min-width: 0; }
-.mn-sec-label  { display: block; font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.mn-sec-sub    { display: block; font-size: 12px; color: var(--text-dim); line-height: 1.35; }
-.mn-sec-caret  { color: var(--text-dim); flex-shrink: 0; display: flex; }
-.mn-sec-caret svg { width: 18px; height: 18px; }
+.mn-sec-icon svg { width: 20px; height: 20px; }
+.mn-sec-body   { min-width: 0; width: 100%; }
+.mn-sec-label  {
+  display: block; font-size: 11px; font-weight: 600; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mn-sec-sub    { display: none; }
+.mn-sec-caret  { display: none; }
 
 /* ─── INVESTMENT BLOCK ────────────────────────────────────────────────────── */
 .mn-invest-block {

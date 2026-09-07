@@ -1,9 +1,10 @@
-/* assets/money-home.css v1 — Stage 6: главный экран расчётов */
+/* assets/money-home.css v2 — Stage 6 + Stage 8A visual polish */
 
 /* ─── Main card value states ─────────────────────────────────────────────── */
-.mn-main-value--neg { color: #e05252; }
+/* Deficit: amber warning tone (not aggressive red) */
+.mn-main-value--neg { color: #c8853a; }
 .mn-main-value--pos { color: var(--accent); }
-html[data-theme="light"] .mn-main-value--neg { color: #c0392b; }
+html[data-theme="light"] .mn-main-value--neg { color: #9e5c10; }
 
 /* ─── CTA button (go to accounts / plan) ────────────────────────────────── */
 .mn-main-cta-btn {

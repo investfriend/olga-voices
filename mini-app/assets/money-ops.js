@@ -168,7 +168,7 @@
     html += '<div class="ops-summary">'
       + '<div class="ops-sum-item"><span class="ops-sum-lbl">Доходы</span><span class="ops-sum-val ops-sum-val--inc">'+(summary.income?fmtRub(summary.income):'—')+'</span></div>'
       + '<div class="ops-sum-item"><span class="ops-sum-lbl">Расходы</span><span class="ops-sum-val ops-sum-val--exp">'+(summary.expense?fmtRub(summary.expense):'—')+'</span></div>'
-      + '<div class="ops-sum-item"><span class="ops-sum-lbl">Инвест.</span><span class="ops-sum-val">'+(summary.investment?fmtRub(summary.investment):'—')+'</span></div>'
+      + '<div class="ops-sum-item"><span class="ops-sum-lbl">Инвест.</span><span class="ops-sum-val ops-sum-val--inv">'+(summary.investment?fmtRub(summary.investment):'—')+'</span></div>'
       + '</div>';
 
     // Filter chips
@@ -229,7 +229,9 @@
       ? '<span class="ops-no-acct-badge">Счёт не указан</span>' : '';
 
     var prefix = tx.type==='income' ? '+' : (tx.type==='expense'||tx.type==='investment' ? '−' : '');
-    var amtCls = tx.type==='income' ? ' ops-row-amt--income' : '';
+    var amtCls = tx.type==='income' ? ' ops-row-amt--income'
+               : tx.type==='expense' ? ' ops-row-amt--expense'
+               : tx.type==='investment' ? ' ops-row-amt--invest' : '';
 
     return '<div class="ops-row" data-id="'+esc(tx.id)+'">'
       + '<div class="ops-row-ic ops-row-ic--'+tx.type+'">'+(IC[tx.type]||IC.expense)+'</div>'
