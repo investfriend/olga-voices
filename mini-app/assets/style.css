@@ -1890,6 +1890,15 @@ html[data-theme="light"] .hp-slide-date { color: rgba(20,40,30,.52); }
 
 /* Таймер обратного отсчёта */
 .hp-countdown-wrap { margin: 4px 0 12px; }
+.hp-countdown-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: rgba(243,241,234,.55);
+  margin-bottom: 6px;
+}
+html[data-theme="light"] .hp-countdown-label { color: rgba(20,40,30,.45); }
 .hp-countdown {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

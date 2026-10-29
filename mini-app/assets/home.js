@@ -1,4 +1,4 @@
-// assets/home.js v12 — Home screen rendering
+// assets/home.js v13 — Home screen rendering
 // Depends on: script.js (STATE, setPage, showToast), data.js (DATA)
 
 (function () {
@@ -89,17 +89,6 @@
       ],
     },
 
-    // ── Плашка интенсива по крипте (сразу под каруселью) ───────────────────
-    cryptoEvent: {
-      tag:       'ЖИВОЙ ИНТЕНСИВ · СЕНТЯБРЬ',
-      title:     'Криптовалюты',
-      subtitle:  'Пять дней, от азов к практике',
-      date:      'Старт 7 сентября 2026 года в 11:00 МСК',
-      targetUtc: '2026-09-07T08:00:00Z',   // 11:00 МСК = 08:00 UTC
-      url:       'https://investfriend.ru/pl/teach/control/lesson/view?id=349173658&editMode=0',
-      btnLabel:  'Открыть анонс',
-    },
-
     // ── Карточка-ссылка «Портфели клуба» ──────────────────────────────────
     portfolios: {
       title: 'Материалы по портфелям',
@@ -107,27 +96,26 @@
       url:   'https://investfriend.ru/teach/control/lesson/view/id/348403796',
     },
 
-    // ── Макро-интенсив (секция «Сейчас в клубе») ──────────────────────────
+    // ── Текущий интенсив (ноябрь 2026) ────────────────────────────────────
     intensiv: {
-      tag:   'МАКРО',
-      title: 'Экономика и портфель: как принимать решения по данным',
-      start: '2026-08-03',
-      end:   '2026-08-10',
-      url:   'https://investfriend.ru/teach/control/stream/view/id/935709630',
+      tag:       'ЖИВОЙ ИНТЕНСИВ · НОЯБРЬ',
+      title:     'Техника &amp; фундаментал',
+      subtitle:  'Как соединить два анализа при принятии инвестиционного решения',
+      date:      '3 и 5 ноября, 18:30 МСК',
+      authors:   'Кирилл Климентьев и Алексей Быстриков',
+      desc:      '2 практических эфира и самостоятельный анализ компаний',
+      phase1Utc: '2026-11-03T15:30:00Z',   // 18:30 МСК = UTC+3
+      phase2Utc: '2026-11-05T15:30:00Z',   // 18:30 МСК = UTC+3
+      url:       'https://investfriend.ru/teach/control/stream/view/id/935947981',
+      btnLabel:  'Открыть анонс',
     },
 
     // ── Расписание событий ─────────────────────────────────────────────────
     events: [
-      { date: '2026-08-03', title: 'День 1. Где находится экономика сейчас',           desc: 'В течение дня',     allDay: true  },
-      { date: '2026-08-04', title: 'День 2. Инфляция и ставка',                        desc: 'В течение дня',     allDay: true  },
-      { date: '2026-08-04', title: 'Живой эфир 1',                                     desc: '18:30 – 19:30 мск', live: true, timeStart: '18:30', timeEnd: '19:30' },
-      { date: '2026-08-05', title: 'День 3. Как экономика меняет цену активов',         desc: 'В течение дня',     allDay: true  },
-      { date: '2026-08-06', title: 'День 4. Отрасли и компании',                       desc: 'В течение дня',     allDay: true  },
-      { date: '2026-08-07', title: 'День 5. Как читать новости и принимать решения',    desc: 'В течение дня',     allDay: true  },
-      { date: '2026-08-07', title: 'Живой эфир 2. Три сценария для портфеля',           desc: '18:30 – 19:30 мск', live: true, timeStart: '18:30', timeEnd: '19:30' },
-      { date: '2026-08-08', title: 'Завершение интенсива и подготовка вопросов',        desc: 'В течение дня',     allDay: true  },
-      { date: '2026-08-09', title: 'Завершение интенсива и подготовка вопросов',        desc: 'В течение дня',     allDay: true  },
-      { date: '2026-08-10', title: 'Проверка заданий и обратная связь',                 desc: 'В течение дня',     allDay: true  },
+      { date: '2026-11-03', title: 'Эфир 1. Техника &amp; фундаментал',  desc: '18:30 МСК',               live: true,  timeStart: '18:30', timeEnd: '20:00' },
+      { date: '2026-11-04', title: 'Самостоятельный анализ компаний',     desc: 'Сдача до 5 ноября, 15:00', allDay: true },
+      { date: '2026-11-05', title: 'Самостоятельный анализ компаний',     desc: 'Сдача до 15:00',           allDay: true },
+      { date: '2026-11-05', title: 'Эфир 2. Разбор практики',             desc: '18:30 МСК',               live: true,  timeStart: '18:30', timeEnd: '20:00' },
     ],
 
     // TODO: confirm final descriptions with content team
@@ -181,10 +169,10 @@
   }
 
   function intensivStatus() {
-    var t = todayMsk();
-    var c = HOME_CFG.intensiv;
-    if (t < c.start) return { label: 'Скоро',             cls: 'hp-status-soon'  };
-    if (t > c.end)   return { label: 'Записи доступны',   cls: 'hp-status-done'  };
+    var c   = HOME_CFG.intensiv;
+    var now = Date.now();
+    if (now < new Date(c.phase1Utc).getTime()) return { label: 'Скоро',           cls: 'hp-status-soon' };
+    if (now > new Date(c.phase2Utc).getTime()) return { label: 'Записи доступны', cls: 'hp-status-done' };
     return { label: 'Идёт сейчас', cls: 'hp-status-live' };
   }
 
@@ -479,59 +467,75 @@
     return many;
   }
 
-  function _tickCountdown(el, targetMs) {
+  function _tickCountdown(el, targetMs, label) {
     var diff = targetMs - Date.now();
-    if (diff <= 0) {
-      el.innerHTML = '<div class="hp-countdown-done">Интенсив начался</div>';
-      return false; // stop interval
-    }
+    if (diff <= 0) { return false; }
     var totalSec = Math.floor(diff / 1000);
     var days    = Math.floor(totalSec / 86400);
     var hours   = Math.floor((totalSec % 86400) / 3600);
     var minutes = Math.floor((totalSec % 3600) / 60);
     var seconds = totalSec % 60;
     function pad(v) { return String(v).padStart(2, '0'); }
-    el.innerHTML = '<div class="hp-countdown">'
+    el.innerHTML = (label ? '<div class="hp-countdown-label">' + label + '</div>' : '')
+      + '<div class="hp-countdown">'
       + '<div class="hp-countdown-unit"><span class="hp-countdown-num">' + days + '</span><span class="hp-countdown-lbl">' + _pluralRu(days, 'день', 'дня', 'дней') + '</span></div>'
       + '<div class="hp-countdown-unit"><span class="hp-countdown-num">' + pad(hours) + '</span><span class="hp-countdown-lbl">' + _pluralRu(hours, 'час', 'часа', 'часов') + '</span></div>'
       + '<div class="hp-countdown-unit"><span class="hp-countdown-num">' + pad(minutes) + '</span><span class="hp-countdown-lbl">' + _pluralRu(minutes, 'минута', 'минуты', 'минут') + '</span></div>'
       + '<div class="hp-countdown-unit"><span class="hp-countdown-num">' + pad(seconds) + '</span><span class="hp-countdown-lbl">' + _pluralRu(seconds, 'секунда', 'секунды', 'секунд') + '</span></div>'
       + '</div>';
-    return true; // continue
+    return true;
   }
 
-  // ── Плашка крипто-интенсива ──────────────────────────────────────────────────
+  function _timerPhase(c) {
+    var now = Date.now();
+    var p1  = new Date(c.phase1Utc).getTime();
+    var p2  = new Date(c.phase2Utc).getTime();
+    if (now < p1) return { label: 'До первого эфира',  target: p1 };
+    if (now < p2) return { label: 'До второго эфира',  target: p2 };
+    return null;
+  }
+
+  // ── Плашка текущего интенсива с двухфазным таймером ────────────────────────
   function renderCryptoEvent() {
     var el = document.getElementById('hp-crypto-event');
     if (!el) return;
 
     if (_cryptoTimerIv) { clearInterval(_cryptoTimerIv); _cryptoTimerIv = null; }
 
-    var c = HOME_CFG.cryptoEvent;
-    var targetMs = new Date(c.targetUtc).getTime();
+    var c     = HOME_CFG.intensiv;
+    var phase = _timerPhase(c);
 
     el.innerHTML = '<div class="hp-slide-inner hp-slide-crypto">'
-      + '<div class="hp-crypto-bg-icon" aria-hidden="true">&#x20BF;</div>'
       + '<div class="hp-slide-top"><span class="hp-slide-tag">' + c.tag + '</span></div>'
       + '<div class="hp-slide-title font-cond">' + c.title + '</div>'
       + '<div class="hp-slide-sub">' + c.subtitle + '</div>'
       + '<div class="hp-slide-date">' + c.date + '</div>'
-      + '<div class="hp-countdown-wrap" role="timer" aria-live="off"></div>'
+      + '<div class="hp-slide-sub" style="opacity:.75">' + c.authors + '</div>'
+      + '<div class="hp-slide-sub">' + c.desc + '</div>'
+      + (phase
+        ? '<div class="hp-countdown-wrap" role="timer" aria-live="off"></div>'
+        : '<div class="hp-countdown-done">Записи и материалы доступны в тренинге</div>'
+      )
       + '<button class="hp-slide-btn hp-crypto-evt-btn" aria-label="' + c.btnLabel + ' — откроется в браузере">'
       + c.btnLabel + '&nbsp;' + _EXT_IC
       + '</button>'
       + '</div>';
 
-    var timerEl = el.querySelector('.hp-countdown-wrap');
-
-    function tick() {
-      if (!_tickCountdown(timerEl, targetMs)) {
-        clearInterval(_cryptoTimerIv);
-        _cryptoTimerIv = null;
+    if (phase) {
+      var timerEl = el.querySelector('.hp-countdown-wrap');
+      function tick() {
+        var ph = _timerPhase(c);
+        if (!ph) {
+          clearInterval(_cryptoTimerIv);
+          _cryptoTimerIv = null;
+          timerEl.className = 'hp-countdown-done';
+          timerEl.removeAttribute('role');
+          timerEl.textContent = 'Записи и материалы доступны в тренинге';
+          return;
+        }
+        _tickCountdown(timerEl, ph.target, ph.label);
       }
-    }
-    tick();
-    if (Date.now() < targetMs) {
+      tick();
       _cryptoTimerIv = setInterval(tick, 1000);
     }
 
@@ -781,6 +785,7 @@
   function initHome() {
     renderPortfolioCarousel();
     renderCryptoEvent();
+    renderCalendar();
     renderExternalGroup();
     renderChatsBtn();
     renderLearning();
